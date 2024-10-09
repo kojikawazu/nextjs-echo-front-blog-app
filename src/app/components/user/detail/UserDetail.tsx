@@ -17,6 +17,10 @@ const UserDetail = () => {
         router.push('/blog/create');
     };
 
+    const handleUserEdit = () => {
+        router.push('/user/edit/1');
+    };
+
     return (
         <BlogFormLayout
             isLoggedIn={isLoggedIn}
@@ -26,6 +30,16 @@ const UserDetail = () => {
             handleLogin={() => {}}
         >
             <main className="flex-grow p-6">
+                {/** 戻る */}
+                <div className="mb-4">
+                    <button
+                        className="mb-4 text-blue-600 hover:underline"
+                        onClick={() => window.history.back()}
+                    >
+                        &larr; 戻る
+                    </button>
+                </div>
+
                 <div className="bg-white shadow-md rounded px-10 pt-8 pb-10 mb-6">
                     <h2 className="text-xl font-bold mb-6">ユーザー詳細</h2>
                     <div className="mb-6">
@@ -35,7 +49,10 @@ const UserDetail = () => {
                         </p>
                     </div>
                     <div className="flex items-center justify-center space-x-6">
-                        <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline">
+                        <button
+                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline"
+                            onClick={handleUserEdit}
+                        >
                             情報を変更する
                         </button>
                     </div>
