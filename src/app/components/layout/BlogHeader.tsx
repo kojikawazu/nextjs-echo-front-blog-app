@@ -2,6 +2,7 @@ import React from 'react';
 
 interface BlogHeaderProps {
     isLoggedIn: boolean;
+    loginUser: string | null;
     handleCreateBlog: () => void;
     handleLogout: () => void;
     handleLogin: () => void;
@@ -10,6 +11,7 @@ interface BlogHeaderProps {
 /**
  * ブログヘッダーコンポーネント
  * @param isLoggedIn
+ * @param loginUser
  * @param handleCreateBlog
  * @param handleLogout
  * @param handleLogin
@@ -17,6 +19,7 @@ interface BlogHeaderProps {
  */
 const BlogHeader = ({
     isLoggedIn,
+    loginUser,
     handleCreateBlog,
     handleLogout,
     handleLogin,
@@ -24,7 +27,12 @@ const BlogHeader = ({
     return (
         <header className="bg-[#1a1a1a] text-white p-4 flex justify-between items-center">
             <h1 className="text-2xl font-bold">Tech Blog</h1>
+
             <div className="flex items-center">
+                <div className="text-sm mr-2">
+                    {isLoggedIn && <p>{loginUser} さん、こんにちは！</p>}
+                </div>
+
                 {isLoggedIn ? (
                     <>
                         <button
