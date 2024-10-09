@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 interface BlogHeaderProps {
     isLoggedIn: boolean;
@@ -30,7 +31,9 @@ const BlogHeader = ({
 
             <div className="flex items-center">
                 <div className="text-sm mr-2">
-                    {isLoggedIn && <p>{loginUser} さん、こんにちは！</p>}
+                    <Link href={'/user/detail'}>
+                        {isLoggedIn && <p>{loginUser} さん、こんにちは！</p>}
+                    </Link>
                 </div>
 
                 {isLoggedIn ? (

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useUser } from '@/app/hooks/useUser';
-import BlogFormLayout from '../../layout/BlogFormLayout';
+import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 
 /**
  * ユーザーログインフォームコンポーネント
@@ -34,12 +34,12 @@ const UserLoginForm = () => {
         handleLogin(formData.username);
     };
 
-    const { handleLoginForm, handleLogin } = useUser({ loginUser: null });
+    const { isLoggedIn, user, handleLoginForm, handleLogin } = useUser({ loginUser: null });
 
     return (
         <BlogFormLayout
-            isLoggedIn={false}
-            loginUser={null}
+            isLoggedIn={isLoggedIn}
+            loginUser={user}
             handleCreateBlog={() => {}}
             handleLogout={() => {}}
             handleLogin={handleLoginForm}
