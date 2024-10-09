@@ -27,7 +27,9 @@ const BlogHeader = ({
 }: BlogHeaderProps) => {
     return (
         <header className="bg-[#1a1a1a] text-white p-4 flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Tech Blog</h1>
+            <Link href={'/blog'}>
+                <h1 className="text-2xl font-bold">Tech Blog</h1>
+            </Link>
 
             <div className="flex items-center">
                 <div className="text-sm mr-2">
