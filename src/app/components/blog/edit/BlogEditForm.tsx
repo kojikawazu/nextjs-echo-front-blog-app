@@ -5,12 +5,18 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/app/hooks/useUser';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 
+interface BlogEditFormProps {
+    editBlogId: string;
+}
+
 /**
- * ブログ作成フォームコンポーネント
+ * ブログ編集フォームコンポーネント
+ * @param editBlogId
  * @returns JSX
  */
-const BlogCreateForm = () => {
+const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
     const router = useRouter();
+    const [blogId, setBlogId] = useState(editBlogId);
     const [formData, setFormData] = useState<{
         title: string;
         githubMarkdown: string;
@@ -23,13 +29,17 @@ const BlogCreateForm = () => {
         tags: [],
     });
 
+    const handleCreateBlog = () => {
+        router.push('/blog/create');
+    };
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (confirm('本当に追加してよろしいですか？')) {
+        if (confirm('本当に更新してよろしいですか？')) {
             //onSave(formData);
             router.push('/blog');
         }
@@ -41,7 +51,7 @@ const BlogCreateForm = () => {
         <BlogFormLayout
             isLoggedIn={isLoggedIn}
             loginUser={user}
-            handleCreateBlog={() => {}}
+            handleCreateBlog={handleCreateBlog}
             handleLogout={handleLogout}
             handleLogin={() => handleLogin('ユーザー')}
         >
@@ -143,4 +153,4 @@ const BlogCreateForm = () => {
     );
 };
 
-export default BlogCreateForm;
+export default BlogEditForm;
