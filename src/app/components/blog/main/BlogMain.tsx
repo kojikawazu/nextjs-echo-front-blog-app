@@ -93,7 +93,7 @@ const BlogMain = () => {
     const paginatedBlogs = paginateBlogs(filteredBlogs, currentPage, itemsPerPage);
     const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
 
-    const { isLoggedIn, user, handleLogin, handleLogout } = useUser({ loginUser: null });
+    const { isLoggedIn, user, handleLoginForm, handleLogout } = useUser({ loginUser: null });
 
     return (
         <BlogMainLayout
@@ -101,7 +101,7 @@ const BlogMain = () => {
             loginUser={user}
             handleCreateBlog={handleCreateBlog}
             handleLogout={handleLogout}
-            handleLogin={() => handleLogin('ユーザー')}
+            handleLogin={handleLoginForm}
             categories={categories}
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
