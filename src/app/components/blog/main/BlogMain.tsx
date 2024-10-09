@@ -1,0 +1,195 @@
+'use client';
+
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { BlogType } from '@/app/types/types';
+import BlogMainLayout from '../../layout/BlogMainLayout';
+import Link from 'next/link';
+
+/**
+ * ブログメインコンポーネント
+ * @returns JSX
+ */
+const BlogMain = () => {
+    const router = useRouter();
+    const [selectedCategory, setSelectedCategory] = useState('全て');
+    const [selectedBlog, setSelectedBlog] = useState<BlogType | null>(null);
+    const [blogs, setBlogs] = useState<BlogType[]>([
+        {
+            id: 1,
+            title: 'Reactの最新フック活用法',
+            excerpt: 'useEffectとuseCallbackの効果的な使い方',
+            content: 'ここに詳細な記事内容が入ります。',
+            tags: ['React', 'JavaScript'],
+            category: 'フロントエンド',
+            likes: 0,
+        },
+        {
+            id: 2,
+            title: 'Dockerコンテナ最適化テクニック',
+            excerpt: '本番環境でのパフォーマンス向上策',
+            content: 'ここに詳細な記事内容が入ります。',
+            tags: ['Docker', 'DevOps'],
+            category: 'DevOps',
+            likes: 0,
+        },
+        {
+            id: 3,
+            title: 'AIを活用した自動コード生成',
+            excerpt: 'GPT-4を使ったコーディング効率化',
+            content: 'ここに詳細な記事内容が入ります。',
+            tags: ['AI', 'プログラミング'],
+            category: 'AI/機械学習',
+            likes: 0,
+        },
+        {
+            id: 4,
+            title: 'Express.jsでRESTful API開発',
+            excerpt: '効率的なバックエンド構築手法',
+            content: 'ここに詳細な記事内容が入ります。',
+            tags: ['Node.js', 'Express'],
+            category: 'バックエンド',
+            likes: 0,
+        },
+    ]);
+    const [isEditing, setIsEditing] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const categories = ['全て', 'フロントエンド', 'バックエンド', 'DevOps', 'AI/機械学習'];
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 2;
+
+    const handleBlogClick = (blog: BlogType) => {
+        // setSelectedBlog(blog);
+        // setIsEditing(false);
+    };
+
+    const handleBackClick = () => {
+        setSelectedBlog(null);
+        setIsEditing(false);
+    };
+
+    const handleCreateBlog = () => {
+        router.push('/blog/create');
+        // const newBlog: BlogType = {
+        //     id: Date.now(),
+        //     title: '',
+        //     excerpt: '',
+        //     content: '',
+        //     tags: [],
+        //     category: '',
+        //     likes: 0,
+        // };
+        // setSelectedBlog(newBlog);
+        // setIsEditing(true);
+    };
+
+    const handleEditBlog = () => {
+        setIsEditing(true);
+    };
+
+    const handleSaveBlog = (updatedBlog: BlogType) => {
+        if (updatedBlog.id) {
+            setBlogs(blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog)));
+        } else {
+            setBlogs([...blogs, { ...updatedBlog, id: Date.now() }]);
+        }
+        setSelectedBlog(updatedBlog);
+        setIsEditing(false);
+    };
+
+    const handleDeleteBlog = (blogId: number) => {
+        setBlogs(blogs.filter((blog) => blog.id !== blogId));
+        setSelectedBlog(null);
+    };
+
+    const handleLikeBlog = (blogId: number) => {
+        setBlogs(
+            blogs.map((blog) => (blog.id === blogId ? { ...blog, likes: blog.likes + 1 } : blog)),
+        );
+    };
+
+    const handleLogin = () => {
+        setIsLoggedIn(true);
+    };
+
+    const handleLogout = () => {
+        setIsLoggedIn(false);
+    };
+
+    const paginateBlogs = (blogs: BlogType[], page: number, itemsPerPage: number) => {
+        const startIndex = (page - 1) * itemsPerPage;
+        return blogs.slice(startIndex, startIndex + itemsPerPage);
+    };
+
+    const filteredBlogs =
+        selectedCategory === '全て'
+            ? blogs
+            : blogs.filter((blog) => blog.category === selectedCategory);
+    const paginatedBlogs = paginateBlogs(filteredBlogs, currentPage, itemsPerPage);
+    const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
+
+    return (
+        <BlogMainLayout
+            isLoggedIn={isLoggedIn}
+            handleCreateBlog={handleCreateBlog}
+            handleLogout={handleLogout}
+            handleLogin={handleLogin}
+            categories={categories}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+        >
+            <main className="flex-grow p-4">
+                {/** ブログリスト */}
+                {paginatedBlogs.map((blog) => (
+                    <div
+                        key={blog.id}
+                        className="bg-white shadow-md m-2 p-4 rounded cursor-pointer"
+                        onClick={() => handleBlogClick(blog)}
+                    >
+                        {/** タグ */}
+                        <Link href={`/blog/detail/${blog.id}`}>
+                            <h2 className="font-bold text-xl mb-2 text-blue-700">{blog.title}</h2>
+                        </Link>
+                        <p className="text-gray-700 mb-2">{blog.excerpt}</p>
+                        <div className="flex flex-wrap mb-2">
+                            {blog.tags.map((tag, tagIndex) => (
+                                <span
+                                    key={tagIndex}
+                                    className="bg-gray-200 text-sm rounded-full px-3 py-1 mr-2 mb-2"
+                                >
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+
+                        {/** いいね */}
+                        <div className="flex justify-between items-center">
+                            <span className="text-gray-600 text-sm">❤️ {blog.likes}</span>
+                            <button
+                                onClick={() => handleLikeBlog(blog.id)}
+                                className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded ml-2"
+                            >
+                                いいね!
+                            </button>
+                        </div>
+                    </div>
+                ))}
+
+                {/** ページング */}
+                <div className="mt-4 flex justify-center space-x-2">
+                    {[...Array(totalPages)].map((_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => setCurrentPage(index + 1)}
+                            className={`px-2 py-1 rounded ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
+                        >
+                            {index + 1}
+                        </button>
+                    ))}
+                </div>
+            </main>
+        </BlogMainLayout>
+    );
+};
+
+export default BlogMain;
