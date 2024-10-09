@@ -17,6 +17,10 @@ export const useUser = ({ loginUser }: useUserProps) => {
     const [isLoggedIn, setIsLoggedIn] = useState(!loginUser ? false : true);
     const [user, setUser] = useState<string | null>(loginUser);
 
+    const handleLoginForm = () => {
+        router.push('/user/login');
+    };
+
     const handleLogin = (loginUser: string) => {
         setIsLoggedIn(true);
         setUser(loginUser);
@@ -33,6 +37,7 @@ export const useUser = ({ loginUser }: useUserProps) => {
         isLoggedIn,
         user,
         setIsLoggedIn,
+        handleLoginForm,
         handleLogin,
         handleLogout,
     };

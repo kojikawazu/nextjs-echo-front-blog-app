@@ -45,7 +45,7 @@ const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
         }
     };
 
-    const { isLoggedIn, user, handleLogin, handleLogout } = useUser({ loginUser: 'ユーザー' });
+    const { isLoggedIn, user, handleLoginForm, handleLogout } = useUser({ loginUser: 'ユーザー' });
 
     return (
         <BlogFormLayout
@@ -53,7 +53,7 @@ const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
             loginUser={user}
             handleCreateBlog={handleCreateBlog}
             handleLogout={handleLogout}
-            handleLogin={() => handleLogin('ユーザー')}
+            handleLogin={handleLoginForm}
         >
             <main className="p-4">
                 {/** 戻る */}
