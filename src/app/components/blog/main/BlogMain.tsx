@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { BlogType } from '@/app/types/types';
-import BlogMainLayout from '../../layout/BlogMainLayout';
-import Link from 'next/link';
+import { useUser } from '@/app/hooks/useUser';
+import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
 
 /**
  * ブログメインコンポーネント
@@ -13,7 +14,6 @@ import Link from 'next/link';
 const BlogMain = () => {
     const router = useRouter();
     const [selectedCategory, setSelectedCategory] = useState('全て');
-    const [selectedBlog, setSelectedBlog] = useState<BlogType | null>(null);
     const [blogs, setBlogs] = useState<BlogType[]>([
         {
             id: 1,
@@ -52,68 +52,33 @@ const BlogMain = () => {
             likes: 0,
         },
     ]);
-    const [isEditing, setIsEditing] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const categories = ['全て', 'フロントエンド', 'バックエンド', 'DevOps', 'AI/機械学習'];
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 2;
 
-    const handleBlogClick = (blog: BlogType) => {
-        // setSelectedBlog(blog);
-        // setIsEditing(false);
-    };
-
-    const handleBackClick = () => {
-        setSelectedBlog(null);
-        setIsEditing(false);
-    };
+    // const handleBackClick = () => {
+    //     setSelectedBlog(null);
+    //     setIsEditing(false);
+    // };
 
     const handleCreateBlog = () => {
         router.push('/blog/create');
-        // const newBlog: BlogType = {
-        //     id: Date.now(),
-        //     title: '',
-        //     excerpt: '',
-        //     content: '',
-        //     tags: [],
-        //     category: '',
-        //     likes: 0,
-        // };
-        // setSelectedBlog(newBlog);
-        // setIsEditing(true);
     };
 
-    const handleEditBlog = () => {
-        setIsEditing(true);
-    };
-
-    const handleSaveBlog = (updatedBlog: BlogType) => {
-        if (updatedBlog.id) {
-            setBlogs(blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog)));
-        } else {
-            setBlogs([...blogs, { ...updatedBlog, id: Date.now() }]);
-        }
-        setSelectedBlog(updatedBlog);
-        setIsEditing(false);
+    const handleEditBlog = (blogId: number) => {
+        router.push(`/blog/edit/${blogId}`);
     };
 
     const handleDeleteBlog = (blogId: number) => {
-        setBlogs(blogs.filter((blog) => blog.id !== blogId));
-        setSelectedBlog(null);
+        if (confirm('本当に削除しますか？')) {
+            setBlogs(blogs.filter((blog) => blog.id !== blogId));
+        }
     };
 
     const handleLikeBlog = (blogId: number) => {
         setBlogs(
             blogs.map((blog) => (blog.id === blogId ? { ...blog, likes: blog.likes + 1 } : blog)),
         );
-    };
-
-    const handleLogin = () => {
-        setIsLoggedIn(true);
-    };
-
-    const handleLogout = () => {
-        setIsLoggedIn(false);
     };
 
     const paginateBlogs = (blogs: BlogType[], page: number, itemsPerPage: number) => {
@@ -128,12 +93,15 @@ const BlogMain = () => {
     const paginatedBlogs = paginateBlogs(filteredBlogs, currentPage, itemsPerPage);
     const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
 
+    const { isLoggedIn, user, handleLogin, handleLogout } = useUser({ loginUser: null });
+
     return (
         <BlogMainLayout
             isLoggedIn={isLoggedIn}
+            loginUser={user}
             handleCreateBlog={handleCreateBlog}
             handleLogout={handleLogout}
-            handleLogin={handleLogin}
+            handleLogin={() => handleLogin('ユーザー')}
             categories={categories}
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
@@ -144,7 +112,6 @@ const BlogMain = () => {
                     <div
                         key={blog.id}
                         className="bg-white shadow-md m-2 p-4 rounded cursor-pointer"
-                        onClick={() => handleBlogClick(blog)}
                     >
                         {/** タグ */}
                         <Link href={`/blog/detail/${blog.id}`}>
@@ -165,12 +132,32 @@ const BlogMain = () => {
                         {/** いいね */}
                         <div className="flex justify-between items-center">
                             <span className="text-gray-600 text-sm">❤️ {blog.likes}</span>
-                            <button
-                                onClick={() => handleLikeBlog(blog.id)}
-                                className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded ml-2"
-                            >
-                                いいね!
-                            </button>
+
+                            <div className="flex items-center">
+                                {isLoggedIn && (
+                                    <>
+                                        <button
+                                            onClick={() => handleEditBlog(blog.id)}
+                                            className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded"
+                                        >
+                                            編集
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteBlog(blog.id)}
+                                            className="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-1 px-2 border border-red-500 hover:border-transparent rounded ml-2"
+                                        >
+                                            削除
+                                        </button>
+                                    </>
+                                )}
+
+                                <button
+                                    onClick={() => handleLikeBlog(blog.id)}
+                                    className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded ml-2"
+                                >
+                                    いいね!
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ))}
