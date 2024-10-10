@@ -28,6 +28,7 @@ const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
         category: '',
         tags: [],
     });
+    const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
 
     const handleCreateBlog = () => {
         router.push('/blog/create');
@@ -45,10 +46,9 @@ const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
         }
     };
 
-    const { isLoggedIn, user, handleLoginForm, handleLogout } = useUser({ loginUser: 'ユーザー' });
-
     return (
         <BlogFormLayout
+            isLoading={isLoading}
             isLoggedIn={isLoggedIn}
             loginUser={user}
             handleCreateBlog={handleCreateBlog}
