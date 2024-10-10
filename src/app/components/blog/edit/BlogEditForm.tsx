@@ -16,6 +16,8 @@ interface BlogEditFormProps {
  */
 const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
     const router = useRouter();
+    // 一時的
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [blogId, setBlogId] = useState(editBlogId);
     const [formData, setFormData] = useState<{
         title: string;

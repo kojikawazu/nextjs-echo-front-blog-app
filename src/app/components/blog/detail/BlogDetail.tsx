@@ -19,6 +19,8 @@ type ContentItem = {
  * @param blogId
  * @returns JSX
  */
+// 一時的
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const BlogDetail = ({ blogId }: BlogDetailProps) => {
     const categories = ['全て', 'フロントエンド', 'バックエンド', 'DevOps', 'AI/機械学習'];
     const router = useRouter();
@@ -26,6 +28,8 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
     const [comment, setComment] = useState('');
     const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
 
+    // 一時的
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [blog, setBlog] = useState({
         id: 1,
         title: 'Reactの最新フック活用法',
@@ -113,6 +117,8 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
         router.push(`/blog/edit/${blogId}`);
     };
 
+    // 一時的
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const handleDeleteBlog = (blogId: number) => {
         if (confirm('本当に削除しますか？')) {
             router.push('/blog');
