@@ -22,6 +22,7 @@ const BlogCreateForm = () => {
         category: '',
         tags: [],
     });
+    const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,10 +36,9 @@ const BlogCreateForm = () => {
         }
     };
 
-    const { isLoggedIn, user, handleLoginForm, handleLogout } = useUser({ loginUser: 'ユーザー' });
-
     return (
         <BlogFormLayout
+            isLoading={isLoading}
             isLoggedIn={isLoggedIn}
             loginUser={user}
             handleCreateBlog={() => {}}

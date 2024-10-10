@@ -10,3 +10,8 @@ export interface BlogType {
     category: string;
     likes: number;
 }
+
+export interface UserLoginFormType {
+    username: string;
+    password: string;
+}

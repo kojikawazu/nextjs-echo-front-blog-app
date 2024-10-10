@@ -11,7 +11,7 @@ import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
  */
 const UserDetail = () => {
     const router = useRouter();
-    const { isLoggedIn, user, handleLogout } = useUser({ loginUser: 'ユーザー' });
+    const { isLoading, isLoggedIn, user, handleLogout } = useUser();
 
     const handleCreateBlog = () => {
         router.push('/blog/create');
@@ -23,6 +23,7 @@ const UserDetail = () => {
 
     return (
         <BlogFormLayout
+            isLoading={isLoading}
             isLoggedIn={isLoggedIn}
             loginUser={user}
             handleCreateBlog={handleCreateBlog}

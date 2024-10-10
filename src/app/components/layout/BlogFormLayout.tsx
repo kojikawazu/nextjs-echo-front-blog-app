@@ -3,6 +3,7 @@ import BlogHeader from './BlogHeader';
 import BlogFooter from './BlogFooter';
 
 interface BlogFormLayoutProps {
+    isLoading: boolean;
     isLoggedIn: boolean;
     loginUser: string | null;
     handleCreateBlog: () => void;
@@ -13,6 +14,7 @@ interface BlogFormLayoutProps {
 
 /**
  * ブログフォームレイアウトコンポーネント
+ * @param isLoading
  * @param isLoggedIn
  * @param loginUser
  * @param handleCreateBlog
@@ -22,6 +24,7 @@ interface BlogFormLayoutProps {
  * @returns JSX
  */
 const BlogFormLayout = ({
+    isLoading,
     isLoggedIn,
     loginUser,
     handleCreateBlog,
@@ -32,6 +35,7 @@ const BlogFormLayout = ({
     return (
         <div className="flex flex-col min-h-screen bg-gray-100">
             <BlogHeader
+                isLoading={isLoading}
                 isLoggedIn={isLoggedIn}
                 loginUser={loginUser}
                 handleCreateBlog={handleCreateBlog}

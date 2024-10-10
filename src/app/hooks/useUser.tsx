@@ -11,6 +11,7 @@ export const useUser = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<string | null>(null);
+    const [isLoginError, setIsLoginError] = useState(false);
 
     useEffect(() => {
         // ページ読み込み時に認証状態を確認
@@ -70,11 +71,11 @@ export const useUser = () => {
                 setIsLoggedIn(true);
                 router.push('/blog');
             } else {
-                alert('ログインに失敗しました。ユーザー名またはパスワードが正しくありません。');
+                setIsLoginError(true);
             }
         } catch (error) {
             console.error('ログイン処理に失敗しました:', error);
-            alert('ログイン中にエラーが発生しました。');
+            setIsLoginError(true);
         } finally {
             setIsLoading(false);
         }
@@ -104,7 +105,7 @@ export const useUser = () => {
             console.error('ログアウト処理に失敗しました:', error);
             alert('ログアウト中にエラーが発生しました。');
         } finally {
-            setIsLoading(false); // ログアウト処理完了時に isLoading を false に設定
+            setIsLoading(false);
         }
     };
 
@@ -116,6 +117,7 @@ export const useUser = () => {
     return {
         isLoading,
         isLoggedIn,
+        isLoginError,
         user,
         setIsLoggedIn,
         handleLoginForm,

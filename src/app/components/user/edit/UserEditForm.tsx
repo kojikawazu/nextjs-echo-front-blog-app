@@ -31,7 +31,7 @@ const UserEditForm = ({ userId }: UserEditFormProps) => {
         confirmPassword: '',
     });
 
-    const { isLoggedIn, user, handleLogout } = useUser({ loginUser: 'ユーザー' });
+    const { isLoading, isLoggedIn, user, handleLogout } = useUser();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -78,6 +78,7 @@ const UserEditForm = ({ userId }: UserEditFormProps) => {
 
     return (
         <BlogFormLayout
+            isLoading={isLoading}
             isLoggedIn={isLoggedIn}
             loginUser={user}
             handleCreateBlog={handleCreateBlog}

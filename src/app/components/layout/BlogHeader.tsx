@@ -38,14 +38,13 @@ const BlogHeader = ({
                 <div className="text-sm mr-2">Loading...</div>
             ) : (
                 <div className="flex items-center">
-                    <div className="text-sm mr-2">
-                        <Link href={'/user/detail'}>
-                            {isLoggedIn && <p>{loginUser} さん、こんにちは！</p>}
-                        </Link>
-                    </div>
-
                     {isLoggedIn ? (
                         <>
+                            <div className="text-sm mr-2">
+                                <Link href={'/user/detail'}>
+                                    {<p>{loginUser} さん、こんにちは！</p>}
+                                </Link>
+                            </div>
                             <button
                                 onClick={handleCreateBlog}
                                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"

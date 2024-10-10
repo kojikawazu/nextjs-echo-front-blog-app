@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { useUser } from '@/app/hooks/useUser';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
+import { UserLoginFormType } from '@/app/types/types';
+import { isValidEmail } from '@/app/utils/validate';
 
 /**
  * ユーザーログインフォームコンポーネント
@@ -11,13 +13,18 @@ import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 const UserLoginForm = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [formData, setFormData] = useState<{
-        username: string;
-        password: string;
-    }>({
+    const [formData, setFormData] = useState<UserLoginFormType>({
         username: '',
         password: '',
     });
+    const {
+        isLoading: isUserLoading,
+        isLoggedIn,
+        isLoginError,
+        user,
+        handleLoginForm,
+        handleLogin,
+    } = useUser();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,21 +32,34 @@ const UserLoginForm = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        // ユーザーネームとパスワードが入力されているかチェック
         if (formData.username === '' || formData.password === '') {
             setErrorMessage('ユーザーネームとパスワードを入力してください');
             return;
         }
+        // メールアドレスの形式チェック
+        if (!isValidEmail(formData.username)) {
+            setErrorMessage('正しいEメールアドレスを入力してください');
+            return;
+        }
 
+        // ログイン処理
         setErrorMessage('');
         setIsLoading(true);
-        await handleLogin(formData.username, formData.password);
-        setIsLoading(false);
-    };
 
-    const { isLoggedIn, user, handleLoginForm, handleLogin } = useUser();
+        try {
+            await handleLogin(formData.username, formData.password);
+        } catch (error) {
+            setErrorMessage('ログイン中にエラーが発生しました。再度お試しください。');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <BlogFormLayout
+            isLoading={isUserLoading}
             isLoggedIn={isLoggedIn}
             loginUser={user}
             handleCreateBlog={() => {}}
@@ -51,8 +71,17 @@ const UserLoginForm = () => {
                     onSubmit={handleSubmit}
                     className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
                 >
+                    {isLoginError && (
+                        <div className="flex justify-center">
+                            <p className="text-red-500 text-sm italic mb-4">
+                                {'ユーザーログインに失敗しました'}
+                            </p>
+                        </div>
+                    )}
                     {errorMessage && (
-                        <p className="text-red-500 text-xs italic mb-4">{errorMessage}</p>
+                        <div className="flex justify-center">
+                            <p className="text-red-500 text-sm italic mb-4">{errorMessage}</p>
+                        </div>
                     )}
 
                     <div className="mb-4">
