@@ -51,6 +51,7 @@ const UserLoginForm = () => {
         try {
             await handleLogin(formData.username, formData.password);
         } catch (error) {
+            console.error('ログイン中にエラーが発生しました:', error);
             setErrorMessage('ログイン中にエラーが発生しました。再度お試しください。');
         } finally {
             setIsLoading(false);

@@ -45,6 +45,7 @@ export const useUser = () => {
         };
 
         checkAuth();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     /** ログインフォームへ */
