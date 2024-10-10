@@ -1,5 +1,5 @@
 import React from 'react';
-import BlogMain from '../components/blog/main/BlogMain';
+import BlogMain from '@/app/components/blog/main/BlogMain';
 
 /**
  * Blog main page.
