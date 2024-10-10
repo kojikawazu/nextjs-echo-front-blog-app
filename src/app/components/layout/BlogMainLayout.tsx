@@ -4,6 +4,7 @@ import BlogSideBar from './BlogSideBar';
 import BlogFooter from './BlogFooter';
 
 interface BlogMainLayoutProps {
+    isLoading: boolean;
     isLoggedIn: boolean;
     loginUser: string | null;
     handleCreateBlog: () => void;
@@ -17,6 +18,7 @@ interface BlogMainLayoutProps {
 
 /**
  * ブログメインレイアウトコンポーネント
+ * @param isLoading
  * @param isLoggedIn
  * @param loginUser
  * @param handleCreateBlog
@@ -29,6 +31,7 @@ interface BlogMainLayoutProps {
  * @returns JSX
  */
 const BlogMainLayout = ({
+    isLoading,
     isLoggedIn,
     loginUser,
     handleCreateBlog,
@@ -42,6 +45,7 @@ const BlogMainLayout = ({
     return (
         <div className="flex flex-col min-h-screen bg-gray-100">
             <BlogHeader
+                isLoading={isLoading}
                 isLoggedIn={isLoggedIn}
                 loginUser={loginUser}
                 handleCreateBlog={handleCreateBlog}

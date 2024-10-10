@@ -24,7 +24,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
     const router = useRouter();
     const [selectedCategory, setSelectedCategory] = useState('全て');
     const [comment, setComment] = useState('');
-    const { isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
+    const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
 
     const [blog, setBlog] = useState({
         id: 1,
@@ -128,6 +128,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
 
     return (
         <BlogMainLayout
+            isLoading={isLoading}
             isLoggedIn={isLoggedIn}
             loginUser={user}
             handleCreateBlog={handleCreateBlog}
