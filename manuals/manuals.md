@@ -1,5 +1,12 @@
 # マニュアル
 
+## インストール
+
+```bash
+npm install jwt-decode
+npm install --save-dev @types/jwt-decode
+```
+
 ## ESLint
 
 .eslintrc.json を修正すること。

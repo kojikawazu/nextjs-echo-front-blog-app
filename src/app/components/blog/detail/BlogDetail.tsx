@@ -24,7 +24,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
     const router = useRouter();
     const [selectedCategory, setSelectedCategory] = useState('全て');
     const [comment, setComment] = useState('');
-    const { isLoggedIn, user, handleLoginForm, handleLogout } = useUser({ loginUser: null });
+    const { isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
 
     const [blog, setBlog] = useState({
         id: 1,
