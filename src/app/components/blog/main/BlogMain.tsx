@@ -52,8 +52,10 @@ const BlogMain = () => {
             likes: 0,
         },
     ]);
-    const categories = ['全て', 'フロントエンド', 'バックエンド', 'DevOps', 'AI/機械学習'];
     const [currentPage, setCurrentPage] = useState(1);
+    const { isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
+
+    const categories = ['全て', 'フロントエンド', 'バックエンド', 'DevOps', 'AI/機械学習'];
     const itemsPerPage = 2;
 
     // const handleBackClick = () => {
@@ -92,8 +94,6 @@ const BlogMain = () => {
             : blogs.filter((blog) => blog.category === selectedCategory);
     const paginatedBlogs = paginateBlogs(filteredBlogs, currentPage, itemsPerPage);
     const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
-
-    const { isLoggedIn, user, handleLoginForm, handleLogout } = useUser({ loginUser: null });
 
     return (
         <BlogMainLayout

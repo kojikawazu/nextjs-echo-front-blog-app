@@ -1,4 +1,4 @@
-# Next.js + TypeScript + Echo + Go のブログWebアプリケーション
+# Next.js + TypeScript + Echo + Go のブログWebアプリケーション(フロントエンド側)
 
 ## Summary
 
@@ -36,6 +36,12 @@ Zennの記事やQiitaの記事も溜まっており、GitHubに管理してい�
         -   GitHub
     -   CI/CD
         -   GitHub Actions
+
+# Backend
+
+バックエンド側のリポジトリは以下になります。
+
+[Backend](https://github.com/kojikawazu/nextjs-echo-back-blog-app)
 
 # URL
 
