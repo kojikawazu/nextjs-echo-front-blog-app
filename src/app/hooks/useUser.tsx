@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
  */
 export const useUser = () => {
     const router = useRouter();
+    const [isLoading, setIsLoading] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<string | null>(null);
 
@@ -30,11 +31,15 @@ export const useUser = () => {
                 } else {
                     setIsLoggedIn(false);
                     setUser(null);
+                    moveToLogin();
                 }
             } catch (error) {
                 console.error('認証状態の確認に失敗しました:', error);
                 setIsLoggedIn(false);
                 setUser(null);
+                moveToLogin();
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -43,49 +48,73 @@ export const useUser = () => {
 
     /** ログインフォームへ */
     const handleLoginForm = () => {
-        router.push('/user/login');
+        moveToLogin();
     };
 
     /** ログイン処理 */
     const handleLogin = async (email: string, password: string) => {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-            body: JSON.stringify({ email, password }),
-        });
+        setIsLoading(true);
 
-        if (response.ok) {
-            await response.json();
-            router.push('/blog');
-        } else {
-            alert('ログインに失敗しました。ユーザー名またはパスワードが正しくありません。');
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (response.ok) {
+                await response.json();
+                setIsLoggedIn(true);
+                router.push('/blog');
+            } else {
+                alert('ログインに失敗しました。ユーザー名またはパスワードが正しくありません。');
+            }
+        } catch (error) {
+            console.error('ログイン処理に失敗しました:', error);
+            alert('ログイン中にエラーが発生しました。');
+        } finally {
+            setIsLoading(false);
         }
     };
 
     /** ログアウト処理 */
     const handleLogout = async () => {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/logout`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-        });
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/logout`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
 
-        if (response.ok) {
-            await response.json();
-            setIsLoggedIn(false);
-            setUser(null);
-            router.push('/blog');
-        } else {
-            alert('ログアウトに失敗しました。ユーザー名またはパスワードが正しくありません。');
+            if (response.ok) {
+                await response.json();
+                setIsLoggedIn(false);
+                setUser(null);
+                router.push('/blog');
+            } else {
+                alert('ログアウトに失敗しました。ユーザー名またはパスワードが正しくありません。');
+            }
+        } catch (error) {
+            console.error('ログアウト処理に失敗しました:', error);
+            alert('ログアウト中にエラーが発生しました。');
+        } finally {
+            setIsLoading(false); // ログアウト処理完了時に isLoading を false に設定
         }
     };
 
+    /** ログイン画面へ */
+    const moveToLogin = () => {
+        router.push('/user/login');
+    };
+
     return {
+        isLoading,
         isLoggedIn,
         user,
         setIsLoggedIn,

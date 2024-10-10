@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 
 interface BlogHeaderProps {
+    isLoading: boolean;
     isLoggedIn: boolean;
     loginUser: string | null;
     handleCreateBlog: () => void;
@@ -11,6 +12,7 @@ interface BlogHeaderProps {
 
 /**
  * ブログヘッダーコンポーネント
+ * @param isLoading
  * @param isLoggedIn
  * @param loginUser
  * @param handleCreateBlog
@@ -19,6 +21,7 @@ interface BlogHeaderProps {
  * @returns JSX
  */
 const BlogHeader = ({
+    isLoading,
     isLoggedIn,
     loginUser,
     handleCreateBlog,
@@ -31,37 +34,41 @@ const BlogHeader = ({
                 <h1 className="text-2xl font-bold">Tech Blog</h1>
             </Link>
 
-            <div className="flex items-center">
-                <div className="text-sm mr-2">
-                    <Link href={'/user/detail'}>
-                        {isLoggedIn && <p>{loginUser} さん、こんにちは！</p>}
-                    </Link>
-                </div>
+            {isLoading ? (
+                <div className="text-sm mr-2">Loading...</div>
+            ) : (
+                <div className="flex items-center">
+                    <div className="text-sm mr-2">
+                        <Link href={'/user/detail'}>
+                            {isLoggedIn && <p>{loginUser} さん、こんにちは！</p>}
+                        </Link>
+                    </div>
 
-                {isLoggedIn ? (
-                    <>
+                    {isLoggedIn ? (
+                        <>
+                            <button
+                                onClick={handleCreateBlog}
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
+                            >
+                                新規ブログ作成
+                            </button>
+                            <button
+                                onClick={handleLogout}
+                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                            >
+                                ログアウト
+                            </button>
+                        </>
+                    ) : (
                         <button
-                            onClick={handleCreateBlog}
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
+                            onClick={handleLogin}
+                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
                         >
-                            新規ブログ作成
+                            ログイン
                         </button>
-                        <button
-                            onClick={handleLogout}
-                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                        >
-                            ログアウト
-                        </button>
-                    </>
-                ) : (
-                    <button
-                        onClick={handleLogin}
-                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                    >
-                        ログイン
-                    </button>
-                )}
-            </div>
+                    )}
+                </div>
+            )}
         </header>
     );
 };

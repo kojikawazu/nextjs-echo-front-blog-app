@@ -53,7 +53,7 @@ const BlogMain = () => {
         },
     ]);
     const [currentPage, setCurrentPage] = useState(1);
-    const { isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
+    const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
 
     const categories = ['全て', 'フロントエンド', 'バックエンド', 'DevOps', 'AI/機械学習'];
     const itemsPerPage = 2;
@@ -97,6 +97,7 @@ const BlogMain = () => {
 
     return (
         <BlogMainLayout
+            isLoading={isLoading}
             isLoggedIn={isLoggedIn}
             loginUser={user}
             handleCreateBlog={handleCreateBlog}
@@ -106,75 +107,81 @@ const BlogMain = () => {
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
         >
-            <main className="flex-grow p-4">
-                {/** ブログリスト */}
-                {paginatedBlogs.map((blog) => (
-                    <div
-                        key={blog.id}
-                        className="bg-white shadow-md m-2 p-4 rounded cursor-pointer"
-                    >
-                        {/** タグ */}
-                        <Link href={`/blog/detail/${blog.id}`}>
-                            <h2 className="font-bold text-xl mb-2 text-blue-700">{blog.title}</h2>
-                        </Link>
-                        <p className="text-gray-700 mb-2">{blog.excerpt}</p>
-                        <div className="flex flex-wrap mb-2">
-                            {blog.tags.map((tag, tagIndex) => (
-                                <span
-                                    key={tagIndex}
-                                    className="bg-gray-200 text-sm rounded-full px-3 py-1 mr-2 mb-2"
-                                >
-                                    {tag}
-                                </span>
-                            ))}
-                        </div>
+            {isLoading ? (
+                <div className="flex-grow p-4 flex items-center justify-center">Loading...</div>
+            ) : (
+                <main className="flex-grow p-4">
+                    {/** ブログリスト */}
+                    {paginatedBlogs.map((blog) => (
+                        <div
+                            key={blog.id}
+                            className="bg-white shadow-md m-2 p-4 rounded cursor-pointer"
+                        >
+                            {/** タグ */}
+                            <Link href={`/blog/detail/${blog.id}`}>
+                                <h2 className="font-bold text-xl mb-2 text-blue-700">
+                                    {blog.title}
+                                </h2>
+                            </Link>
+                            <p className="text-gray-700 mb-2">{blog.excerpt}</p>
+                            <div className="flex flex-wrap mb-2">
+                                {blog.tags.map((tag, tagIndex) => (
+                                    <span
+                                        key={tagIndex}
+                                        className="bg-gray-200 text-sm rounded-full px-3 py-1 mr-2 mb-2"
+                                    >
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
 
-                        {/** いいね */}
-                        <div className="flex justify-between items-center">
-                            <span className="text-gray-600 text-sm">❤️ {blog.likes}</span>
+                            {/** いいね */}
+                            <div className="flex justify-between items-center">
+                                <span className="text-gray-600 text-sm">❤️ {blog.likes}</span>
 
-                            <div className="flex items-center">
-                                {isLoggedIn && (
-                                    <>
-                                        <button
-                                            onClick={() => handleEditBlog(blog.id)}
-                                            className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded"
-                                        >
-                                            編集
-                                        </button>
-                                        <button
-                                            onClick={() => handleDeleteBlog(blog.id)}
-                                            className="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-1 px-2 border border-red-500 hover:border-transparent rounded ml-2"
-                                        >
-                                            削除
-                                        </button>
-                                    </>
-                                )}
+                                <div className="flex items-center">
+                                    {isLoggedIn && (
+                                        <>
+                                            <button
+                                                onClick={() => handleEditBlog(blog.id)}
+                                                className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded"
+                                            >
+                                                編集
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteBlog(blog.id)}
+                                                className="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-1 px-2 border border-red-500 hover:border-transparent rounded ml-2"
+                                            >
+                                                削除
+                                            </button>
+                                        </>
+                                    )}
 
-                                <button
-                                    onClick={() => handleLikeBlog(blog.id)}
-                                    className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded ml-2"
-                                >
-                                    いいね!
-                                </button>
+                                    <button
+                                        onClick={() => handleLikeBlog(blog.id)}
+                                        className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded ml-2"
+                                    >
+                                        いいね!
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
-
-                {/** ページング */}
-                <div className="mt-4 flex justify-center space-x-2">
-                    {[...Array(totalPages)].map((_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => setCurrentPage(index + 1)}
-                            className={`px-2 py-1 rounded ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
-                        >
-                            {index + 1}
-                        </button>
                     ))}
-                </div>
-            </main>
+
+                    {/** ページング */}
+                    <div className="mt-4 flex justify-center space-x-2">
+                        {[...Array(totalPages)].map((_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => setCurrentPage(index + 1)}
+                                className={`px-2 py-1 rounded ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+                    </div>
+                </main>
+            )}
         </BlogMainLayout>
     );
 };
