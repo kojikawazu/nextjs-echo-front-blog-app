@@ -1,0 +1,36 @@
+// import { cookies } from 'next/headers';
+
+// export async function POST(req: Request) {
+//     console.log('POST start...');
+
+//     const { email, password } = await req.json();
+//     const fetchUrl = `${process.env.API_URL}/users/login`;
+
+//     // クッキーを取得
+//     const cookieStore = cookies();
+//     const tokenCookie = cookieStore.get('token');
+//     console.log('isTokenCookie:', tokenCookie !== undefined);
+
+//     try {
+//         const response = await fetch(fetchUrl, {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 Cookie: tokenCookie ? `token=${tokenCookie.value}` : '',
+//             },
+//             body: JSON.stringify({ email, password }),
+//         });
+//         console.log('auth login post response:', response);
+
+//         if (response.ok) {
+//             console.log('auth login post response.ok');
+//             return true;
+//         } else {
+//             console.error('auth login post response.error');
+//             return false;
+//         }
+//     } catch (error) {
+//         console.error('ログイン処理に失敗しました:', error);
+//         return false;
+//     }
+// }

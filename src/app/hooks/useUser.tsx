@@ -7,6 +7,7 @@ import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 /**
  * カスタムフック: ユーザー情報管理
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const useUser = ({ token }: { token: RequestCookie | undefined }) => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
@@ -20,9 +21,7 @@ export const useUser = ({ token }: { token: RequestCookie | undefined }) => {
             try {
                 const response = await fetch('/api/apitest', {
                     method: 'GET',
-                    headers: {
-                        Cookie: token ? `token=${token}` : '',
-                    },
+                    credentials: 'include',
                 });
 
                 if (response.ok) {
@@ -36,10 +35,13 @@ export const useUser = ({ token }: { token: RequestCookie | undefined }) => {
             }
 
             try {
-                const response = await fetch('/api/auth/getuser', {
-                    method: 'GET',
-                    credentials: 'include',
-                });
+                const response = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/users/auth-check`,
+                    {
+                        method: 'GET',
+                        credentials: 'include',
+                    },
+                );
 
                 if (response.ok) {
                     const data = await response.json();
@@ -59,6 +61,31 @@ export const useUser = ({ token }: { token: RequestCookie | undefined }) => {
             } finally {
                 setIsLoading(false);
             }
+
+            // try {
+            //     const response = await fetch('/api/auth/getuser', {
+            //         method: 'GET',
+            //         credentials: 'include',
+            //     });
+
+            //     if (response.ok) {
+            //         const data = await response.json();
+            //         setIsLoggedIn(true);
+            //         setUser(data.username);
+            //     } else {
+            //         console.warn('Authentication failed:', response.status);
+            //         setIsLoggedIn(false);
+            //         setUser(null);
+            //         moveToLogin();
+            //     }
+            // } catch (error) {
+            //     console.error('認証状態の確認に失敗しました:', error);
+            //     setIsLoggedIn(false);
+            //     setUser(null);
+            //     moveToLogin();
+            // } finally {
+            //     setIsLoading(false);
+            // }
         };
 
         checkAuth();
