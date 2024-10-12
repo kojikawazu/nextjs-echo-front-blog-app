@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { fetchAuthUser } from '@/app/utils/fetchUser';
 
 /**
  * カスタムフック: ユーザー情報管理
@@ -16,31 +17,17 @@ export const useUser = () => {
     useEffect(() => {
         // ページ読み込み時に認証状態を確認
         const checkAuth = async () => {
-            try {
-                const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/users/auth-check`,
-                    {
-                        method: 'GET',
-                        credentials: 'include', // クッキーを含める
-                    },
-                );
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setIsLoggedIn(true);
-                    setUser(data.username);
-                } else {
-                    setIsLoggedIn(false);
-                    setUser(null);
-                    moveToLogin();
-                }
-            } catch (error) {
-                console.error('認証状態の確認に失敗しました:', error);
+            const responseData = await fetchAuthUser();
+            if (responseData !== null) {
+                const data = responseData;
+                setIsLoggedIn(true);
+                setUser(data.username);
+                setIsLoading(false);
+            } else {
                 setIsLoggedIn(false);
                 setUser(null);
-                moveToLogin();
-            } finally {
                 setIsLoading(false);
+                moveToLogin();
             }
         };
 

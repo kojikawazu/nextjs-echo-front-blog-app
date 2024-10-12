@@ -11,6 +11,9 @@ export interface BlogType {
     likes: number;
 }
 
+/**
+ * @description: Type for the user
+ */
 export interface UserLoginFormType {
     username: string;
     password: string;
