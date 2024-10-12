@@ -1,4 +1,5 @@
 import React from 'react';
+import { getCookieToken } from '@/app/utils/auth-user';
 import UserLoginForm from '@/app/components/user/login/UserLoginForm';
 
 /**
@@ -6,7 +7,8 @@ import UserLoginForm from '@/app/components/user/login/UserLoginForm';
  * @returns JSX
  */
 const UserLoginPage = () => {
-    return <UserLoginForm />;
+    const tokenCookie = getCookieToken();
+    return <UserLoginForm token={tokenCookie} />;
 };
 
 export default UserLoginPage;

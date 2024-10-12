@@ -2,14 +2,19 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { useUser } from '@/app/hooks/useUser';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
+
+interface BlogCreateFormProps {
+    token: RequestCookie | undefined;
+}
 
 /**
  * ブログ作成フォームコンポーネント
  * @returns JSX
  */
-const BlogCreateForm = () => {
+const BlogCreateForm = ({ token }: BlogCreateFormProps) => {
     const router = useRouter();
     const [formData, setFormData] = useState<{
         title: string;
@@ -22,7 +27,7 @@ const BlogCreateForm = () => {
         category: '',
         tags: [],
     });
-    const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
+    const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser({ token });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });

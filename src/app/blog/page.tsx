@@ -1,4 +1,5 @@
 import React from 'react';
+import { getCookieToken } from '@/app/utils/auth-user';
 import BlogMain from '@/app/components/blog/main/BlogMain';
 
 /**
@@ -6,7 +7,8 @@ import BlogMain from '@/app/components/blog/main/BlogMain';
  * @returns JSX
  */
 const BlogMainPage = () => {
-    return <BlogMain />;
+    const tokenCookie = getCookieToken();
+    return <BlogMain token={tokenCookie} />;
 };
 
 export default BlogMainPage;

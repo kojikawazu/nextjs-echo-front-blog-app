@@ -2,15 +2,20 @@
 
 import React, { useState } from 'react';
 import { useUser } from '@/app/hooks/useUser';
+import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 import { UserLoginFormType } from '@/app/types/types';
 import { isValidEmail } from '@/app/utils/validate';
+
+interface UserLoginFormProps {
+    token: RequestCookie | undefined;
+}
 
 /**
  * ユーザーログインフォームコンポーネント
  * @returns JSX
  */
-const UserLoginForm = () => {
+const UserLoginForm = ({ token }: UserLoginFormProps) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState<UserLoginFormType>({
@@ -24,7 +29,7 @@ const UserLoginForm = () => {
         user,
         handleLoginForm,
         handleLogin,
-    } = useUser();
+    } = useUser({ token });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
