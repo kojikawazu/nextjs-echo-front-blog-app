@@ -13,7 +13,7 @@ export const getCookieToken = () => {
     console.log('[page]isTokenCookie:', tokenCookie !== undefined);
 
     return tokenCookie;
-}
+};
 
 /**
  *　認証ユーザー情報を取得
