@@ -46,7 +46,7 @@ export async function POST(req: Request) {
         }
     } catch (error) {
         console.error('ログイン処理に失敗しました:', error);
-        return new Response(JSON.stringify({ error: 'Failed to fetch content from GitHub' }), {
+        return new Response(JSON.stringify({ error: 'Server Error' }), {
             status: 500,
         });
     }

@@ -53,7 +53,7 @@ export async function GET(req: Request) {
         }
     } catch (error) {
         console.error('fetch auth user GET error:', error);
-        return new Response(JSON.stringify({ error: 'Failed to fetch content from GitHub' }), {
+        return new Response(JSON.stringify({ error: 'Server Error' }), {
             status: 500,
         });
     }
