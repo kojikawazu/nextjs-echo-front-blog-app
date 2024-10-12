@@ -103,6 +103,39 @@ const BlogMain = ({ token }: BlogMainProps) => {
     const paginatedBlogs = paginateBlogs(filteredBlogs, currentPage, itemsPerPage);
     const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
 
+    // useEffect(() => {
+    //     const fetchMarkdown = async () => {
+    //         const url = 'https://github.com/drawdb-io/drawdb/blob/main/README.md'; // 任意のパブリックリポジトリのURL
+    //         const regex = /^https:\/\/github\.com\/([^\/]+)\/([^\/]+)\/blob\/main\/(.+\.md)$/;
+    //         const match = url.match(regex);
+
+    //         if (!match) {
+    //             console.error('Invalid GitHub Markdown URL format');
+    //             return;
+    //         }
+
+    //         const [, repoOwner, repoName, filePath] = match;
+    //         const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+    //         console.log('API URL:', apiUrl);
+    //         console.log('Repo Owner:', repoOwner, 'Repo Name:', repoName, 'File Path:', filePath);
+
+    //         try {
+    //             const response = await axios.post('/api/markdown', {
+    //                 repoOwner,
+    //                 repoName,
+    //                 filePath,
+    //             });
+
+    //             const content = response.data.content;
+    //             console.log('Markdown content:', content);
+    //         } catch (error) {
+    //             console.error('Failed to fetch Markdown file:', error);
+    //         }
+    //     };
+
+    //     fetchMarkdown();
+    // }, []);
+
     return (
         <BlogMainLayout
             isLoading={isLoading}
