@@ -7,7 +7,7 @@ import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { BlogType } from '@/app/types/types';
 import { useUser } from '@/app/hooks/useUser';
 import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
-import axios from 'axios';
+//import axios from 'axios';
 //import ReactMarkdown from 'react-markdown';
 //import matter from 'gray-matter';
 
