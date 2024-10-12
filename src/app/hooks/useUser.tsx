@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 /**
  * カスタムフック: ユーザー情報管理
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const useUser = () => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
@@ -17,35 +16,21 @@ export const useUser = () => {
     useEffect(() => {
         // ページ読み込み時に認証状態を確認
         const checkAuth = async () => {
-            // try {
-            //     const response = await fetch('/api/apitest', {
-            //         method: 'GET',
-            //         credentials: 'include',
-            //     });
-
-            //     if (response.ok) {
-            //         const data = await response.json();
-            //         console.log('fetchApiTest data:', data);
-            //     } else {
-            //         console.warn('Authentication failed:', response.status);
-            //     }
-            // } catch (error) {
-            //     console.error('認証状態の確認に失敗しました:', error);
-            // }
-
             try {
-                const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/users/auth-check`,
-                    {
-                        method: 'GET',
-                        credentials: 'include',
-                    },
-                );
+                const response = await fetch(`/api/auth/getuser`, {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+
+                console.log('fetch auth user GET response status:', response.status);
+                //console.log('fetch auth user GET response status:', response.headers);
+                //console.log('fetch auth user GET response body:', response.body);
 
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('fetch auth user GET data:', data);
                     setIsLoggedIn(true);
-                    setUser(data.username);
+                    setUser(data.content.username);
                 } else {
                     console.warn('Authentication failed:', response.status);
                     setIsLoggedIn(false);
@@ -53,7 +38,7 @@ export const useUser = () => {
                     moveToLogin();
                 }
             } catch (error) {
-                console.error('認証状態の確認に失敗しました:', error);
+                console.error('認証状態の確認に失敗しました: ', error);
                 setIsLoggedIn(false);
                 setUser(null);
                 moveToLogin();
@@ -75,30 +60,6 @@ export const useUser = () => {
     const handleLogin = async (email: string, password: string) => {
         setIsLoading(true);
 
-        // try {
-        //     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         },
-        //         credentials: 'include',
-        //         body: JSON.stringify({ email, password }),
-        //     });
-
-        //     if (response.ok) {
-        //         await response.json();
-        //         setIsLoggedIn(true);
-        //         router.push('/blog');
-        //     } else {
-        //         setIsLoginError(true);
-        //     }
-        // } catch (error) {
-        //     console.error('ログイン処理に失敗しました:', error);
-        //     setIsLoginError(true);
-        // } finally {
-        //     setIsLoading(false);
-        // }
-
         try {
             const response = await fetch(`/api/auth/login`, {
                 method: 'POST',
@@ -108,6 +69,9 @@ export const useUser = () => {
                 credentials: 'include',
                 body: JSON.stringify({ email, password }),
             });
+
+            console.log('auth login post response headers:', response.headers);
+            console.log('auth login post response body:', response.body);
 
             if (response.ok) {
                 await response.json();
