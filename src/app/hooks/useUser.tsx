@@ -34,39 +34,14 @@ export const useUser = ({ token }: { token: RequestCookie | undefined }) => {
                 console.error('認証状態の確認に失敗しました:', error);
             }
 
-            try {
-                const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/users/auth-check`,
-                    {
-                        method: 'GET',
-                        credentials: 'include',
-                    },
-                );
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setIsLoggedIn(true);
-                    setUser(data.username);
-                } else {
-                    console.warn('Authentication failed:', response.status);
-                    setIsLoggedIn(false);
-                    setUser(null);
-                    moveToLogin();
-                }
-            } catch (error) {
-                console.error('認証状態の確認に失敗しました:', error);
-                setIsLoggedIn(false);
-                setUser(null);
-                moveToLogin();
-            } finally {
-                setIsLoading(false);
-            }
-
             // try {
-            //     const response = await fetch('/api/auth/getuser', {
-            //         method: 'GET',
-            //         credentials: 'include',
-            //     });
+            //     const response = await fetch(
+            //         `${process.env.NEXT_PUBLIC_API_URL}/users/auth-check`,
+            //         {
+            //             method: 'GET',
+            //             credentials: 'include',
+            //         },
+            //     );
 
             //     if (response.ok) {
             //         const data = await response.json();
@@ -86,6 +61,31 @@ export const useUser = ({ token }: { token: RequestCookie | undefined }) => {
             // } finally {
             //     setIsLoading(false);
             // }
+
+            try {
+                const response = await fetch('/api/auth/getuser', {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setIsLoggedIn(true);
+                    setUser(data.username);
+                } else {
+                    console.warn('Authentication failed:', response.status);
+                    setIsLoggedIn(false);
+                    setUser(null);
+                    moveToLogin();
+                }
+            } catch (error) {
+                console.error('認証状態の確認に失敗しました:', error);
+                setIsLoggedIn(false);
+                setUser(null);
+                moveToLogin();
+            } finally {
+                setIsLoading(false);
+            }
         };
 
         checkAuth();
