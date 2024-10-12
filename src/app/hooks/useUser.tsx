@@ -75,8 +75,32 @@ export const useUser = () => {
     const handleLogin = async (email: string, password: string) => {
         setIsLoading(true);
 
+        // try {
+        //     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         },
+        //         credentials: 'include',
+        //         body: JSON.stringify({ email, password }),
+        //     });
+
+        //     if (response.ok) {
+        //         await response.json();
+        //         setIsLoggedIn(true);
+        //         router.push('/blog');
+        //     } else {
+        //         setIsLoginError(true);
+        //     }
+        // } catch (error) {
+        //     console.error('ログイン処理に失敗しました:', error);
+        //     setIsLoginError(true);
+        // } finally {
+        //     setIsLoading(false);
+        // }
+
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
+            const response = await fetch(`/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
