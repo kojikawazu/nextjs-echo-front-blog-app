@@ -17,6 +17,22 @@ export const useUser = () => {
         // ページ読み込み時に認証状態を確認
         const checkAuth = async () => {
             try {
+                const response = await fetch('/api/apitest', { // '/api/auth/getuser' から '/api/apitest' に変更
+                    method: 'GET',
+                    credentials: 'include', // クッキーを含める
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('fetchApiTest data:', data);
+                } else {
+                    console.warn('Authentication failed:', response.status);
+                }
+            } catch (error) {
+                console.error('認証状態の確認に失敗しました:', error);
+            }
+
+            try {
                 const response = await fetch('/api/auth/getuser', {
                     method: 'GET',
                     credentials: 'include',
