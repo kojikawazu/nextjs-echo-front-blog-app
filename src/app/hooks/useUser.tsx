@@ -28,7 +28,7 @@ export const useUser = () => {
 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('fetch auth user GET data:', data);
+                    //console.log('fetch auth user GET data:', data);
                     setIsLoggedIn(true);
                     setUser(data.content.username);
                 } else {
@@ -70,8 +70,9 @@ export const useUser = () => {
                 body: JSON.stringify({ email, password }),
             });
 
-            console.log('auth login post response headers:', response.headers);
-            console.log('auth login post response body:', response.body);
+            console.log('auth login post response status:', response.status);
+            //console.log('auth login post response headers:', response.headers);
+            //console.log('auth login post response body:', response.body);
 
             if (response.ok) {
                 await response.json();
@@ -91,20 +92,23 @@ export const useUser = () => {
     /** ログアウト処理 */
     const handleLogout = async () => {
         setIsLoading(true);
+
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/logout`, {
-                method: 'POST',
+            const response = await fetch(`/api/auth/logout`, {
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
             });
 
+            console.log('auth logout get response status:', response.status);
+
             if (response.ok) {
                 await response.json();
                 setIsLoggedIn(false);
                 setUser(null);
-                router.push('/blog');
+                router.push('/user/login');
             } else {
                 alert('ログアウトに失敗しました。ユーザー名またはパスワードが正しくありません。');
             }
