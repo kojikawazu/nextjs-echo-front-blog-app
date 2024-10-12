@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 
 /**
  * カスタムフック: ユーザー情報管理
  */
-export const useUser = () => {
+export const useUser = ({ token }: { token: RequestCookie | undefined }) => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -19,7 +20,9 @@ export const useUser = () => {
             try {
                 const response = await fetch('/api/apitest', {
                     method: 'GET',
-                    credentials: 'include', // クッキーを含める
+                    headers: {
+                        Cookie: token ? `token=${token}` : '',
+                    },
                 });
 
                 if (response.ok) {

@@ -1,4 +1,5 @@
 import React from 'react';
+import { getCookieToken } from '@/app/utils/auth-user';
 import BlogDetail from '@/app/components/blog/detail/BlogDetail';
 
 /**
@@ -7,7 +8,8 @@ import BlogDetail from '@/app/components/blog/detail/BlogDetail';
  * @returns JSX
  */
 const BlogDetailPage = ({ params }: { params: { blogId: string } }) => {
-    return <BlogDetail blogId={params.blogId} />;
+    const tokenCookie = getCookieToken();
+    return <BlogDetail token={tokenCookie} blogId={params.blogId} />;
 };
 
 export default BlogDetailPage;

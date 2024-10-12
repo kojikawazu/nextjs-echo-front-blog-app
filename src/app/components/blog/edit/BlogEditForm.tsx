@@ -2,10 +2,12 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { useUser } from '@/app/hooks/useUser';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 
 interface BlogEditFormProps {
+    token: RequestCookie | undefined;
     editBlogId: string;
 }
 
@@ -14,7 +16,7 @@ interface BlogEditFormProps {
  * @param editBlogId
  * @returns JSX
  */
-const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
+const BlogEditForm = ({ token, editBlogId }: BlogEditFormProps) => {
     const router = useRouter();
     // 一時的
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -30,7 +32,7 @@ const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
         category: '',
         tags: [],
     });
-    const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
+    const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser({ token });
 
     const handleCreateBlog = () => {
         router.push('/blog/create');

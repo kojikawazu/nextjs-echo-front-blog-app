@@ -2,16 +2,21 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { useUser } from '@/app/hooks/useUser';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
+
+interface UserDetailProps {
+    token: RequestCookie | undefined;
+}
 
 /**
  * ユーザー詳細コンポーネント
  * @returns JSX
  */
-const UserDetail = () => {
+const UserDetail = ({ token }: UserDetailProps) => {
     const router = useRouter();
-    const { isLoading, isLoggedIn, user, handleLogout } = useUser();
+    const { isLoading, isLoggedIn, user, handleLogout } = useUser({ token });
 
     const handleCreateBlog = () => {
         router.push('/blog/create');
