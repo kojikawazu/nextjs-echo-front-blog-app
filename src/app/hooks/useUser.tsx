@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 
 /**
  * カスタムフック: ユーザー情報管理
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const useUser = ({ token }: { token: RequestCookie | undefined }) => {
+export const useUser = () => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -34,39 +33,14 @@ export const useUser = ({ token }: { token: RequestCookie | undefined }) => {
                 console.error('認証状態の確認に失敗しました:', error);
             }
 
-            // try {
-            //     const response = await fetch(
-            //         `${process.env.NEXT_PUBLIC_API_URL}/users/auth-check`,
-            //         {
-            //             method: 'GET',
-            //             credentials: 'include',
-            //         },
-            //     );
-
-            //     if (response.ok) {
-            //         const data = await response.json();
-            //         setIsLoggedIn(true);
-            //         setUser(data.username);
-            //     } else {
-            //         console.warn('Authentication failed:', response.status);
-            //         setIsLoggedIn(false);
-            //         setUser(null);
-            //         moveToLogin();
-            //     }
-            // } catch (error) {
-            //     console.error('認証状態の確認に失敗しました:', error);
-            //     setIsLoggedIn(false);
-            //     setUser(null);
-            //     moveToLogin();
-            // } finally {
-            //     setIsLoading(false);
-            // }
-
             try {
-                const response = await fetch('/api/auth/getuser', {
-                    method: 'GET',
-                    credentials: 'include',
-                });
+                const response = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL}/users/auth-check`,
+                    {
+                        method: 'GET',
+                        credentials: 'include',
+                    },
+                );
 
                 if (response.ok) {
                     const data = await response.json();

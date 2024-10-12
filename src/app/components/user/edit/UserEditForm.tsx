@@ -2,12 +2,10 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { useUser } from '@/app/hooks/useUser';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 
 interface UserEditFormProps {
-    token: RequestCookie | undefined;
     userId: string;
 }
 
@@ -18,7 +16,7 @@ interface UserEditFormProps {
  */
 // 一時的
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const UserEditForm = ({ token, userId }: UserEditFormProps) => {
+const UserEditForm = ({ userId }: UserEditFormProps) => {
     const router = useRouter();
 
     const [formData, setFormData] = useState<{
@@ -35,7 +33,7 @@ const UserEditForm = ({ token, userId }: UserEditFormProps) => {
         confirmPassword: '',
     });
 
-    const { isLoading, isLoggedIn, user, handleLogout } = useUser({ token });
+    const { isLoading, isLoggedIn, user, handleLogout } = useUser();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
