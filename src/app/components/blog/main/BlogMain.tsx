@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { RequestCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { BlogType } from '@/app/types/types';
 import { useUser } from '@/app/hooks/useUser';
 import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
@@ -11,15 +10,11 @@ import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
 //import ReactMarkdown from 'react-markdown';
 //import matter from 'gray-matter';
 
-interface BlogMainProps {
-    token: RequestCookie | undefined;
-}
-
 /**
  * ブログメインコンポーネント
  * @returns JSX
  */
-const BlogMain = ({ token }: BlogMainProps) => {
+const BlogMain = () => {
     const router = useRouter();
     const [selectedCategory, setSelectedCategory] = useState('全て');
     const [blogs, setBlogs] = useState<BlogType[]>([
@@ -61,7 +56,7 @@ const BlogMain = ({ token }: BlogMainProps) => {
         },
     ]);
     const [currentPage, setCurrentPage] = useState(1);
-    const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser({ token });
+    const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
 
     const categories = ['全て', 'フロントエンド', 'バックエンド', 'DevOps', 'AI/機械学習'];
     const itemsPerPage = 2;

@@ -1,5 +1,4 @@
 import React from 'react';
-import { getCookieToken } from '@/app/utils/auth-user';
 import BlogCreateForm from '@/app/components/blog/create/BlogCreateForm';
 
 /**
@@ -7,8 +6,7 @@ import BlogCreateForm from '@/app/components/blog/create/BlogCreateForm';
  * @returns JSX
  */
 const BlogCreateFormPage = () => {
-    const tokenCookie = getCookieToken();
-    return <BlogCreateForm token={tokenCookie} />;
+    return <BlogCreateForm />;
 };
 
 export default BlogCreateFormPage;
