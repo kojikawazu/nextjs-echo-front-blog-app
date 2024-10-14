@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-//import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useUser } from '@/app/hooks/useUser';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 import { BlogCreateFormType } from '@/app/types/blogs-types';
+import { toast } from 'react-toastify';
 
 /**
  * ブログ作成フォームコンポーネント
@@ -12,7 +13,7 @@ import { BlogCreateFormType } from '@/app/types/blogs-types';
  */
 const BlogCreateForm = () => {
     // Router(カスタムフック)
-    //const router = useRouter();
+    const router = useRouter();
     // フォームデータ
     const [formData, setFormData] = useState<BlogCreateFormType>({
         title: '',
@@ -33,8 +34,6 @@ const BlogCreateForm = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (confirm('本当に追加してよろしいですか？')) {
-            console.log('formData:', formData);
-
             // API 送信
             const response = await fetch(`/api/blog/create`, {
                 method: 'POST',
@@ -44,13 +43,18 @@ const BlogCreateForm = () => {
                 },
                 body: JSON.stringify(formData),
             });
-            console.log(`response.status: ${response.status}`);
-            console.log(`response.headers: ${response.headers}`);
-            const responseData = await response.json();
-            console.log('response data:', responseData);
 
-            //onSave(formData);
-            //router.push('/blog');
+            console.log(`response.status: ${response.status}`);
+            //console.log(`response.headers: ${response.headers}`);
+            if (response.ok) {
+                console.log('response.ok');
+                //setFormData({} as BlogCreateFormType);
+                toast.success('ブログを追加しました。');
+                router.push('/blog');
+            } else {
+                console.log('response.error');
+                toast.error('ブログの追加に失敗しました。');
+            }
         }
     };
 

@@ -5,6 +5,11 @@
 ```bash
 npm install jwt-decode
 npm install --save-dev @types/jwt-decode
+npm install axios react-markdown gray-matter
+npm install node-fetch
+npm install js-cookie
+npm install --save-dev @types/js-cookie
+npm install react-toastify
 ```
 
 ## ESLint
