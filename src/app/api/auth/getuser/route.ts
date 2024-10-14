@@ -29,14 +29,13 @@ export async function GET(req: Request) {
 
         console.log('fetch auth user GET response status:', response.status);
         //console.log('fetch auth user GET response header:', response.headers);
-        const responseBody = await response.text();
-        //console.log('fetch auth user GET response body:', responseBody);
 
         if (response.ok) {
             console.log('fetch auth user GET response.ok');
-
+            const responseBody = await response.text();
+            //console.log('fetch auth user GET response body:', responseBody);
             const data = JSON.parse(responseBody);
-            console.log('fetch auth user GET data:', data);
+            //console.log('fetch auth user GET data:', data);
 
             const responseHeaders = new Headers();
             responseHeaders.append('Content-Type', 'application/json');
@@ -47,7 +46,7 @@ export async function GET(req: Request) {
             });
         } else {
             console.error('fetch auth user GET response.error: ', response.status);
-            return new Response(JSON.stringify({ error: 'Failed to fetch content from GitHub' }), {
+            return new Response(JSON.stringify({ error: 'Failed to fetch auth user' }), {
                 status: response.status,
             });
         }

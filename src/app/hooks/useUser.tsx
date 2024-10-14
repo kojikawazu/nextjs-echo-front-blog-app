@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { UserAuthType } from '@/app/types/types';
 
 /**
  * カスタムフック: ユーザー情報管理
@@ -11,6 +12,7 @@ export const useUser = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<string | null>(null);
+    const [authUser, setAuthUser] = useState<UserAuthType | null>(null);
     const [isLoginError, setIsLoginError] = useState(false);
 
     useEffect(() => {
@@ -31,6 +33,11 @@ export const useUser = () => {
                     //console.log('fetch auth user GET data:', data);
                     setIsLoggedIn(true);
                     setUser(data.content.username);
+                    setAuthUser({
+                        user_id: data.content.user_id,
+                        username: data.content.username,
+                        email: data.content.email,
+                    });
                 } else {
                     console.warn('Authentication failed:', response.status);
                     setIsLoggedIn(false);
@@ -130,6 +137,7 @@ export const useUser = () => {
         isLoggedIn,
         isLoginError,
         user,
+        authUser,
         setIsLoggedIn,
         handleLoginForm,
         handleLogin,

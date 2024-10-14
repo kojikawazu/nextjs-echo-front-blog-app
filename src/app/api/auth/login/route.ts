@@ -22,7 +22,6 @@ export async function POST(req: Request) {
 
         console.log('auth login post response status:', response.status);
         //console.log('auth login post response headers:', response.headers);
-        //console.log('fetch auth user GET response body:', await response.text());
 
         if (response.ok) {
             console.log('auth login post response.ok');
@@ -40,7 +39,7 @@ export async function POST(req: Request) {
             });
         } else {
             console.error('auth login post response.error: ', response.status);
-            return new Response(JSON.stringify({ error: 'Failed to fetch content from GitHub' }), {
+            return new Response(JSON.stringify({ error: 'Failed login' }), {
                 status: response.status,
             });
         }

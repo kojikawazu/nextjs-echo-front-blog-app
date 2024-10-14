@@ -19,10 +19,11 @@ export async function GET(req: Request) {
             },
         });
 
-        console.log('logout GET response status:', response.status);
+        console.log('logout POST response status:', response.status);
+        //console.log('logout POST response headers:', response.headers);
 
         if (response.ok) {
-            console.log('logout GET response.ok');
+            console.log('logout POST response.ok');
 
             const responseHeaders = new Headers();
             responseHeaders.append('Content-Type', 'application/json');
@@ -37,7 +38,7 @@ export async function GET(req: Request) {
             });
         } else {
             console.error('logout GET response.error: ', response.status);
-            return new Response(JSON.stringify({ error: 'Failed to logout from GitHub' }), {
+            return new Response(JSON.stringify({ error: 'Failed logout' }), {
                 status: response.status,
             });
         }

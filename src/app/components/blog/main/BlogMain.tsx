@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { BlogType } from '@/app/types/types';
@@ -17,49 +17,80 @@ import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
 const BlogMain = () => {
     const router = useRouter();
     const [selectedCategory, setSelectedCategory] = useState('全て');
-    const [blogs, setBlogs] = useState<BlogType[]>([
-        {
-            id: 1,
-            title: 'Reactの最新フック活用法',
-            excerpt: 'useEffectとuseCallbackの効果的な使い方',
-            content: 'ここに詳細な記事内容が入ります。',
-            tags: ['React', 'JavaScript'],
-            category: 'フロントエンド',
-            likes: 0,
-        },
-        {
-            id: 2,
-            title: 'Dockerコンテナ最適化テクニック',
-            excerpt: '本番環境でのパフォーマンス向上策',
-            content: 'ここに詳細な記事内容が入ります。',
-            tags: ['Docker', 'DevOps'],
-            category: 'DevOps',
-            likes: 0,
-        },
-        {
-            id: 3,
-            title: 'AIを活用した自動コード生成',
-            excerpt: 'GPT-4を使ったコーディング効率化',
-            content: 'ここに詳細な記事内容が入ります。',
-            tags: ['AI', 'プログラミング'],
-            category: 'AI/機械学習',
-            likes: 0,
-        },
-        {
-            id: 4,
-            title: 'Express.jsでRESTful API開発',
-            excerpt: '効率的なバックエンド構築手法',
-            content: 'ここに詳細な記事内容が入ります。',
-            tags: ['Node.js', 'Express'],
-            category: 'バックエンド',
-            likes: 0,
-        },
-    ]);
+    const [blogs, setBlogs] = useState<BlogType[]>([]);
+    // const [blogs, setBlogs] = useState<BlogType[]>([
+    //     {
+    //         id: 1,
+    //         title: 'Reactの最新フック活用法',
+    //         excerpt: 'useEffectとuseCallbackの効果的な使い方',
+    //         content: 'ここに詳細な記事内容が入ります。',
+    //         tags: ['React', 'JavaScript'],
+    //         category: 'フロントエンド',
+    //         likes: 0,
+    //     },
+    //     {
+    //         id: 2,
+    //         title: 'Dockerコンテナ最適化テクニック',
+    //         excerpt: '本番環境でのパフォーマンス向上策',
+    //         content: 'ここに詳細な記事内容が入ります。',
+    //         tags: ['Docker', 'DevOps'],
+    //         category: 'DevOps',
+    //         likes: 0,
+    //     },
+    //     {
+    //         id: 3,
+    //         title: 'AIを活用した自動コード生成',
+    //         excerpt: 'GPT-4を使ったコーディング効率化',
+    //         content: 'ここに詳細な記事内容が入ります。',
+    //         tags: ['AI', 'プログラミング'],
+    //         category: 'AI/機械学習',
+    //         likes: 0,
+    //     },
+    //     {
+    //         id: 4,
+    //         title: 'Express.jsでRESTful API開発',
+    //         excerpt: '効率的なバックエンド構築手法',
+    //         content: 'ここに詳細な記事内容が入ります。',
+    //         tags: ['Node.js', 'Express'],
+    //         category: 'バックエンド',
+    //         likes: 0,
+    //     },
+    // ]);
     const [currentPage, setCurrentPage] = useState(1);
     const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
-
     const categories = ['全て', 'フロントエンド', 'バックエンド', 'DevOps', 'AI/機械学習'];
     const itemsPerPage = 2;
+
+    useEffect(() => {
+        /**
+         * ブログ一覧を取得する
+         */
+        const fetchBlogs = async () => {
+            try {
+                const response = await fetch(`/api/blog`, {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+
+                //console.log('fetch blogs GET response status:', response.status);
+                //console.log('fetch blogs GET response headers:', response.headers);
+
+                if (response.ok) {
+                    const responseData = await response.json();
+                    //console.log('fetch blogs GET response data:', responseData);
+                    //setBlogs(data.content);
+                } else {
+                    console.warn('Failed to fetch blogs:', response.status);
+                }
+            } catch (error) {
+                console.error('Failed to fetch blogs:', error);
+            }
+        };
+
+        if (!isLoading && isLoggedIn) {
+            fetchBlogs();
+        }
+    }, [isLoading]);
 
     // const handleBackClick = () => {
     //     setSelectedBlog(null);
