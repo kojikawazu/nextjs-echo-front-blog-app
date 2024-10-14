@@ -1,4 +1,4 @@
-import { BlogType, RawBlogType } from "@/app/types/types";
+import { BlogType, RawBlogType } from '@/app/types/types';
 
 /**
  * RawBlogType → BlogType に変換する
@@ -18,4 +18,4 @@ export const conversionFromRawBlogTypeToBlogType = (rawBlog: RawBlogType): BlogT
         createdAt: new Date(rawBlog.created_at),
         updatedAt: new Date(rawBlog.updated_at),
     };
-}
+};

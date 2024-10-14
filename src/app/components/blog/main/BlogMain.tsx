@@ -20,14 +20,14 @@ const BlogMain = () => {
     const router = useRouter();
     // カテゴリー選択状態
     const [selectedCategory, setSelectedCategory] = useState('全て');
+    // カテゴリー一覧
+    const [categories, setCategories] = useState<string[]>(['全て']);
     // ブログ一覧
     const [blogs, setBlogs] = useState<BlogType[]>([]);
     // ページネーション
     const [currentPage, setCurrentPage] = useState(1);
     // ユーザー情報
     const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
-    // カテゴリー一覧
-    const categories = ['全て', 'フロントエンド', 'バックエンド', 'DevOps', 'AI/機械学習'];
     // 1ページあたりの表示数
     const itemsPerPage = 2;
 
@@ -50,10 +50,15 @@ const BlogMain = () => {
                     //console.log('fetch blogs GET response data:', responseData);
 
                     // RawBlogType から BlogType に変換
-                    const changedBlogs: BlogType[] = responseData.map(conversionFromRawBlogTypeToBlogType);
+                    const changedBlogs: BlogType[] = responseData.map(
+                        conversionFromRawBlogTypeToBlogType,
+                    );
                     //console.log('changed blogs data:', changedBlogs);
-                    
                     setBlogs(changedBlogs);
+
+                    // カテゴリを抽出して追加
+                    const newCategories = [...new Set(changedBlogs.map((blog) => blog.category))]; // 重複排除
+                    setCategories(['全て', ...newCategories]); // 「全て」を先頭に追加
                 } else {
                     console.warn('Failed to fetch blogs:', response.status);
                 }
