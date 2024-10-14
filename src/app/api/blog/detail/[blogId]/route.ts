@@ -1,8 +1,8 @@
 /**
  * ブログデータを取得する
  * GET /api/blogs/detail/:blogId
- * @param req 
- * @param blogId 
+ * @param req
+ * @param blogId
  * @returns ブログデータ
  */
 export async function GET(
