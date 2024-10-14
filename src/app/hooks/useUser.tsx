@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { UserAuthType } from '@/app/types/types';
+import { UserAuthType } from '@/app/types/users-type';
 
 /**
  * カスタムフック: ユーザー情報管理
