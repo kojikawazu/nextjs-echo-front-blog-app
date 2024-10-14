@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { BlogType, RawBlogType } from '@/app/types/types';
+import { BlogType, RawBlogType } from '@/app/types/blogs-types';
 import { useUser } from '@/app/hooks/useUser';
 import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
 import { conversionFromRawBlogTypeToBlogType } from '@/app/utils/conversion';

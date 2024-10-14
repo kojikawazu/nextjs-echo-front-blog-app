@@ -1,4 +1,4 @@
-import { BlogType, RawBlogType } from '@/app/types/types';
+import { BlogType, RawBlogType } from '@/app/types/blogs-types';
 
 /**
  * RawBlogType → BlogType に変換する
