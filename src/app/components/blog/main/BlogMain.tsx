@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { BlogType } from '@/app/types/types';
+import { BlogType, RawBlogType } from '@/app/types/types';
 import { useUser } from '@/app/hooks/useUser';
 import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
+import { conversionFromRawBlogTypeToBlogType } from '@/app/utils/conversion';
 //import axios from 'axios';
 //import ReactMarkdown from 'react-markdown';
 //import matter from 'gray-matter';
@@ -15,50 +16,19 @@ import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
  * @returns JSX
  */
 const BlogMain = () => {
+    // Router(カスタムフック)
     const router = useRouter();
+    // カテゴリー選択状態
     const [selectedCategory, setSelectedCategory] = useState('全て');
+    // カテゴリー一覧
+    const [categories, setCategories] = useState<string[]>(['全て']);
+    // ブログ一覧
     const [blogs, setBlogs] = useState<BlogType[]>([]);
-    // const [blogs, setBlogs] = useState<BlogType[]>([
-    //     {
-    //         id: 1,
-    //         title: 'Reactの最新フック活用法',
-    //         excerpt: 'useEffectとuseCallbackの効果的な使い方',
-    //         content: 'ここに詳細な記事内容が入ります。',
-    //         tags: ['React', 'JavaScript'],
-    //         category: 'フロントエンド',
-    //         likes: 0,
-    //     },
-    //     {
-    //         id: 2,
-    //         title: 'Dockerコンテナ最適化テクニック',
-    //         excerpt: '本番環境でのパフォーマンス向上策',
-    //         content: 'ここに詳細な記事内容が入ります。',
-    //         tags: ['Docker', 'DevOps'],
-    //         category: 'DevOps',
-    //         likes: 0,
-    //     },
-    //     {
-    //         id: 3,
-    //         title: 'AIを活用した自動コード生成',
-    //         excerpt: 'GPT-4を使ったコーディング効率化',
-    //         content: 'ここに詳細な記事内容が入ります。',
-    //         tags: ['AI', 'プログラミング'],
-    //         category: 'AI/機械学習',
-    //         likes: 0,
-    //     },
-    //     {
-    //         id: 4,
-    //         title: 'Express.jsでRESTful API開発',
-    //         excerpt: '効率的なバックエンド構築手法',
-    //         content: 'ここに詳細な記事内容が入ります。',
-    //         tags: ['Node.js', 'Express'],
-    //         category: 'バックエンド',
-    //         likes: 0,
-    //     },
-    // ]);
+    // ページネーション
     const [currentPage, setCurrentPage] = useState(1);
+    // ユーザー情報
     const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
-    const categories = ['全て', 'フロントエンド', 'バックエンド', 'DevOps', 'AI/機械学習'];
+    // 1ページあたりの表示数
     const itemsPerPage = 2;
 
     useEffect(() => {
@@ -76,9 +46,19 @@ const BlogMain = () => {
                 //console.log('fetch blogs GET response headers:', response.headers);
 
                 if (response.ok) {
-                    const responseData = await response.json();
-                    console.log('fetch blogs GET response data:', responseData);
-                    //setBlogs(data.content);
+                    const responseData: RawBlogType[] = await response.json();
+                    //console.log('fetch blogs GET response data:', responseData);
+
+                    // RawBlogType から BlogType に変換
+                    const changedBlogs: BlogType[] = responseData.map(
+                        conversionFromRawBlogTypeToBlogType,
+                    );
+                    //console.log('changed blogs data:', changedBlogs);
+                    setBlogs(changedBlogs);
+
+                    // カテゴリを抽出して追加
+                    const newCategories = [...new Set(changedBlogs.map((blog) => blog.category))]; // 重複排除
+                    setCategories(['全て', ...newCategories]); // 「全て」を先頭に追加
                 } else {
                     console.warn('Failed to fetch blogs:', response.status);
                 }
@@ -90,7 +70,7 @@ const BlogMain = () => {
         if (!isLoading && isLoggedIn) {
             fetchBlogs();
         }
-    }, [isLoading]);
+    }, [isLoading, isLoggedIn]);
 
     // const handleBackClick = () => {
     //     setSelectedBlog(null);
@@ -101,17 +81,17 @@ const BlogMain = () => {
         router.push('/blog/create');
     };
 
-    const handleEditBlog = (blogId: number) => {
+    const handleEditBlog = (blogId: string) => {
         router.push(`/blog/edit/${blogId}`);
     };
 
-    const handleDeleteBlog = (blogId: number) => {
+    const handleDeleteBlog = (blogId: string) => {
         if (confirm('本当に削除しますか？')) {
             setBlogs(blogs.filter((blog) => blog.id !== blogId));
         }
     };
 
-    const handleLikeBlog = (blogId: number) => {
+    const handleLikeBlog = (blogId: string) => {
         setBlogs(
             blogs.map((blog) => (blog.id === blogId ? { ...blog, likes: blog.likes + 1 } : blog)),
         );
@@ -190,7 +170,7 @@ const BlogMain = () => {
                                     {blog.title}
                                 </h2>
                             </Link>
-                            <p className="text-gray-700 mb-2">{blog.excerpt}</p>
+                            <p className="text-gray-700 mb-2">{blog.description}</p>
                             <div className="flex flex-wrap mb-2">
                                 {blog.tags.map((tag, tagIndex) => (
                                     <span
