@@ -1,17 +1,5 @@
 # マニュアル
 
-## インストール
-
-```bash
-npm install jwt-decode
-npm install --save-dev @types/jwt-decode
-npm install axios react-markdown gray-matter
-npm install node-fetch
-npm install js-cookie
-npm install --save-dev @types/js-cookie
-npm install react-toastify
-```
-
 ## ESLint
 
 .eslintrc.json を修正すること。
@@ -31,4 +19,22 @@ prettier.config.js を修正すること。
 
 ```bash
 npm run format
+```
+
+## その他インストール
+
+```bash
+# JWTトークン
+npm install jwt-decode
+npm install --save-dev @types/jwt-decode
+#
+npm install axios  gray-matter
+npm install node-fetch
+npm install js-cookie
+npm install --save-dev @types/js-cookie
+# toast
+npm install react-toastify
+# マークダウン
+npm install react-markdown remark-gfm rehype-raw remark-breaks rehype-highlight
+npm install date-fns
 ```
