@@ -77,7 +77,7 @@ const BlogMain = () => {
 
                 if (response.ok) {
                     const responseData = await response.json();
-                    //console.log('fetch blogs GET response data:', responseData);
+                    console.log('fetch blogs GET response data:', responseData);
                     //setBlogs(data.content);
                 } else {
                     console.warn('Failed to fetch blogs:', response.status);
