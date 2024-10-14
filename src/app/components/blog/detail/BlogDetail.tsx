@@ -2,27 +2,32 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
+import rehypeRaw from 'rehype-raw';
+import rehypeHighlight from 'rehype-highlight';
+import matter from 'gray-matter';
+import { format } from 'date-fns';
+
 import { useUser } from '@/app/hooks/useUser';
 import { BlogType, RawBlogType } from '@/app/types/blogs-types';
 import { conversionFromRawBlogTypeToBlogType } from '@/app/utils/conversion';
 import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
 
+import 'highlight.js/styles/github.css';
+//import 'highlight.js/styles/monokai.css';
+import '@/app/styles/markdown.css';
+
 interface BlogDetailProps {
     blogId: string;
 }
-
-// type ContentItem = {
-//     type: string;
-//     content: string;
-// };
 
 /**
  * ブログ詳細コンポーネント
  * @param blogId
  * @returns JSX
  */
-// 一時的
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const BlogDetail = ({ blogId }: BlogDetailProps) => {
     const router = useRouter();
     const [selectedCategory, setSelectedCategory] = useState('全て');
@@ -30,6 +35,11 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
     const [comment, setComment] = useState('');
     const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
     const [blog, setBlog] = useState<BlogType>();
+    const [markdownContent, setMarkdownContent] = useState('');
+    const [blogMeta, setBlogMeta] = useState<{ title: string; topics: string[] }>({
+        title: '',
+        topics: [],
+    });
 
     const [comments, setComments] = useState([
         { text: 'とても役に立ちました！', user: 'ユーザーA' },
@@ -40,21 +50,82 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
     useEffect(() => {
         // ブログの取得処理を実装する
         const fetchBlogById = async () => {
+            let githubUrls = '';
+
             try {
-                const response = await fetch(`/api/blog/detail/${blogId}`);
-                if (response.ok) {
-                    const responseData: RawBlogType = await response.json();
+                const responseDetail = await fetch(`/api/blog/detail/${blogId}`);
+                if (responseDetail.ok) {
+                    const responseData: RawBlogType = await responseDetail.json();
                     //console.log('fetch blog by id GET response data:', responseData);
 
                     // RawBlogType から BlogType に変換
                     const changedBlogs: BlogType =
                         conversionFromRawBlogTypeToBlogType(responseData);
                     setBlog(changedBlogs);
+                    githubUrls = changedBlogs.githubUrl;
                 } else {
                     console.error('Failed to fetch blog by id');
+                    return;
                 }
             } catch (error) {
                 console.error('Server error:', error);
+                return;
+            }
+
+            //console.log('GitHub URL:', githubUrls);
+
+            const regex = /^https:\/\/github\.com\/([^\/]+)\/([^\/]+)\/blob\/main\/(.+\.md)$/;
+            const match = githubUrls.match(regex);
+            const githubToken = process.env.GITHUB_TOKEN;
+            if (!match) {
+                console.error('Invalid GitHub Markdown URL format');
+                return;
+            }
+
+            //console.log('GitHub URL match:', match);
+
+            // GitHub API用のURLを構築
+            const owner = match[1];
+            const repo = match[2];
+            const path = match[3];
+            const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+            const headers: HeadersInit = {
+                Accept: 'application/vnd.github.v3.raw',
+                ...(githubToken ? { Authorization: `Bearer ${githubToken}` } : {}),
+            };
+
+            //console.log('GitHub API URL:', apiUrl);
+            //console.log('GitHub API headers:', headers);
+
+            try {
+                const resGitHub = await fetch(apiUrl, {
+                    headers,
+                });
+
+                console.log('GitHub API response status:', resGitHub.status);
+
+                if (resGitHub.ok) {
+                    const resMdContent = await resGitHub.text();
+                    //console.log('Markdown content:', resMdContent);
+
+                    // フロントマターを解析・除去
+                    const { content, data } = matter(resMdContent);
+
+                    setMarkdownContent(content);
+                    setBlogMeta({
+                        title: data.title,
+                        topics: data.topics || [],
+                    });
+                } else {
+                    console.error(
+                        'Failed to fetch Markdown content from GitHub status:',
+                        resGitHub.status,
+                    );
+                    return;
+                }
+            } catch (error) {
+                console.error('API Error:', error);
+                return;
             }
         };
 
@@ -66,39 +137,6 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
     const handleCreateBlog = () => {
         router.push('/blog/create');
     };
-
-    // const renderContent = (content: ContentItem[]) => {
-    //     return content.map((item, index) => {
-    //         switch (item.type) {
-    //             case 'h1':
-    //                 return (
-    //                     <h1 key={index} className="text-3xl font-bold my-4">
-    //                         {item.content}
-    //                     </h1>
-    //                 );
-    //             case 'h2':
-    //                 return (
-    //                     <h2 key={index} className="text-2xl font-semibold my-3">
-    //                         {item.content}
-    //                     </h2>
-    //                 );
-    //             case 'p':
-    //                 return (
-    //                     <p key={index} className="my-2">
-    //                         {item.content}
-    //                     </p>
-    //                 );
-    //             case 'code':
-    //                 return (
-    //                     <pre key={index} className="bg-gray-100 p-2 rounded my-2 overflow-x-auto">
-    //                         <code>{item.content}</code>
-    //                     </pre>
-    //                 );
-    //             default:
-    //                 return null;
-    //         }
-    //     });
-    // };
 
     const handleEditBlog = (blogId: string) => {
         router.push(`/blog/edit/${blogId}`);
@@ -139,6 +177,9 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                 <main className="flex-grow p-4">
                     <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                         <h2 className="text-2xl font-bold mb-4">{blog.title}</h2>
+                        <p className="text-sm text-gray-600">
+                            トピック: {blogMeta.topics.join(', ')}
+                        </p>
 
                         <div className="flex space-x-4 mb-2">
                             <p className="text-sm text-gray-600">カテゴリー: {blog.category}</p>
@@ -147,18 +188,24 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
 
                         <div className="flex space-x-4 mb-4">
                             <p className="text-sm text-gray-600">
-                                作成日: {blog.createdAt.toString()}
+                                作成日: {format(new Date(blog.createdAt), 'yyyy/MM/dd HH:mm')}
                             </p>
                             <p className="text-sm text-gray-600">
-                                更新日: {blog.updatedAt.toString()}
+                                更新日: {format(new Date(blog.updatedAt), 'yyyy/MM/dd HH:mm')}
                             </p>
                         </div>
 
                         <div className="mb-4 border-t border-b border-gray-200 py-4">
                             <h3 className="text-lg font-semibold mb-2">概要</h3>
                             <p className="mb-4">{blog.description}</p>
-                            {/* <h3 className="text-lg font-semibold mb-2">内容</h3>
-                            <div>{renderContent(blog.content)}</div> */}
+                            <div className="markdown-content">
+                                <ReactMarkdown
+                                    remarkPlugins={[remarkGfm, remarkBreaks]}
+                                    rehypePlugins={[rehypeRaw, rehypeHighlight]}
+                                >
+                                    {markdownContent}
+                                </ReactMarkdown>
+                            </div>
                         </div>
 
                         <div className="flex justify-end items-center space-x-2 mb-4">

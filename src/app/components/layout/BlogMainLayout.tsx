@@ -59,7 +59,7 @@ const BlogMainLayout = ({
                     selectedCategory={selectedCategory}
                     setSelectedCategory={setSelectedCategory}
                 />
-                {children}
+                <section className="flex-1 p-4 max-w-4xl mx-auto">{children}</section>
             </div>
 
             <BlogFooter />
