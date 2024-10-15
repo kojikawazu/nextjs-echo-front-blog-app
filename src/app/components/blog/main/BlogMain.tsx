@@ -3,13 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+
 import { BlogType, RawBlogType } from '@/app/types/blogs-types';
 import { useUser } from '@/app/hooks/useUser';
+import { conversionFromRawBlogTypeToBlogType } from '@/app/utils/conversion/conversion';
 import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
-import { conversionFromRawBlogTypeToBlogType } from '@/app/utils/conversion';
-//import axios from 'axios';
-//import ReactMarkdown from 'react-markdown';
-//import matter from 'gray-matter';
+import { deleteBlog } from '@/app/utils/blog/fetch-blog';
 
 /**
  * ブログメインコンポーネント
@@ -29,7 +28,7 @@ const BlogMain = () => {
     // ユーザー情報
     const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
     // 1ページあたりの表示数
-    const itemsPerPage = 2;
+    const itemsPerPage = 4;
 
     useEffect(() => {
         /**
@@ -85,9 +84,16 @@ const BlogMain = () => {
         router.push(`/blog/edit/${blogId}`);
     };
 
-    const handleDeleteBlog = (blogId: string) => {
+    const handleDeleteBlog = async (blogId: string) => {
         if (confirm('本当に削除しますか？')) {
-            setBlogs(blogs.filter((blog) => blog.id !== blogId));
+            try {
+                const ret = await deleteBlog(blogId);
+                if (ret) {
+                    setBlogs(blogs.filter((blog) => blog.id !== blogId));
+                }
+            } catch (error) {
+                console.error('Failed to delete blog:', error);
+            }
         }
     };
 
@@ -108,39 +114,6 @@ const BlogMain = () => {
             : blogs.filter((blog) => blog.category === selectedCategory);
     const paginatedBlogs = paginateBlogs(filteredBlogs, currentPage, itemsPerPage);
     const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
-
-    // useEffect(() => {
-    //     const fetchMarkdown = async () => {
-    //         const url = 'https://github.com/drawdb-io/drawdb/blob/main/README.md'; // 任意のパブリックリポジトリのURL
-    //         const regex = /^https:\/\/github\.com\/([^\/]+)\/([^\/]+)\/blob\/main\/(.+\.md)$/;
-    //         const match = url.match(regex);
-
-    //         if (!match) {
-    //             console.error('Invalid GitHub Markdown URL format');
-    //             return;
-    //         }
-
-    //         const [, repoOwner, repoName, filePath] = match;
-    //         const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
-    //         console.log('API URL:', apiUrl);
-    //         console.log('Repo Owner:', repoOwner, 'Repo Name:', repoName, 'File Path:', filePath);
-
-    //         try {
-    //             const response = await axios.post('/api/markdown', {
-    //                 repoOwner,
-    //                 repoName,
-    //                 filePath,
-    //             });
-
-    //             const content = response.data.content;
-    //             console.log('Markdown content:', content);
-    //         } catch (error) {
-    //             console.error('Failed to fetch Markdown file:', error);
-    //         }
-    //     };
-
-    //     fetchMarkdown();
-    // }, []);
 
     return (
         <BlogMainLayout
