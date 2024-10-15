@@ -12,7 +12,8 @@ import { format } from 'date-fns';
 
 import { useUser } from '@/app/hooks/useUser';
 import { BlogType, RawBlogType } from '@/app/types/blogs-types';
-import { conversionFromRawBlogTypeToBlogType } from '@/app/utils/conversion';
+import { conversionFromRawBlogTypeToBlogType } from '@/app/utils/conversion/conversion';
+import { deleteBlog } from '@/app/utils/blog/fetch-blog';
 import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
 
 import 'highlight.js/styles/github.css';
@@ -142,11 +143,16 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
         router.push(`/blog/edit/${blogId}`);
     };
 
-    // 一時的
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const handleDeleteBlog = (blogId: string) => {
+    const handleDeleteBlog = async (blogId: string) => {
         if (confirm('本当に削除しますか？')) {
-            router.push('/blog');
+            try {
+                const ret = await deleteBlog(blogId);
+                if (ret) {
+                    router.push('/blog');
+                }
+            } catch (error) {
+                console.error('Failed to delete blog:', error);
+            }
         }
     };
 
