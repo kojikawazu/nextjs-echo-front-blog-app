@@ -6,9 +6,10 @@ import { useRouter } from 'next/navigation';
 
 import { BlogType, RawBlogType } from '@/app/types/blogs-types';
 import { useUser } from '@/app/hooks/useUser';
+import { handleCreateBlogForm, handleEditBlogForm } from '@/app/utils/blog/handle-blog';
+import { deleteBlog } from '@/app/utils/blog/fetch-blog';
 import { conversionFromRawBlogTypeToBlogType } from '@/app/utils/conversion/conversion';
 import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
-import { deleteBlog } from '@/app/utils/blog/fetch-blog';
 
 /**
  * ブログメインコンポーネント
@@ -76,14 +77,6 @@ const BlogMain = () => {
     //     setIsEditing(false);
     // };
 
-    const handleCreateBlog = () => {
-        router.push('/blog/create');
-    };
-
-    const handleEditBlog = (blogId: string) => {
-        router.push(`/blog/edit/${blogId}`);
-    };
-
     const handleDeleteBlog = async (blogId: string) => {
         if (confirm('本当に削除しますか？')) {
             try {
@@ -120,7 +113,7 @@ const BlogMain = () => {
             isLoading={isLoading}
             isLoggedIn={isLoggedIn}
             loginUser={user}
-            handleCreateBlog={handleCreateBlog}
+            handleCreateBlog={() => handleCreateBlogForm(router)}
             handleLogout={handleLogout}
             handleLogin={handleLoginForm}
             categories={categories}
@@ -163,7 +156,7 @@ const BlogMain = () => {
                                     {isLoggedIn && (
                                         <>
                                             <button
-                                                onClick={() => handleEditBlog(blog.id)}
+                                                onClick={() => handleEditBlogForm(router, blog.id)}
                                                 className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded"
                                             >
                                                 編集

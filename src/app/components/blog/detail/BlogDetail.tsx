@@ -11,9 +11,10 @@ import matter from 'gray-matter';
 import { format } from 'date-fns';
 
 import { useUser } from '@/app/hooks/useUser';
-import { BlogType, RawBlogType } from '@/app/types/blogs-types';
+import { BlogType } from '@/app/types/blogs-types';
+import { handleCreateBlogForm, handleEditBlogForm } from '@/app/utils/blog/handle-blog';
+import { deleteBlog, fetchBlogById } from '@/app/utils/blog/fetch-blog';
 import { conversionFromRawBlogTypeToBlogType } from '@/app/utils/conversion/conversion';
-import { deleteBlog } from '@/app/utils/blog/fetch-blog';
 import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
 
 import 'highlight.js/styles/github.css';
@@ -49,16 +50,14 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
     ]);
 
     useEffect(() => {
-        // ブログの取得処理を実装する
-        const fetchBlogById = async () => {
+        // ブログデータの取得
+        const localFetchBlogById = async () => {
             let githubUrls = '';
 
             try {
-                const responseDetail = await fetch(`/api/blog/detail/${blogId}`);
-                if (responseDetail.ok) {
-                    const responseData: RawBlogType = await responseDetail.json();
-                    //console.log('fetch blog by id GET response data:', responseData);
+                const responseData = await fetchBlogById(blogId);
 
+                if (responseData) {
                     // RawBlogType から BlogType に変換
                     const changedBlogs: BlogType =
                         conversionFromRawBlogTypeToBlogType(responseData);
@@ -131,17 +130,9 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
         };
 
         if (!isLoading && isLoggedIn) {
-            fetchBlogById();
+            localFetchBlogById();
         }
     }, [isLoading, isLoggedIn, blogId]);
-
-    const handleCreateBlog = () => {
-        router.push('/blog/create');
-    };
-
-    const handleEditBlog = (blogId: string) => {
-        router.push(`/blog/edit/${blogId}`);
-    };
 
     const handleDeleteBlog = async (blogId: string) => {
         if (confirm('本当に削除しますか？')) {
@@ -168,7 +159,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
             isLoading={isLoading}
             isLoggedIn={isLoggedIn}
             loginUser={user}
-            handleCreateBlog={handleCreateBlog}
+            handleCreateBlog={() => handleCreateBlogForm(router)}
             handleLogout={handleLogout}
             handleLogin={handleLoginForm}
             categories={categories}
@@ -222,7 +213,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                                 ❤️ 0
                             </button>
                             <button
-                                onClick={() => handleEditBlog(blog.id)}
+                                onClick={() => handleEditBlogForm(router, blog.id)}
                                 className="bg-[#4a90e2] hover:bg-[#3b7ac7] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             >
                                 編集する
