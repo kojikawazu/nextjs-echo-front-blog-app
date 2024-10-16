@@ -62,6 +62,7 @@ const UserEditForm = () => {
     // フォームの送信
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
         if (formData.name == '') {
             alert('ユーザーネームを入力してください');
             return;
@@ -92,14 +93,16 @@ const UserEditForm = () => {
             return;
         }
 
-        try {
-            // ユーザー情報更新
-            const ret = await updateUser(formData);
-            if (ret) {
-                router.push('/blog');
+        if (confirm('本当に変更してよろしいですか？')) {
+            try {
+                // ユーザー情報更新
+                const ret = await updateUser(formData);
+                if (ret) {
+                    router.push('/blog');
+                }
+            } catch (error) {
+                console.error('Failed to update user: ', error);
             }
-        } catch (error) {
-            console.error('Failed to update user: ', error);
         }
     };
 
