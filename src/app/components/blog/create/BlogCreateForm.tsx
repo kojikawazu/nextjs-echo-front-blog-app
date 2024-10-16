@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 
-import { useUser } from '@/app/hooks/useUser';
 import { BlogCreateFormType } from '@/app/types/blogs-types';
 import { handleFormChange } from '@/app/utils/form/handle-form';
-import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 import { createBlog } from '@/app/utils/blog/fetch-blog';
+import { useUser } from '@/app/hooks/user/useUser';
+import { useBlogCreateForm } from '@/app/hooks/blog/useBlogCreateForm';
+import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 
 /**
  * ブログ作成フォームコンポーネント
@@ -16,15 +17,10 @@ import { createBlog } from '@/app/utils/blog/fetch-blog';
 const BlogCreateForm = () => {
     // Router(カスタムフック)
     const router = useRouter();
-    // フォームデータ
-    const [formData, setFormData] = useState<BlogCreateFormType>({
-        title: '',
-        description: '',
-        githubUrl: '',
-        category: '',
-        tags: '',
-    });
-    // ユーザー情報
+    // ブログ作成フォームカスタムフック
+    const { formData, setFormData } = useBlogCreateForm();
+
+    // ユーザー情報カスタムフック
     const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
 
     // フォームの送信

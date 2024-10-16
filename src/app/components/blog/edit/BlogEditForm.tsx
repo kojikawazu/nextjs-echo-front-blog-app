@@ -7,7 +7,8 @@ import { BlogCreateFormType } from '@/app/types/blogs-types';
 import { handleCreateBlogForm } from '@/app/utils/blog/handle-blog';
 import { handleFormChange } from '@/app/utils/form/handle-form';
 import { fetchBlogById, updateBlog } from '@/app/utils/blog/fetch-blog';
-import { useUser } from '@/app/hooks/useUser';
+import { useUser } from '@/app/hooks/user/useUser';
+import { useBlogEditForm } from '@/app/hooks/blog/useBlogEditForm';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 
 interface BlogEditFormProps {
@@ -24,17 +25,10 @@ const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
     const router = useRouter();
     // 編集中のブログID
     const [blogId] = useState(editBlogId);
-    // ブログデータ取得中
-    const [isLoadingBlogData, setIsLoadingBlogData] = useState(true);
-    // フォームデータ
-    const [formData, setFormData] = useState<BlogCreateFormType>({
-        title: '',
-        description: '',
-        githubUrl: '',
-        category: '',
-        tags: '',
-    });
-    // ユーザー情報
+    // ブログ編集フォームカスタムフック
+    const { isLoadingBlogData, formData, setIsLoadingBlogData, setFormData } = useBlogEditForm();
+
+    // ユーザー情報カスタムフック
     const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
 
     // ブログデータ取得
@@ -64,7 +58,7 @@ const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
         if (!isLoading && isLoggedIn) {
             localFetchBlogById();
         }
-    }, [blogId, isLoading, isLoggedIn, router]);
+    }, [blogId, isLoading, isLoggedIn, router, setFormData, setIsLoadingBlogData]);
 
     // フォームの送信
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

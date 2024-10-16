@@ -10,7 +10,7 @@ import rehypeHighlight from 'rehype-highlight';
 import matter from 'gray-matter';
 import { format } from 'date-fns';
 
-import { useUser } from '@/app/hooks/useUser';
+import { useUser } from '@/app/hooks/user/useUser';
 import { BlogType } from '@/app/types/blogs-types';
 import { handleCreateBlogForm, handleEditBlogForm } from '@/app/utils/blog/handle-blog';
 import { deleteBlog, fetchBlogById } from '@/app/utils/blog/fetch-blog';
@@ -173,6 +173,17 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                 <div className="flex-grow p-4 flex items-center justify-center">No blog found</div>
             ) : (
                 <main className="flex-grow p-4">
+                    {/** 戻る */}
+                    <div className="mb-4">
+                        <button
+                            className="mb-4 text-blue-600 hover:underline"
+                            onClick={() => window.history.back()}
+                        >
+                            &larr; 戻る
+                        </button>
+                    </div>
+
+                    {/** ブログ詳細 */}
                     <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                         <h2 className="text-2xl font-bold mb-4">{blog.title}</h2>
                         <p className="text-sm text-gray-600">
