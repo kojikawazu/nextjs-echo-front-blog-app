@@ -11,7 +11,6 @@ export const useUser = () => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [user, setUser] = useState<string | null>(null);
     const [authUser, setAuthUser] = useState<UserAuthType | null>(null);
     const [isLoginError, setIsLoginError] = useState(false);
 
@@ -32,7 +31,6 @@ export const useUser = () => {
                     const data = await response.json();
                     //console.log('fetch auth user GET data:', data);
                     setIsLoggedIn(true);
-                    setUser(data.content.username);
                     setAuthUser({
                         user_id: data.content.user_id,
                         username: data.content.username,
@@ -41,13 +39,11 @@ export const useUser = () => {
                 } else {
                     console.warn('Authentication failed:', response.status);
                     setIsLoggedIn(false);
-                    setUser(null);
                     moveToLogin();
                 }
             } catch (error) {
                 console.error('認証状態の確認に失敗しました: ', error);
                 setIsLoggedIn(false);
-                setUser(null);
                 moveToLogin();
             } finally {
                 setIsLoading(false);
@@ -114,7 +110,6 @@ export const useUser = () => {
             if (response.ok) {
                 await response.json();
                 setIsLoggedIn(false);
-                setUser(null);
                 router.push('/user/login');
             } else {
                 alert('ログアウトに失敗しました。ユーザー名またはパスワードが正しくありません。');
@@ -136,7 +131,6 @@ export const useUser = () => {
         isLoading,
         isLoggedIn,
         isLoginError,
-        user,
         authUser,
         setIsLoggedIn,
         handleLoginForm,

@@ -27,7 +27,7 @@ const BlogMain = () => {
     // ページネーション
     const [currentPage, setCurrentPage] = useState(1);
     // ユーザー情報
-    const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
+    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
     // 1ページあたりの表示数
     const itemsPerPage = 4;
 
@@ -37,7 +37,7 @@ const BlogMain = () => {
          */
         const fetchBlogs = async () => {
             try {
-                const response = await fetch(`/api/blog`, {
+                const response = await fetch(`/api/blogs`, {
                     method: 'GET',
                     credentials: 'include',
                 });
@@ -72,11 +72,7 @@ const BlogMain = () => {
         }
     }, [isLoading, isLoggedIn]);
 
-    // const handleBackClick = () => {
-    //     setSelectedBlog(null);
-    //     setIsEditing(false);
-    // };
-
+    // ブログ一覧をカテゴリーで絞り込み
     const handleDeleteBlog = async (blogId: string) => {
         if (confirm('本当に削除しますか？')) {
             try {
@@ -112,7 +108,7 @@ const BlogMain = () => {
         <BlogMainLayout
             isLoading={isLoading}
             isLoggedIn={isLoggedIn}
-            loginUser={user}
+            loginUser={authUser ? authUser.username : null}
             handleCreateBlog={() => handleCreateBlogForm(router)}
             handleLogout={handleLogout}
             handleLogin={handleLoginForm}

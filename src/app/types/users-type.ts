@@ -14,3 +14,14 @@ export interface UserAuthType {
     username: string;
     email: string;
 }
+
+/**
+ * @description: Type for the user
+ */
+export interface UserEditFormType {
+    name: string;
+    email: string;
+    password: string;
+    newPassword: string;
+    confirmPassword: string;
+}

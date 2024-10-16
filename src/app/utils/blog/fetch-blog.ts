@@ -9,7 +9,7 @@ import { BlogCreateFormType, RawBlogType } from '@/app/types/blogs-types';
  */
 export const fetchBlogById = async (blogId: string) => {
     try {
-        const responseDetail = await fetch(`/api/blog/detail/${blogId}`);
+        const responseDetail = await fetch(`/api/blogs/detail/${blogId}`);
 
         if (responseDetail.ok) {
             const responseData: RawBlogType = await responseDetail.json();
@@ -33,7 +33,7 @@ export const fetchBlogById = async (blogId: string) => {
 export const createBlog = async (formData: BlogCreateFormType) => {
     try {
         // API 送信
-        const response = await fetch(`/api/blog/create`, {
+        const response = await fetch(`/api/blogs/create`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -70,7 +70,7 @@ export const createBlog = async (formData: BlogCreateFormType) => {
 export const updateBlog = async (blogId: string, formData: BlogCreateFormType) => {
     try {
         // API 送信
-        const response = await fetch(`/api/blog/update/${blogId}`, {
+        const response = await fetch(`/api/blogs/update/${blogId}`, {
             method: 'PUT',
             credentials: 'include',
             headers: {
@@ -105,7 +105,7 @@ export const updateBlog = async (blogId: string, formData: BlogCreateFormType) =
  */
 export const deleteBlog = async (blogId: string) => {
     try {
-        const response = await fetch(`/api/blog/delete/${blogId}`, {
+        const response = await fetch(`/api/blogs/delete/${blogId}`, {
             method: 'DELETE',
             credentials: 'include',
         });

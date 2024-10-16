@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 
 import { useUser } from '@/app/hooks/useUser';
 import { BlogCreateFormType } from '@/app/types/blogs-types';
-import { handleFormChange } from '@/app/utils/blog/handle-blog';
+import { handleFormChange } from '@/app/utils/form/handle-form';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 import { createBlog } from '@/app/utils/blog/fetch-blog';
 
@@ -25,7 +25,7 @@ const BlogCreateForm = () => {
         tags: '',
     });
     // ユーザー情報
-    const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
+    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
 
     // フォームの送信
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,7 +48,7 @@ const BlogCreateForm = () => {
         <BlogFormLayout
             isLoading={isLoading}
             isLoggedIn={isLoggedIn}
-            loginUser={user}
+            loginUser={authUser ? authUser.username : null}
             handleCreateBlog={() => {}}
             handleLogout={handleLogout}
             handleLogin={handleLoginForm}
@@ -85,7 +85,9 @@ const BlogCreateForm = () => {
                                 type="text"
                                 name="title"
                                 value={formData.title}
-                                onChange={(e) => handleFormChange(e, formData, setFormData)}
+                                onChange={(e) =>
+                                    handleFormChange<BlogCreateFormType>(e, formData, setFormData)
+                                }
                                 required
                             />
                         </div>
@@ -103,7 +105,9 @@ const BlogCreateForm = () => {
                                 type="text"
                                 name="description"
                                 value={formData.description}
-                                onChange={(e) => handleFormChange(e, formData, setFormData)}
+                                onChange={(e) =>
+                                    handleFormChange<BlogCreateFormType>(e, formData, setFormData)
+                                }
                                 required
                             />
                         </div>
@@ -121,7 +125,9 @@ const BlogCreateForm = () => {
                                 type="url"
                                 name="githubUrl"
                                 value={formData.githubUrl}
-                                onChange={(e) => handleFormChange(e, formData, setFormData)}
+                                onChange={(e) =>
+                                    handleFormChange<BlogCreateFormType>(e, formData, setFormData)
+                                }
                                 required
                             />
                         </div>
@@ -139,7 +145,9 @@ const BlogCreateForm = () => {
                                 type="text"
                                 name="category"
                                 value={formData.category}
-                                onChange={(e) => handleFormChange(e, formData, setFormData)}
+                                onChange={(e) =>
+                                    handleFormChange<BlogCreateFormType>(e, formData, setFormData)
+                                }
                                 required
                             />
                         </div>
@@ -157,7 +165,9 @@ const BlogCreateForm = () => {
                                 type="text"
                                 name="tags"
                                 value={formData.tags.split(',')}
-                                onChange={(e) => handleFormChange(e, formData, setFormData)}
+                                onChange={(e) =>
+                                    handleFormChange<BlogCreateFormType>(e, formData, setFormData)
+                                }
                             />
                         </div>
 
