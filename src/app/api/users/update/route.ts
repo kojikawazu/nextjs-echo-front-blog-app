@@ -1,19 +1,11 @@
 /**
- * ブログの更新処理API
+ * ユーザー情報更新API
  * @param req
- * @param blogId
- * @returns 200 or 500
+ * @returns ユーザーデータ
  */
-export async function PUT(
-    req: Request,
-    {
-        params,
-    }: {
-        params: { blogId: string };
-    },
-) {
-    console.log('DELETE /api/blogs/update/:blogId');
-    const fetchUrl = `${process.env.API_URL}/blogs/update/${params.blogId}`;
+export async function PUT(req: Request) {
+    console.log('DELETE /api/users/update');
+    const fetchUrl = `${process.env.API_URL}/users/update`;
 
     // リクエストヘッダーとボディの確認
     //console.log('Incoming request headers:', req.headers);
@@ -36,19 +28,27 @@ export async function PUT(
             body: JSON.stringify(reqBody),
         });
 
-        console.log('update blog by id PUT response status:', response.status);
+        console.log('update user by token PUT response status:', response.status);
 
         if (response.ok) {
             const responseBody = await response.text();
-            const blogData = JSON.parse(responseBody);
-            console.log('update blog by id PUT response data:', blogData);
+            const userData = JSON.parse(responseBody);
+            //console.log('update user by token PUT response data:', userData);
 
-            return new Response(JSON.stringify(blogData), {
+            // クッキーをレスポンスヘッダーに含めて返す
+            const updatedCookie = response.headers.get('set-cookie');
+            const responseHeaders = new Headers();
+            if (updatedCookie) {
+                responseHeaders.append('Set-Cookie', updatedCookie);
+            }
+
+            return new Response(JSON.stringify(userData), {
+                headers: responseHeaders, // クッキーを含めたレスポンス
                 status: 200,
             });
         } else {
-            console.error('update blog by id PUT from response status:', response.status);
-            return new Response(JSON.stringify({ error: 'Failed update blog by id' }), {
+            console.error('update user by token PUT from response status:', response.status);
+            return new Response(JSON.stringify({ error: 'Failed update user by token' }), {
                 status: response.status,
             });
         }

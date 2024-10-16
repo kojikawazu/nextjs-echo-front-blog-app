@@ -11,25 +11,31 @@ import { isValidEmail } from '@/app/utils/validate/validate';
  * @returns JSX
  */
 const UserLoginForm = () => {
+    // エラーメッセージ
     const [errorMessage, setErrorMessage] = useState('');
+    // ローディング
     const [isLoading, setIsLoading] = useState(false);
+    // フォームデータ
     const [formData, setFormData] = useState<UserLoginFormType>({
         username: '',
         password: '',
     });
+    // ユーザーログインフック
     const {
         isLoading: isUserLoading,
         isLoggedIn,
         isLoginError,
-        user,
+        authUser,
         handleLoginForm,
         handleLogin,
     } = useUser();
 
+    // フォームの変更
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    // フォームの送信
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -62,7 +68,7 @@ const UserLoginForm = () => {
         <BlogFormLayout
             isLoading={isUserLoading}
             isLoggedIn={isLoggedIn}
-            loginUser={user}
+            loginUser={authUser ? authUser.username : null}
             handleCreateBlog={() => {}}
             handleLogout={() => {}}
             handleLogin={handleLoginForm}

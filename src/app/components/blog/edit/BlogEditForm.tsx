@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { BlogCreateFormType } from '@/app/types/blogs-types';
-import { handleCreateBlogForm, handleFormChange } from '@/app/utils/blog/handle-blog';
+import { handleCreateBlogForm } from '@/app/utils/blog/handle-blog';
+import { handleFormChange } from '@/app/utils/form/handle-form';
 import { fetchBlogById, updateBlog } from '@/app/utils/blog/fetch-blog';
 import { useUser } from '@/app/hooks/useUser';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
@@ -34,7 +35,7 @@ const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
         tags: '',
     });
     // ユーザー情報
-    const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
+    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
 
     // ブログデータ取得
     useEffect(() => {
@@ -85,7 +86,7 @@ const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
         <BlogFormLayout
             isLoading={isLoading}
             isLoggedIn={isLoggedIn}
-            loginUser={user}
+            loginUser={authUser ? authUser.username : null}
             handleCreateBlog={() => handleCreateBlogForm(router)}
             handleLogout={handleLogout}
             handleLogin={handleLoginForm}
@@ -122,7 +123,9 @@ const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
                                 type="text"
                                 name="title"
                                 value={formData.title}
-                                onChange={(e) => handleFormChange(e, formData, setFormData)}
+                                onChange={(e) =>
+                                    handleFormChange<BlogCreateFormType>(e, formData, setFormData)
+                                }
                                 required
                             />
                         </div>
@@ -140,7 +143,9 @@ const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
                                 type="text"
                                 name="description"
                                 value={formData.description}
-                                onChange={(e) => handleFormChange(e, formData, setFormData)}
+                                onChange={(e) =>
+                                    handleFormChange<BlogCreateFormType>(e, formData, setFormData)
+                                }
                                 required
                             />
                         </div>
@@ -158,7 +163,9 @@ const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
                                 type="url"
                                 name="githubUrl"
                                 value={formData.githubUrl}
-                                onChange={(e) => handleFormChange(e, formData, setFormData)}
+                                onChange={(e) =>
+                                    handleFormChange<BlogCreateFormType>(e, formData, setFormData)
+                                }
                                 required
                             />
                         </div>
@@ -176,7 +183,9 @@ const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
                                 type="text"
                                 name="category"
                                 value={formData.category}
-                                onChange={(e) => handleFormChange(e, formData, setFormData)}
+                                onChange={(e) =>
+                                    handleFormChange<BlogCreateFormType>(e, formData, setFormData)
+                                }
                                 required
                             />
                         </div>
@@ -194,7 +203,9 @@ const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
                                 type="text"
                                 name="tags"
                                 value={formData.tags.split(',')}
-                                onChange={(e) => handleFormChange(e, formData, setFormData)}
+                                onChange={(e) =>
+                                    handleFormChange<BlogCreateFormType>(e, formData, setFormData)
+                                }
                             />
                         </div>
 

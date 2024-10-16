@@ -35,7 +35,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
     const [selectedCategory, setSelectedCategory] = useState('全て');
     const categories = ['全て', 'フロントエンド', 'バックエンド', 'DevOps', 'AI/機械学習'];
     const [comment, setComment] = useState('');
-    const { isLoading, isLoggedIn, user, handleLoginForm, handleLogout } = useUser();
+    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
     const [blog, setBlog] = useState<BlogType>();
     const [markdownContent, setMarkdownContent] = useState('');
     const [blogMeta, setBlogMeta] = useState<{ title: string; topics: string[] }>({
@@ -134,6 +134,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
         }
     }, [isLoading, isLoggedIn, blogId]);
 
+    // ブログ削除
     const handleDeleteBlog = async (blogId: string) => {
         if (confirm('本当に削除しますか？')) {
             try {
@@ -158,7 +159,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
         <BlogMainLayout
             isLoading={isLoading}
             isLoggedIn={isLoggedIn}
-            loginUser={user}
+            loginUser={authUser ? authUser.username : null}
             handleCreateBlog={() => handleCreateBlogForm(router)}
             handleLogout={handleLogout}
             handleLogin={handleLoginForm}

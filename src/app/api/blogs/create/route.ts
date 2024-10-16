@@ -5,7 +5,7 @@
  * @returns Response
  */
 export async function POST(req: Request) {
-    console.log('POST /api/blog/create');
+    console.log('POST /api/blogs/create');
 
     const fetchUrl = `${process.env.API_URL}/blogs/create`;
     // フォームのデータを取得
