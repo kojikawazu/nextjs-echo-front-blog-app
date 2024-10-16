@@ -7,7 +7,7 @@ import { BlogCreateFormType } from '@/app/types/blogs-types';
 import { handleCreateBlogForm } from '@/app/utils/blog/handle-blog';
 import { handleFormChange } from '@/app/utils/form/handle-form';
 import { fetchBlogById, updateBlog } from '@/app/utils/blog/fetch-blog';
-import { useUser } from '@/app/hooks/useUser';
+import { useUser } from '@/app/hooks/user/useUser';
 import { useBlogEditForm } from '@/app/hooks/blog/useBlogEditForm';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 

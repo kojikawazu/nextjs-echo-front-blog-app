@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { BlogType, RawBlogType } from '@/app/types/blogs-types';
-import { useUser } from '@/app/hooks/useUser';
+import { useUser } from '@/app/hooks/user/useUser';
 import { handleCreateBlogForm, handleEditBlogForm } from '@/app/utils/blog/handle-blog';
 import { deleteBlog } from '@/app/utils/blog/fetch-blog';
 import { conversionFromRawBlogTypeToBlogType } from '@/app/utils/conversion/conversion';
@@ -72,7 +72,7 @@ const BlogMain = () => {
         }
     }, [isLoading, isLoggedIn]);
 
-    // ブログ一覧をカテゴリーで絞り込み
+    // ブログ削除
     const handleDeleteBlog = async (blogId: string) => {
         if (confirm('本当に削除しますか？')) {
             try {

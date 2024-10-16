@@ -1,13 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 import { UserEditFormType } from '@/app/types/users-type';
 import { fetchUser, updateUser } from '@/app/utils/user/fetch-user';
 import { handleCreateBlogForm } from '@/app/utils/blog/handle-blog';
 import { handleFormChange } from '@/app/utils/form/handle-form';
-import { useUser } from '@/app/hooks/useUser';
+import { useUser } from '@/app/hooks/user/useUser';
+import { useUserEditForm } from '@/app/hooks/user/useUserEditForm';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 
 /**
@@ -17,16 +19,9 @@ import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 const UserEditForm = () => {
     // Router(カスタムフック)
     const router = useRouter();
-    // ユーザーデータ取得中
-    const [isLoadingUserData, setIsLoadingUserData] = useState(true);
-    // フォームデータ
-    const [formData, setFormData] = useState<UserEditFormType>({
-        name: '',
-        email: '',
-        password: '',
-        newPassword: '',
-        confirmPassword: '',
-    });
+    // ユーザー情報取得中(カスタムフック)
+    const { isLoadingUserData, formData, setIsLoadingUserData, setFormData } = useUserEditForm();
+
     // ユーザー情報
     const { isLoading, isLoggedIn, authUser, handleLogout } = useUser();
 
@@ -57,39 +52,48 @@ const UserEditForm = () => {
         if (!isLoading && isLoggedIn) {
             localFetchUserById();
         }
-    }, [isLoading, isLoggedIn, router]);
+    }, [isLoading, isLoggedIn, router, setFormData, setIsLoadingUserData]);
 
     // フォームの送信
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        // バリデーション
         if (formData.name == '') {
-            alert('ユーザーネームを入力してください');
+            toast.error('ユーザーネームを入力してください');
             return;
         }
 
         if (formData.email == '') {
-            alert('メールアドレスを入力してください');
+            toast.error('メールアドレスを入力してください');
             return;
         }
 
         if (formData.password == '') {
-            alert('現在のパスワードを入力してください');
+            toast.error('現在のパスワードを入力してください');
             return;
         }
 
         if (formData.newPassword == '') {
-            alert('新しいパスワードを入力してください');
+            toast.error('新しいパスワードを入力してください');
             return;
         }
 
         if (formData.confirmPassword == '') {
-            alert('パスワードをもう一度入力してください');
+            toast.error('パスワードをもう一度入力してください');
             return;
         }
 
+        // Eメール形式チェック
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!formData.email.match(emailPattern)) {
+            toast.error('メールアドレスの形式が正しくありません');
+            return;
+        }
+
+        // パスワード一致チェック
         if (formData.newPassword !== formData.confirmPassword) {
-            alert('パスワードが一致しません');
+            toast.error('新しいパスワードが一致しません');
             return;
         }
 
@@ -129,6 +133,7 @@ const UserEditForm = () => {
                         </button>
                     </div>
 
+                    {/** ユーザー情報変更フォーム */}
                     <div className="bg-white shadow-md rounded px-10 pt-8 pb-10 mb-6">
                         <h2 className="text-xl font-bold mb-6">ユーザー情報変更</h2>
                         <form

@@ -10,7 +10,7 @@ import rehypeHighlight from 'rehype-highlight';
 import matter from 'gray-matter';
 import { format } from 'date-fns';
 
-import { useUser } from '@/app/hooks/useUser';
+import { useUser } from '@/app/hooks/user/useUser';
 import { BlogType } from '@/app/types/blogs-types';
 import { handleCreateBlogForm, handleEditBlogForm } from '@/app/utils/blog/handle-blog';
 import { deleteBlog, fetchBlogById } from '@/app/utils/blog/fetch-blog';

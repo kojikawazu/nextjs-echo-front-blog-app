@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { BlogCreateFormType } from '@/app/types/blogs-types';
 import { handleFormChange } from '@/app/utils/form/handle-form';
 import { createBlog } from '@/app/utils/blog/fetch-blog';
-import { useUser } from '@/app/hooks/useUser';
+import { useUser } from '@/app/hooks/user/useUser';
 import { useBlogCreateForm } from '@/app/hooks/blog/useBlogCreateForm';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 
