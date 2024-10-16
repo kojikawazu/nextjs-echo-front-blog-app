@@ -4,10 +4,10 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { BlogType, RawBlogType } from '@/app/types/blogs-types';
+import { BlogType } from '@/app/types/blogs-types';
 import { useUser } from '@/app/hooks/user/useUser';
 import { handleCreateBlogForm, handleEditBlogForm } from '@/app/utils/blog/handle-blog';
-import { deleteBlog } from '@/app/utils/blog/fetch-blog';
+import { deleteBlog, fetchBlogs } from '@/app/utils/blog/fetch-blog';
 import { conversionFromRawBlogTypeToBlogType } from '@/app/utils/conversion/conversion';
 import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
 
@@ -35,20 +35,10 @@ const BlogMain = () => {
         /**
          * ブログ一覧を取得する
          */
-        const fetchBlogs = async () => {
+        const localFetchBlogs = async () => {
             try {
-                const response = await fetch(`/api/blogs`, {
-                    method: 'GET',
-                    credentials: 'include',
-                });
-
-                //console.log('fetch blogs GET response status:', response.status);
-                //console.log('fetch blogs GET response headers:', response.headers);
-
-                if (response.ok) {
-                    const responseData: RawBlogType[] = await response.json();
-                    //console.log('fetch blogs GET response data:', responseData);
-
+                const responseData = await fetchBlogs();
+                if (responseData) {
                     // RawBlogType から BlogType に変換
                     const changedBlogs: BlogType[] = responseData.map(
                         conversionFromRawBlogTypeToBlogType,
@@ -59,8 +49,6 @@ const BlogMain = () => {
                     // カテゴリを抽出して追加
                     const newCategories = [...new Set(changedBlogs.map((blog) => blog.category))]; // 重複排除
                     setCategories(['全て', ...newCategories]); // 「全て」を先頭に追加
-                } else {
-                    console.warn('Failed to fetch blogs:', response.status);
                 }
             } catch (error) {
                 console.error('Failed to fetch blogs:', error);
@@ -68,7 +56,7 @@ const BlogMain = () => {
         };
 
         if (!isLoading && isLoggedIn) {
-            fetchBlogs();
+            localFetchBlogs();
         }
     }, [isLoading, isLoggedIn]);
 
