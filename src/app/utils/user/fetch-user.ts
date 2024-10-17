@@ -10,6 +10,8 @@ export const fetchUser = async () => {
     try {
         const responseDetail = await fetch(`/api/users/detail`);
 
+        console.log('fetch user GET response status:', responseDetail.status);
+
         if (responseDetail.ok) {
             const responseData = await responseDetail.json();
             return responseData;

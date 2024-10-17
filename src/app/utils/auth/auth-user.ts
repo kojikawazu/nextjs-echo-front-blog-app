@@ -35,7 +35,7 @@ export const fetchAuthUser = async () => {
                 Cookie: tokenCookie ? `token=${tokenCookie.value}` : '',
             },
         });
-        console.log('fetchAuthUser response:', response);
+        console.log('fetchAuthUser GET response.status:', response.status);
 
         if (response.ok) {
             console.log('fetchAuthUser response.ok');

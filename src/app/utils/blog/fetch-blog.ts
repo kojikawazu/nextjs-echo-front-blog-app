@@ -12,7 +12,7 @@ export const fetchBlogs = async () => {
             credentials: 'include',
         });
 
-        //console.log('fetch blogs GET response status:', response.status);
+        console.log('fetch blogs GET response status:', response.status);
         //console.log('fetch blogs GET response headers:', response.headers);
 
         if (response.ok) {
@@ -37,7 +37,12 @@ export const fetchBlogs = async () => {
  */
 export const fetchBlogById = async (blogId: string) => {
     try {
-        const responseDetail = await fetch(`/api/blogs/detail/${blogId}`);
+        const responseDetail = await fetch(`/api/blogs/detail/${blogId}`, {
+            method: 'GET',
+        });
+
+        console.log('fetch blog by id GET response status:', responseDetail.status);
+        //console.log('fetch blogs GET response headers:', response.headers);
 
         if (responseDetail.ok) {
             const responseData: RawBlogType = await responseDetail.json();
