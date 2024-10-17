@@ -2,6 +2,34 @@ import { toast } from 'react-toastify';
 import { BlogCreateFormType, RawBlogType } from '@/app/types/blogs-types';
 
 /**
+ * 全ブログデータ取得関数
+ * @returns ブログリスト
+ */
+export const fetchBlogs = async () => {
+    try {
+        const response = await fetch(`/api/blogs`, {
+            method: 'GET',
+            credentials: 'include',
+        });
+
+        //console.log('fetch blogs GET response status:', response.status);
+        //console.log('fetch blogs GET response headers:', response.headers);
+
+        if (response.ok) {
+            const responseData: RawBlogType[] = await response.json();
+            //console.log('fetch blogs GET response data:', responseData);
+            return responseData;
+        } else {
+            console.error('Failed to fetch blogs:', response.status);
+            return null;
+        }
+    } catch (error) {
+        console.error('Failed to fetch blogs:', error);
+        throw new Error('Failed to fetch blogs');
+    }
+};
+
+/**
  * ブログデータ取得関数
  * @param blogId ブログID
  * @returns ブログデータ or null

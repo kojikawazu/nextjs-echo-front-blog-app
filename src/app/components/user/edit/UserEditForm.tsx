@@ -8,6 +8,7 @@ import { UserEditFormType } from '@/app/types/users-type';
 import { fetchUser, updateUser } from '@/app/utils/user/fetch-user';
 import { handleCreateBlogForm } from '@/app/utils/blog/handle-blog';
 import { handleFormChange } from '@/app/utils/form/handle-form';
+import { isValidEmail } from '@/app/utils/validate/validate';
 import { useUser } from '@/app/hooks/user/useUser';
 import { useUserEditForm } from '@/app/hooks/user/useUserEditForm';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
@@ -21,7 +22,6 @@ const UserEditForm = () => {
     const router = useRouter();
     // ユーザー情報取得中(カスタムフック)
     const { isLoadingUserData, formData, setIsLoadingUserData, setFormData } = useUserEditForm();
-
     // ユーザー情報
     const { isLoading, isLoggedIn, authUser, handleLogout } = useUser();
 
@@ -85,8 +85,7 @@ const UserEditForm = () => {
         }
 
         // Eメール形式チェック
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!formData.email.match(emailPattern)) {
+        if (!isValidEmail(formData.email)) {
             toast.error('メールアドレスの形式が正しくありません');
             return;
         }

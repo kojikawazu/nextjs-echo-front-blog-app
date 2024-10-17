@@ -1,25 +1,28 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useUser } from '@/app/hooks/user/useUser';
-import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
+import React from 'react';
 import { UserLoginFormType } from '@/app/types/users-type';
 import { isValidEmail } from '@/app/utils/validate/validate';
+import { handleFormChange } from '@/app/utils/form/handle-form';
+import { useUser } from '@/app/hooks/user/useUser';
+import { useUserLoginForm } from '@/app/hooks/user/useUserLoginForm';
+import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 
 /**
  * ユーザーログインフォームコンポーネント
  * @returns JSX
  */
 const UserLoginForm = () => {
-    // エラーメッセージ
-    const [errorMessage, setErrorMessage] = useState('');
-    // ローディング
-    const [isLoading, setIsLoading] = useState(false);
-    // フォームデータ
-    const [formData, setFormData] = useState<UserLoginFormType>({
-        username: '',
-        password: '',
-    });
+    // ユーザーログインフォームフック
+    const {
+        errorMessage,
+        isLoginLoading,
+        formData,
+        setErrorMessage,
+        setIsLoginLoading,
+        setFormData,
+    } = useUserLoginForm();
+
     // ユーザーログインフック
     const {
         isLoading: isUserLoading,
@@ -29,11 +32,6 @@ const UserLoginForm = () => {
         handleLoginForm,
         handleLogin,
     } = useUser();
-
-    // フォームの変更
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
 
     // フォームの送信
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -52,7 +50,7 @@ const UserLoginForm = () => {
 
         // ログイン処理
         setErrorMessage('');
-        setIsLoading(true);
+        setIsLoginLoading(true);
 
         try {
             await handleLogin(formData.username, formData.password);
@@ -60,7 +58,7 @@ const UserLoginForm = () => {
             console.error('ログイン中にエラーが発生しました:', error);
             setErrorMessage('ログイン中にエラーが発生しました。再度お試しください。');
         } finally {
-            setIsLoading(false);
+            setIsLoginLoading(false);
         }
     };
 
@@ -104,7 +102,9 @@ const UserLoginForm = () => {
                             type="text"
                             name="username"
                             value={formData.username}
-                            onChange={handleChange}
+                            onChange={(e) =>
+                                handleFormChange<UserLoginFormType>(e, formData, setFormData)
+                            }
                             required
                         />
                     </div>
@@ -122,7 +122,9 @@ const UserLoginForm = () => {
                             type="password"
                             name="password"
                             value={formData.password}
-                            onChange={handleChange}
+                            onChange={(e) =>
+                                handleFormChange<UserLoginFormType>(e, formData, setFormData)
+                            }
                             required
                         />
                     </div>
@@ -131,9 +133,9 @@ const UserLoginForm = () => {
                         <button
                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             type="submit"
-                            disabled={isLoading}
+                            disabled={isLoginLoading}
                         >
-                            {isLoading ? 'ログイン中...' : 'ログイン'}
+                            {isLoginLoading ? 'ログイン中...' : 'ログイン'}
                         </button>
                     </div>
                 </form>
