@@ -1,13 +1,12 @@
 /**
- * Create blog API
- * POST /api/blog/create
- * @param req Request
- * @returns Response
+ * コメントデータの追加API
+ * @param req
+ * @returns コメントデータ
  */
 export async function POST(req: Request) {
-    console.log('POST /api/blogs/create');
+    console.log('POST /api/comments/create');
 
-    const fetchUrl = `${process.env.API_URL}/blogs/create`;
+    const fetchUrl = `${process.env.API_URL}/comments/create`;
     // フォームのデータを取得
     const reqBody = await req.json();
 
@@ -15,34 +14,29 @@ export async function POST(req: Request) {
     //console.log('Incoming request headers:', req.headers);
     //console.log('Incoming request body:', reqBody);
 
-    // クライアントから受け取ったクッキーを取得
-    const cookie = req.headers.get('cookie');
-    //console.log('Incoming request cookie:', cookie);
-
     try {
         const response = await fetch(`${fetchUrl}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                ...(cookie ? { Cookie: cookie } : {}),
             },
             body: JSON.stringify(reqBody),
         });
 
-        console.log('create blog POST response status:', response.status);
-        //console.log('create blog POST response headers:', response.headers);
+        console.log('create comment POST response status:', response.status);
+        //console.log('create comment POST response headers:', response.headers);
 
         if (response.ok) {
             const responseBody = await response.text();
-            const blogData = JSON.parse(responseBody);
-            //console.log('create blog POST response data:', blogData);
+            const commentData = JSON.parse(responseBody);
+            //console.log('create comment POST response data:', blogData);
 
-            return new Response(JSON.stringify(blogData), {
+            return new Response(JSON.stringify(commentData), {
                 status: 200,
             });
         } else {
-            console.error('failed create blog POST from response status:', response.status);
-            return new Response(JSON.stringify({ error: 'Failed create blog' }), {
+            console.error('failed create comment POST from response status:', response.status);
+            return new Response(JSON.stringify({ error: 'Failed create comment' }), {
                 status: response.status,
             });
         }

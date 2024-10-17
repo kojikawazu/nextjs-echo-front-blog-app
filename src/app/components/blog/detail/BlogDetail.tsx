@@ -7,19 +7,30 @@ import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
 import rehypeRaw from 'rehype-raw';
 import rehypeHighlight from 'rehype-highlight';
-import matter from 'gray-matter';
 import { format } from 'date-fns';
 
-import { useUser } from '@/app/hooks/user/useUser';
+// types
 import { BlogType } from '@/app/types/blogs-types';
+import { CommentFormType } from '@/app/types/comment-types';
+// utils
 import { handleCreateBlogForm, handleEditBlogForm } from '@/app/utils/blog/handle-blog';
 import { deleteBlog, fetchBlogById } from '@/app/utils/blog/fetch-blog';
-import { conversionFromRawBlogTypeToBlogType } from '@/app/utils/conversion/conversion';
+import {
+    conversionFRawCommentListTCommentList,
+    conversionFromRawBlogTypeToBlogType,
+} from '@/app/utils/conversion/conversion';
+import { handleFormChange, handleTextareaFormChange } from '@/app/utils/form/handle-form';
+import { createComment, fetchCommentsByBlogId } from '@/app/utils/comment/fetch-comment';
+import { fetchMarkdown } from '@/app/utils/github/fetch-github';
+// hooks
+import { useUser } from '@/app/hooks/user/useUser';
+import { useCommentForm } from '@/app/hooks/comment/useCommentForm';
+// components
 import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
-
+// css
 import 'highlight.js/styles/github.css';
-//import 'highlight.js/styles/monokai.css';
 import '@/app/styles/markdown.css';
+import { toast } from 'react-toastify';
 
 interface BlogDetailProps {
     blogId: string;
@@ -31,40 +42,44 @@ interface BlogDetailProps {
  * @returns JSX
  */
 const BlogDetail = ({ blogId }: BlogDetailProps) => {
+    // Router(カスタムフック)
     const router = useRouter();
+    // 選択カテゴリー
     const [selectedCategory, setSelectedCategory] = useState('全て');
+    // カテゴリー
     const categories = ['全て', 'フロントエンド', 'バックエンド', 'DevOps', 'AI/機械学習'];
-    const [comment, setComment] = useState('');
-    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
+    // ブログ
     const [blog, setBlog] = useState<BlogType>();
+    // markdown用
     const [markdownContent, setMarkdownContent] = useState('');
-    const [blogMeta, setBlogMeta] = useState<{ title: string; topics: string[] }>({
+    // ブログメタ情報
+    const [blogMeta] = useState<{ title: string; topics: string[] }>({
         title: '',
         topics: [],
     });
 
-    const [comments, setComments] = useState([
-        { text: 'とても役に立ちました！', user: 'ユーザーA' },
-        { text: 'もう少し詳しくお願いします。', user: 'ユーザーB' },
-        { text: '素晴らしい記事です。', user: 'ユーザーC' },
-    ]);
+    // コメントカスタムフック
+    const { commentForm, setCommentForm, comments, setComments, addCommentData, validation } =
+        useCommentForm();
+    // ユーザー情報カスタムフック
+    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
 
     useEffect(() => {
-        // ブログデータの取得
-        const localFetchBlogById = async () => {
+        const localFetch = async () => {
             let githubUrls = '';
 
+            /**
+             * ブログデータ取得
+             */
             try {
-                const responseData = await fetchBlogById(blogId);
-
-                if (responseData) {
+                const responseBlogData = await fetchBlogById(blogId);
+                if (responseBlogData) {
                     // RawBlogType から BlogType に変換
                     const changedBlogs: BlogType =
-                        conversionFromRawBlogTypeToBlogType(responseData);
+                        conversionFromRawBlogTypeToBlogType(responseBlogData);
                     setBlog(changedBlogs);
                     githubUrls = changedBlogs.githubUrl;
                 } else {
-                    console.error('Failed to fetch blog by id');
                     return;
                 }
             } catch (error) {
@@ -72,73 +87,49 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                 return;
             }
 
-            //console.log('GitHub URL:', githubUrls);
-
-            const regex = /^https:\/\/github\.com\/([^\/]+)\/([^\/]+)\/blob\/main\/(.+\.md)$/;
-            const match = githubUrls.match(regex);
-            const githubToken = process.env.GITHUB_TOKEN;
-            if (!match) {
-                console.error('Invalid GitHub Markdown URL format');
-                return;
-            }
-
-            //console.log('GitHub URL match:', match);
-
-            // GitHub API用のURLを構築
-            const owner = match[1];
-            const repo = match[2];
-            const path = match[3];
-            const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-            const headers: HeadersInit = {
-                Accept: 'application/vnd.github.v3.raw',
-                ...(githubToken ? { Authorization: `Bearer ${githubToken}` } : {}),
-            };
-
-            //console.log('GitHub API URL:', apiUrl);
-            //console.log('GitHub API headers:', headers);
-
+            /**
+             * GitHubからMarkdownを取得
+             */
             try {
-                const resGitHub = await fetch(apiUrl, {
-                    headers,
-                });
-
-                console.log('GitHub API response status:', resGitHub.status);
-
-                if (resGitHub.ok) {
-                    const resMdContent = await resGitHub.text();
-                    //console.log('Markdown content:', resMdContent);
-
-                    // フロントマターを解析・除去
-                    const { content, data } = matter(resMdContent);
-
-                    setMarkdownContent(content);
-                    setBlogMeta({
-                        title: data.title,
-                        topics: data.topics || [],
-                    });
+                const resGitHubContent = await fetchMarkdown(githubUrls);
+                if (resGitHubContent) {
+                    setMarkdownContent(resGitHubContent);
                 } else {
-                    console.error(
-                        'Failed to fetch Markdown content from GitHub status:',
-                        resGitHub.status,
-                    );
                     return;
                 }
             } catch (error) {
                 console.error('API Error:', error);
                 return;
             }
+
+            /**
+             * コメントデータリストの取得
+             */
+            try {
+                const rawCommentsData = await fetchCommentsByBlogId(blogId);
+                if (rawCommentsData) {
+                    const commentsData: CommentFormType[] =
+                        conversionFRawCommentListTCommentList(rawCommentsData);
+                    setComments(commentsData);
+                }
+            } catch (error) {
+                console.error('Failed to fetch comments:', error);
+            }
         };
 
         if (!isLoading && isLoggedIn) {
-            localFetchBlogById();
+            localFetch();
         }
-    }, [isLoading, isLoggedIn, blogId]);
+    }, [isLoading, isLoggedIn, blogId, setComments]);
 
-    // ブログ削除
-    const handleDeleteBlog = async (blogId: string) => {
+    /**
+     * ブログ削除ハンドル
+     * @param localBlogId
+     */
+    const handleDeleteBlog = async (localBlogId: string) => {
         if (confirm('本当に削除しますか？')) {
             try {
-                const ret = await deleteBlog(blogId);
+                const ret = await deleteBlog(localBlogId);
                 if (ret) {
                     router.push('/blog');
                 }
@@ -148,10 +139,28 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
         }
     };
 
-    const handleAddComment = () => {
-        if (comment) {
-            setComments([...comments, { text: comment, user: 'ゲストユーザー' }]);
-            setComment('');
+    /**
+     * コメントの追加ハンドル
+     * @param localBlogId
+     * @returns void
+     */
+    const handleAddComment = async (localBlogId: string) => {
+        if (confirm('コメントを追加しますか？')) {
+            // バリデーション
+            if (!validation()) {
+                toast.error('名前とコメントは必須です');
+                return;
+            }
+
+            try {
+                const response = await createComment(commentForm, localBlogId);
+                if (response) {
+                    toast.success('コメントを追加しました');
+                    addCommentData();
+                }
+            } catch (error) {
+                console.error('Failed to add comment:', error);
+            }
         }
     };
 
@@ -239,23 +248,50 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                         </div>
 
                         <div className="mt-6">
+                            <h3 className="text-lg font-semibold mb-2">ユーザー</h3>
+                            <input
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="guestUser"
+                                type="text"
+                                name="guestUser"
+                                value={commentForm.guestUser}
+                                onChange={(e) =>
+                                    handleFormChange<CommentFormType>(
+                                        e,
+                                        commentForm,
+                                        setCommentForm,
+                                    )
+                                }
+                                required
+                            />
+
                             <h3 className="text-lg font-semibold mb-2">コメント</h3>
                             <textarea
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
+                                id="comment"
+                                value={commentForm?.comment}
+                                name="comment"
+                                onChange={(e) =>
+                                    handleTextareaFormChange<CommentFormType>(
+                                        e,
+                                        commentForm,
+                                        setCommentForm,
+                                    )
+                                }
                                 placeholder="コメントを書く..."
                             />
+
                             <button
-                                onClick={handleAddComment}
+                                onClick={() => handleAddComment(blog.id)}
                                 className="bg-[#4a90e2] hover:bg-[#3b7ac7] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
                             >
                                 コメントを追加
                             </button>
+
                             <ul className="mb-4">
                                 {comments.map((comment, index) => (
                                     <li key={index} className="p-2 border-b border-gray-200">
-                                        <strong>{comment.user}</strong>: {comment.text}
+                                        <strong>{comment.guestUser}</strong> : {comment.comment}
                                     </li>
                                 ))}
                             </ul>

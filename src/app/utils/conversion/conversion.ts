@@ -1,4 +1,5 @@
 import { BlogType, RawBlogType } from '@/app/types/blogs-types';
+import { CommentFormType, RawCommentType } from '@/app/types/comment-types';
 
 /**
  * RawBlogType → BlogType に変換する
@@ -18,4 +19,20 @@ export const conversionFromRawBlogTypeToBlogType = (rawBlog: RawBlogType): BlogT
         createdAt: new Date(rawBlog.created_at),
         updatedAt: new Date(rawBlog.updated_at),
     };
+};
+
+/**
+ * RawCommentType → CommentFormType に変換する
+ * @param rawCommentsData RawCommentType[]
+ * @returns 変換後の CommentFormType[]
+ */
+export const conversionFRawCommentListTCommentList = (
+    rawCommentsData: RawCommentType[],
+): CommentFormType[] => {
+    return rawCommentsData.map((rawCommentData) => {
+        return {
+            guestUser: rawCommentData.guest_user,
+            comment: rawCommentData.comment,
+        };
+    });
 };
