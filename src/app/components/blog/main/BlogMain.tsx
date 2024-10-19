@@ -249,7 +249,11 @@ const BlogMain = () => {
                                     <div className="flex justify-between items-center">
                                         {isLoadingBlogLikes ? (
                                             <div className="flex-grow p-4 flex items-center justify-center">
-                                                <ClipLoader color={'#4a90e2'} loading={true} size={20} />
+                                                <ClipLoader
+                                                    color={'#4a90e2'}
+                                                    loading={true}
+                                                    size={20}
+                                                />
                                             </div>
                                         ) : (
                                             <span
@@ -285,7 +289,11 @@ const BlogMain = () => {
 
                                             {isLoadingBlogLikes ? (
                                                 <div className="flex-grow p-4 flex items-center justify-center">
-                                                    <ClipLoader color={'#4a90e2'} loading={true} size={20} />
+                                                    <ClipLoader
+                                                        color={'#4a90e2'}
+                                                        loading={true}
+                                                        size={20}
+                                                    />
                                                 </div>
                                             ) : (
                                                 <button
