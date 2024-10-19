@@ -3,7 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import ClipLoader from 'react-spinners/ClipLoader';
 
+// constants
+import { CommonConstants } from '@/app/utils/constants/common-constants';
 // types
 import { BlogType } from '@/app/types/blogs-types';
 import { BlogLikeType } from '@/app/types/blogs-likes-types';
@@ -39,19 +42,34 @@ const BlogMain = () => {
     const [currentPage, setCurrentPage] = useState(1);
     // いいねリスト
     const [blogLikes, setBlogLikes] = useState<string[]>([]);
+
+    const [isLoadingVisitId, setIsLoadingVisitId] = useState(true);
+    const [isLoadingBlogs, setIsLoadingBlogs] = useState(true);
+    const [isLoadingBlogLikes, setIsLoadingBlogLikes] = useState(true);
+
     // ユーザー情報
     const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
-    // 1ページあたりの表示数
-    const itemsPerPage = 4;
 
     useEffect(() => {
-        const localFetchData = async () => {
+        const localFetch = async () => {
             try {
-                const [, responseBlogsData, responseBlogLikes] = await Promise.all([
-                    generateVisitId(),
-                    fetchBlogs(),
-                    fetchBlogLikes(),
-                ]);
+                generateVisitId();
+            } catch (error) {
+                console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+            } finally {
+                setIsLoadingVisitId(false);
+            }
+        };
+
+        if (!isLoading && isLoggedIn) {
+            localFetch();
+        }
+    }, [isLoading, isLoggedIn, setIsLoadingVisitId]);
+
+    useEffect(() => {
+        const localFetch = async () => {
+            try {
+                const [responseBlogsData] = await Promise.all([fetchBlogs()]);
 
                 /**
                  * ブログ一覧を取得する
@@ -68,6 +86,22 @@ const BlogMain = () => {
                     const newCategories = [...new Set(changedBlogs.map((blog) => blog.category))]; // 重複排除
                     setCategories(['全て', ...newCategories]); // 「全て」を先頭に追加
                 }
+            } catch (error) {
+                console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+            } finally {
+                setIsLoadingBlogs(false);
+            }
+        };
+
+        if (!isLoading && isLoggedIn && !isLoadingVisitId) {
+            localFetch();
+        }
+    }, [isLoading, isLoggedIn, isLoadingVisitId, setIsLoadingBlogs]);
+
+    useEffect(() => {
+        const localFetch = async () => {
+            try {
+                const [responseBlogLikes] = await Promise.all([fetchBlogLikes()]);
 
                 /**
                  * ブログいいね一覧を取得する
@@ -84,25 +118,30 @@ const BlogMain = () => {
                     setBlogLikes(uniqueBlogIds);
                 }
             } catch (error) {
-                console.error('Failed fetch API:', error);
+                console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+            } finally {
+                setIsLoadingBlogLikes(false);
             }
         };
 
-        if (!isLoading && isLoggedIn) {
-            localFetchData();
+        if (!isLoading && isLoggedIn && !isLoadingVisitId) {
+            localFetch();
         }
-    }, [isLoading, isLoggedIn]);
+    }, [isLoading, isLoggedIn, isLoadingVisitId, setIsLoadingBlogLikes]);
 
-    // ブログ削除
+    /**
+     * ブログ削除ハンドル
+     * @param blogId
+     */
     const handleDeleteBlog = async (blogId: string) => {
-        if (confirm('本当に削除しますか？')) {
+        if (confirm(CommonConstants.CONFIRM_MESSAGE.BLOG_DELETE)) {
             try {
                 const ret = await deleteBlog(blogId);
                 if (ret) {
                     setBlogs(blogs.filter((blog) => blog.id !== blogId));
                 }
             } catch (error) {
-                console.error('Failed to delete blog:', error);
+                console.error(`${CommonConstants.ERROR_MESSAGE.DEL_BLOG_FAILURE}: `, error);
             }
         }
     };
@@ -135,10 +174,11 @@ const BlogMain = () => {
                 }
             }
         } catch (error) {
-            console.error('Failed to fetch blog like:', error);
+            console.error(`${CommonConstants.ERROR_MESSAGE.BLOG_LIKE_FAILURE}: `, error);
         }
     };
 
+    /** TODO start */
     const paginateBlogs = (blogs: BlogType[], page: number, itemsPerPage: number) => {
         const startIndex = (page - 1) * itemsPerPage;
         return blogs.slice(startIndex, startIndex + itemsPerPage);
@@ -148,8 +188,13 @@ const BlogMain = () => {
         selectedCategory === '全て'
             ? blogs
             : blogs.filter((blog) => blog.category === selectedCategory);
-    const paginatedBlogs = paginateBlogs(filteredBlogs, currentPage, itemsPerPage);
-    const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
+    const paginatedBlogs = paginateBlogs(
+        filteredBlogs,
+        currentPage,
+        CommonConstants.BLOG_LIST.ITEMS_PER_PAGE,
+    );
+    const totalPages = Math.ceil(filteredBlogs.length / CommonConstants.BLOG_LIST.ITEMS_PER_PAGE);
+    /** TODO end */
 
     return (
         <BlogMainLayout
@@ -163,87 +208,121 @@ const BlogMain = () => {
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
         >
-            {isLoading ? (
-                <div className="flex-grow p-4 flex items-center justify-center">Loading...</div>
+            {isLoading || isLoadingVisitId ? (
+                <div className="flex-grow p-4 flex items-center justify-center">
+                    <ClipLoader color={'#4a90e2'} loading={true} size={20} />
+                </div>
             ) : (
                 <main className="flex-grow p-4">
-                    {/** ブログリスト */}
-                    {paginatedBlogs.map((blog) => (
-                        <div
-                            key={blog.id}
-                            className="bg-white shadow-md m-2 p-4 rounded cursor-pointer"
-                        >
-                            {/** タグ */}
-                            <Link href={`/blog/detail/${blog.id}`}>
-                                <h2 className="font-bold text-xl mb-2 text-blue-700">
-                                    {blog.title}
-                                </h2>
-                            </Link>
-                            <p className="text-gray-700 mb-2">{blog.description}</p>
-                            <div className="flex flex-wrap mb-2">
-                                {blog.tags.map((tag, tagIndex) => (
-                                    <span
-                                        key={tagIndex}
-                                        className="bg-gray-200 text-sm rounded-full px-3 py-1 mr-2 mb-2"
+                    {isLoadingBlogs ? (
+                        <div className="flex-grow p-4 flex items-center justify-center">
+                            <ClipLoader color={'#4a90e2'} loading={true} size={20} />
+                        </div>
+                    ) : (
+                        <>
+                            {/** ブログリスト */}
+                            {paginatedBlogs.map((blog) => (
+                                <div
+                                    key={blog.id}
+                                    className="bg-white shadow-md m-2 p-4 rounded cursor-pointer"
+                                >
+                                    {/** タイトル */}
+                                    <Link href={`/blog/detail/${blog.id}`}>
+                                        <h2 className="font-bold text-xl mb-2 text-blue-700">
+                                            {blog.title}
+                                        </h2>
+                                    </Link>
+                                    {/** 概要 */}
+                                    <p className="text-gray-700 mb-2">{blog.description}</p>
+                                    {/** タグ */}
+                                    <div className="flex flex-wrap mb-2">
+                                        {blog.tags.map((tag, tagIndex) => (
+                                            <span
+                                                key={tagIndex}
+                                                className="bg-gray-200 text-sm rounded-full px-3 py-1 mr-2 mb-2"
+                                            >
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+
+                                    <div className="flex justify-between items-center">
+                                        {isLoadingBlogLikes ? (
+                                            <div className="flex-grow p-4 flex items-center justify-center">
+                                                <ClipLoader
+                                                    color={'#4a90e2'}
+                                                    loading={true}
+                                                    size={20}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <span
+                                                className={`text-sm ${
+                                                    blogLikes.includes(blog.id)
+                                                        ? 'text-red-600'
+                                                        : 'text-gray-600'
+                                                }`}
+                                            >
+                                                ❤️ {blog.likes}
+                                            </span>
+                                        )}
+
+                                        <div className="flex items-center">
+                                            {isLoggedIn && (
+                                                <>
+                                                    <button
+                                                        onClick={() =>
+                                                            handleEditBlogForm(router, blog.id)
+                                                        }
+                                                        className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded"
+                                                    >
+                                                        編集
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteBlog(blog.id)}
+                                                        className="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-1 px-2 border border-red-500 hover:border-transparent rounded ml-2"
+                                                    >
+                                                        削除
+                                                    </button>
+                                                </>
+                                            )}
+
+                                            {isLoadingBlogLikes ? (
+                                                <div className="flex-grow p-4 flex items-center justify-center">
+                                                    <ClipLoader
+                                                        color={'#4a90e2'}
+                                                        loading={true}
+                                                        size={20}
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    onClick={() => handleBlogLike(blog.id)}
+                                                    className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded ml-2"
+                                                >
+                                                    いいね!
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+
+                            {/** ページング start */}
+                            <div className="mt-4 flex justify-center space-x-2">
+                                {[...Array(totalPages)].map((_, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => setCurrentPage(index + 1)}
+                                        className={`px-2 py-1 rounded ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
                                     >
-                                        {tag}
-                                    </span>
+                                        {index + 1}
+                                    </button>
                                 ))}
                             </div>
-
-                            {/** いいね */}
-                            <div className="flex justify-between items-center">
-                                <span
-                                    className={`text-sm ${
-                                        blogLikes.includes(blog.id)
-                                            ? 'text-red-600'
-                                            : 'text-gray-600'
-                                    }`}
-                                >
-                                    ❤️ {blog.likes}
-                                </span>
-
-                                <div className="flex items-center">
-                                    {isLoggedIn && (
-                                        <>
-                                            <button
-                                                onClick={() => handleEditBlogForm(router, blog.id)}
-                                                className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded"
-                                            >
-                                                編集
-                                            </button>
-                                            <button
-                                                onClick={() => handleDeleteBlog(blog.id)}
-                                                className="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-1 px-2 border border-red-500 hover:border-transparent rounded ml-2"
-                                            >
-                                                削除
-                                            </button>
-                                        </>
-                                    )}
-
-                                    <button
-                                        onClick={() => handleBlogLike(blog.id)}
-                                        className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded ml-2"
-                                    >
-                                        いいね!
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-
-                    {/** ページング */}
-                    <div className="mt-4 flex justify-center space-x-2">
-                        {[...Array(totalPages)].map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setCurrentPage(index + 1)}
-                                className={`px-2 py-1 rounded ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
-                    </div>
+                            {/** ページング end */}
+                        </>
+                    )}
                 </main>
             )}
         </BlogMainLayout>

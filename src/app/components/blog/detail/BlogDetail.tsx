@@ -9,6 +9,7 @@ import rehypeRaw from 'rehype-raw';
 import rehypeHighlight from 'rehype-highlight';
 import { format } from 'date-fns';
 import { toast } from 'react-toastify';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 // constants
 import { CommonConstants } from '@/app/utils/constants/common-constants';
@@ -168,7 +169,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
      * @param localBlogId
      */
     const handleDeleteBlog = async (localBlogId: string) => {
-        if (confirm(CommonConstants.TOAST_MESSAGE.CONFIRM_DELETE_BLOG)) {
+        if (confirm(CommonConstants.CONFIRM_MESSAGE.BLOG_DELETE)) {
             try {
                 const ret = await deleteBlog(localBlogId);
                 if (ret) {
@@ -207,7 +208,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
      * @returns void
      */
     const handleAddComment = async (localBlogId: string) => {
-        if (confirm(CommonConstants.TOAST_MESSAGE.CONFIRM_ADD_COMMENT)) {
+        if (confirm(CommonConstants.CONFIRM_MESSAGE.ADD_COMMENT)) {
             // バリデーション
             if (!validation()) {
                 toast.error(CommonConstants.TOAST_MESSAGE.ADD_COMMENT_INVALID_REQUIRED);
@@ -239,7 +240,9 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
             setSelectedCategory={setSelectedCategory}
         >
             {isLoading ? (
-                <div className="flex-grow p-4 flex items-center justify-center">Loading...</div>
+                <div className="flex-grow p-4 flex items-center justify-center">
+                    <ClipLoader color={'#4a90e2'} loading={true} size={20} />
+                </div>
             ) : blog == undefined ? (
                 <div className="flex-grow p-4 flex items-center justify-center">No blog found</div>
             ) : (
@@ -257,8 +260,8 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                     {/** ブログ詳細 start */}
                     <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                         {isLoadingBlog ? (
-                            <div className="flex-grow p-4 flex items-center justify-center">
-                                Loading...
+                            <div className="p-4 flex items-center justify-center">
+                                <ClipLoader color={'#4a90e2'} loading={true} size={20} />
                             </div>
                         ) : (
                             <>
@@ -307,7 +310,9 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                         <div className="flex justify-end items-center space-x-2 mb-4">
                             {/** いいね */}
                             {isLoadingBlogLike ? (
-                                <div className="flex items-center justify-center">Loading...</div>
+                                <div className="p-4 flex items-center justify-center">
+                                    <ClipLoader color={'#4a90e2'} loading={true} size={20} />
+                                </div>
                             ) : (
                                 <button
                                     onClick={() => handleBlogLike(blog.id)}
@@ -339,7 +344,11 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
 
                         {/** コメント */}
                         {isLoadingComments ? (
-                            <div className="flex items-center justify-center">Loading...</div>
+                            <div className="flex items-center justify-center">
+                                <div className="p-4 flex items-center justify-center">
+                                    <ClipLoader color={'#4a90e2'} loading={true} size={20} />
+                                </div>
+                            </div>
                         ) : (
                             <div className="mt-6">
                                 {/** コメントフォーム start */}

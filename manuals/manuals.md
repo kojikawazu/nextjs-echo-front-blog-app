@@ -37,4 +37,6 @@ npm install react-toastify
 # マークダウン
 npm install react-markdown remark-gfm rehype-raw remark-breaks rehype-highlight
 npm install date-fns
+# その他
+npm install react-spinners
 ```
