@@ -1,4 +1,7 @@
 import { toast } from 'react-toastify';
+// constants
+import { CommonConstants } from '@/app/utils/constants/common-constants';
+// types
 import { UserEditFormType } from '@/app/types/users-type';
 
 /**
@@ -10,18 +13,18 @@ export const fetchUser = async () => {
     try {
         const responseDetail = await fetch(`/api/users/detail`);
 
-        console.log('fetch user GET response status:', responseDetail.status);
+        console.log('fetch user GET response status: ', responseDetail.status);
 
         if (responseDetail.ok) {
             const responseData = await responseDetail.json();
             return responseData;
         } else {
-            console.error('Failed to fetch user');
+            console.error('Failed to fetch user response status: ', responseDetail.status);
             return null;
         }
     } catch (error) {
-        console.error('Server error:', error);
-        throw new Error('Failed to fetch user');
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+        throw new Error('Failed to fetch user. ' + error);
     }
 };
 
@@ -43,20 +46,20 @@ export const updateUser = async (formData: UserEditFormType) => {
             body: JSON.stringify(formData),
         });
 
-        console.log('update user PUT response status:', response.status);
+        console.log('update user PUT response status: ', response.status);
         //console.log(`response.headers: ${response.headers}`);
 
         if (response.ok) {
-            toast.success('ユーザーを更新しました。');
+            toast.success(CommonConstants.TOAST_MESSAGE.UPDATE_USER_SUCCESSED);
             return true;
         } else {
-            console.log('response error status:', response.status);
-            toast.error('ユーザーの更新に失敗しました。');
+            console.log('response error status: ', response.status);
+            toast.error(CommonConstants.TOAST_MESSAGE.UPDATE_USER_FAILURE);
             return false;
         }
     } catch (error) {
-        console.error('Server error:', error);
-        toast.error('ユーザーの更新に失敗しました。');
-        throw new Error('Failed to update user');
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+        toast.error(CommonConstants.TOAST_MESSAGE.UPDATE_USER_FAILURE);
+        throw new Error('Failed to update user. ' + error);
     }
 };

@@ -16,10 +16,20 @@ export const CommonConstants = {
         UPDATE_USER_INVALID_PASSWORD_NOT_MATCH:
             '新しいパスワードと確認用パスワードが一致しません。',
         UPDATE_USER_SUCCESSED: 'ユーザー情報を更新しました。',
+        UPDATE_USER_FAILURE: 'ユーザー情報の更新に失敗しました。',
 
         LOGIN_USER_INVALID_EMAIL_AND_PASSWORD: 'メールアドレスとパスワードを入力してください。',
         LOGIN_USER_INVALID_EMAIL_FORMAT: '正しいEメールアドレスを入力してください',
         LOGIN_USER_FAILURE: 'ログインに失敗しました。',
+
+        ADD_BLOG_SUCCESSED: 'ブログを追加しました。',
+        ADD_BLOG_FAILURE: 'ブログの追加に失敗しました。',
+
+        UPDATE_BLOG_SUCCESSED: 'ブログを更新しました。',
+        UPDATE_BLOG_FAILURE: 'ブログの更新に失敗しました。',
+
+        DELETE_BLOG_SUCCESSED: 'ブログを削除しました。',
+        DELETE_BLOG_FAILURE: 'ブログの削除に失敗しました。',
     },
     // confirm messages
     CONFIRM_MESSAGE: {
@@ -34,6 +44,7 @@ export const CommonConstants = {
     // URL path
     URL_PATH: {
         BLOG_HOME: '/blog',
+        USER_LOGIN: '/user/login',
     },
     // API error message
     ERROR_MESSAGE: {

@@ -1,4 +1,6 @@
 import matter from 'gray-matter';
+// constants
+import { CommonConstants } from '@/app/utils/constants/common-constants';
 
 /**
  * GitHub URLからMarkdownファイルの内容を取得する
@@ -10,7 +12,7 @@ export const fetchMarkdown = async (githubUrls: string) => {
     const match = githubUrls.match(regex);
     const githubToken = process.env.GITHUB_TOKEN;
     if (!match) {
-        console.error('Invalid GitHub Markdown URL format');
+        console.error('Invalid GitHub Markdown URL format.');
         return null;
     }
 
@@ -30,7 +32,7 @@ export const fetchMarkdown = async (githubUrls: string) => {
             headers,
         });
 
-        console.log('GitHub API response status:', resGitHub.status);
+        console.log('GitHub API response status: ', resGitHub.status);
 
         if (resGitHub.ok) {
             // Markdownファイルの内容を取得
@@ -41,11 +43,14 @@ export const fetchMarkdown = async (githubUrls: string) => {
             const { content } = matter(resMdContent);
             return content;
         } else {
-            console.error('Failed to fetch Markdown content from GitHub status:', resGitHub.status);
+            console.error(
+                'Failed to fetch Markdown content from GitHub status: ',
+                resGitHub.status,
+            );
             return null;
         }
     } catch (error) {
-        console.error('GitHub API Error:', error);
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
         throw new Error('GitHub API Error: ' + error);
     }
 };

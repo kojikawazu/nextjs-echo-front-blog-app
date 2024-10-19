@@ -2,6 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+
+// constants
+import { CommonConstants } from '@/app/utils/constants/common-constants';
+// types
 import { UserAuthType } from '@/app/types/users-type';
 
 /**
@@ -42,7 +46,7 @@ export const useUser = () => {
                     moveToLogin();
                 }
             } catch (error) {
-                console.error('認証状態の確認に失敗しました: ', error);
+                console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
                 setIsLoggedIn(false);
                 moveToLogin();
             } finally {
@@ -73,19 +77,19 @@ export const useUser = () => {
                 body: JSON.stringify({ email, password }),
             });
 
-            console.log('auth login post response status:', response.status);
+            console.log('auth login post response status: ', response.status);
             //console.log('auth login post response headers:', response.headers);
             //console.log('auth login post response body:', response.body);
 
             if (response.ok) {
                 await response.json();
                 setIsLoggedIn(true);
-                router.push('/blog');
+                router.push(CommonConstants.URL_PATH.BLOG_HOME);
             } else {
                 setIsLoginError(true);
             }
         } catch (error) {
-            console.error('ログイン処理に失敗しました:', error);
+            console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
             setIsLoginError(true);
         } finally {
             setIsLoading(false);
@@ -105,18 +109,15 @@ export const useUser = () => {
                 credentials: 'include',
             });
 
-            console.log('auth logout get response status:', response.status);
+            console.log('auth logout get response status: ', response.status);
 
             if (response.ok) {
                 await response.json();
                 setIsLoggedIn(false);
-                router.push('/user/login');
-            } else {
-                alert('ログアウトに失敗しました。ユーザー名またはパスワードが正しくありません。');
+                router.push(CommonConstants.URL_PATH.USER_LOGIN);
             }
         } catch (error) {
-            console.error('ログアウト処理に失敗しました:', error);
-            alert('ログアウト中にエラーが発生しました。');
+            console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
         } finally {
             setIsLoading(false);
         }
@@ -124,7 +125,7 @@ export const useUser = () => {
 
     /** ログイン画面へ */
     const moveToLogin = () => {
-        router.push('/user/login');
+        router.push(CommonConstants.URL_PATH.USER_LOGIN);
     };
 
     return {
