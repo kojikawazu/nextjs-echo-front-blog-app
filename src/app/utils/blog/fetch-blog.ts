@@ -1,4 +1,8 @@
 import { toast } from 'react-toastify';
+
+// constants
+import { CommonConstants } from '@/app/utils/constants/common-constants';
+// types
 import { BlogCreateFormType, RawBlogType } from '@/app/types/blogs-types';
 
 /**
@@ -12,7 +16,7 @@ export const fetchBlogs = async () => {
             credentials: 'include',
         });
 
-        console.log('fetch blogs GET response status:', response.status);
+        console.log('fetch blogs GET response status: ', response.status);
         //console.log('fetch blogs GET response headers:', response.headers);
 
         if (response.ok) {
@@ -20,12 +24,12 @@ export const fetchBlogs = async () => {
             //console.log('fetch blogs GET response data:', responseData);
             return responseData;
         } else {
-            console.error('Failed to fetch blogs:', response.status);
+            console.error('Failed to fetch blogs: ', response.status);
             return null;
         }
     } catch (error) {
-        console.error('Failed to fetch blogs:', error);
-        throw new Error('Failed to fetch blogs');
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+        throw new Error('Failed to fetch blogs data. ' + error);
     }
 };
 
@@ -41,19 +45,19 @@ export const fetchBlogById = async (blogId: string) => {
             method: 'GET',
         });
 
-        console.log('fetch blog by id GET response status:', responseDetail.status);
+        console.log('fetch blog by id GET response status: ', responseDetail.status);
         //console.log('fetch blogs GET response headers:', response.headers);
 
         if (responseDetail.ok) {
             const responseData: RawBlogType = await responseDetail.json();
             return responseData;
         } else {
-            console.error('Failed to fetch blog by id');
+            console.error('Failed to fetch blog by id: ', responseDetail.status);
             return null;
         }
     } catch (error) {
-        console.error('Server error:', error);
-        throw new Error('Failed to fetch blog by id');
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+        throw new Error('Failed to fetch blog by id. ' + error);
     }
 };
 
@@ -75,21 +79,21 @@ export const createBlog = async (formData: BlogCreateFormType) => {
             body: JSON.stringify(formData),
         });
 
-        console.log('create blog POST response status:', response.status);
+        console.log('create blog POST response status: ', response.status);
         //console.log(`response.headers: ${response.headers}`);
 
         if (response.ok) {
-            toast.success('ブログを追加しました。');
+            toast.success(CommonConstants.TOAST_MESSAGE.ADD_BLOG_SUCCESSED);
             return true;
         } else {
-            console.log('response.error');
-            toast.error('ブログの追加に失敗しました。');
+            console.log('create blog POST response error status: ', response.status);
+            toast.error(CommonConstants.TOAST_MESSAGE.ADD_BLOG_FAILURE);
             return false;
         }
     } catch (error) {
-        console.error('Server error:', error);
-        toast.error('ブログの追加に失敗しました。');
-        throw new Error('Failed to create blog');
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+        toast.error(CommonConstants.TOAST_MESSAGE.ADD_BLOG_FAILURE);
+        throw new Error('Failed to create blog. ' + error);
     }
 };
 
@@ -116,17 +120,17 @@ export const updateBlog = async (blogId: string, formData: BlogCreateFormType) =
         //console.log(`response.headers: ${response.headers}`);
 
         if (response.ok) {
-            toast.success('ブログを更新しました。');
+            toast.success(CommonConstants.TOAST_MESSAGE.UPDATE_BLOG_SUCCESSED);
             return true;
         } else {
-            console.log('response.error');
-            toast.error('ブログの更新に失敗しました。');
+            console.log('update blog by id PUT response error status:', response.status);
+            toast.error(CommonConstants.TOAST_MESSAGE.UPDATE_BLOG_FAILURE);
             return false;
         }
     } catch (error) {
-        console.error('Server error:', error);
-        toast.error('ブログの更新に失敗しました。');
-        throw new Error('Failed to update blog');
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+        toast.error(CommonConstants.TOAST_MESSAGE.UPDATE_BLOG_FAILURE);
+        throw new Error('Failed to update blog. ' + error);
     }
 };
 
@@ -146,16 +150,16 @@ export const deleteBlog = async (blogId: string) => {
         console.log('delete blog by id DELETE response status:', response.status);
 
         if (response.ok) {
-            toast.success('ブログを削除しました。');
+            toast.success(CommonConstants.TOAST_MESSAGE.DELETE_BLOG_SUCCESSED);
             return true;
         } else {
-            toast.error('ブログの削除に失敗しました');
-            console.error('delete blog by id DELETE from response status:', response.status);
+            toast.error(CommonConstants.TOAST_MESSAGE.DELETE_BLOG_FAILURE);
+            console.error('delete blog by id DELETE from response status: ', response.status);
             return false;
         }
     } catch (error) {
-        console.error('Failed to delete blog:', error);
-        toast.error('ブログの削除に失敗しました');
-        throw new Error('Failed to delete blog');
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+        toast.error(CommonConstants.TOAST_MESSAGE.DELETE_BLOG_FAILURE);
+        throw new Error('Failed to delete blog. ' + error);
     }
 };

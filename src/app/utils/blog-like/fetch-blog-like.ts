@@ -1,3 +1,6 @@
+// constants
+import { CommonConstants } from '@/app/utils/constants/common-constants';
+
 /**
  * 訪問IDを生成する
  * @returns void
@@ -11,7 +14,8 @@ export const generateVisitId = async () => {
         console.log('Generate visitId response status:', response.status);
         //console.log('Generate visitId response headers:', response.headers);
     } catch (error) {
-        console.error('Failed to generate visitId:', error);
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+        throw new Error('Failed to generate visitId. ' + error);
     }
 };
 
@@ -33,12 +37,12 @@ export const fetchBlogLikes = async () => {
             const responseData = await response.json();
             return responseData;
         } else {
-            console.error('Failed to fetch blog likes');
+            console.error('Failed to fetch blog likes response status: ', response.status);
             return null;
         }
     } catch (error) {
-        console.error('Server error:', error);
-        throw new Error('Failed to fetch blog likes');
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+        throw new Error('Failed to fetch blog likes. ' + error);
     }
 };
 
@@ -61,12 +65,12 @@ export const fetchBlogLikeById = async (blogId: string) => {
             const responseData = await response.json();
             return responseData;
         } else {
-            console.error('Failed to fetch blog like by id');
+            console.error('Failed to fetch blog like by id response status: ', response.status);
             return null;
         }
     } catch (error) {
-        console.error('Server error:', error);
-        throw new Error('Failed to fetch blog like by id');
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+        throw new Error('Failed to fetch blog like by id. ' + error);
     }
 };
 
@@ -87,12 +91,12 @@ export const createBlogLikeById = async (blogId: string) => {
         if (response.ok) {
             return true;
         } else {
-            console.error('Failed to create blog like by id');
+            console.error('Failed to create blog like by id response status:', response.status);
             return false;
         }
     } catch (error) {
-        console.error('Server error:', error);
-        throw new Error('Failed to create blog like by id');
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+        throw new Error('Failed to create blog like by id. ' + error);
     }
 };
 
@@ -114,11 +118,11 @@ export const deleteBlogLikeById = async (blogId: string) => {
         if (response.ok) {
             return true;
         } else {
-            console.error('Failed to delete blog like by id');
+            console.error('Failed to delete blog like by id response status:', response.status);
             return false;
         }
     } catch (error) {
-        console.error('Server error:', error);
-        throw new Error('Failed to delete blog like by id');
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+        throw new Error('Failed to delete blog like by id. ' + error);
     }
 };

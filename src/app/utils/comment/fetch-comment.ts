@@ -1,3 +1,6 @@
+// constants
+import { CommonConstants } from '@/app/utils/constants/common-constants';
+// types
 import { CommentFormType, RawCommentType } from '@/app/types/comment-types';
 
 /**
@@ -22,12 +25,12 @@ export const fetchCommentsByBlogId = async (blogId: string) => {
             //console.log('Comments data:', commentsData);
             return commentsData;
         } else {
-            console.error('Failed to fetch comments by blogId');
+            console.error('Failed to fetch comments by blogId response.status:', response.status);
             return null;
         }
     } catch (error) {
-        console.error('Failed to fetch comments:', error);
-        throw new Error('Failed to fetch comments');
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+        throw new Error('Failed to fetch comments.' + error);
     }
 };
 
@@ -40,7 +43,7 @@ export const fetchCommentsByBlogId = async (blogId: string) => {
  */
 export const createComment = async (commentData: CommentFormType, blogId: string) => {
     if (blogId === '') {
-        console.error('Invalid blogId:', blogId);
+        console.error('Invalid blogId: ', blogId);
         return null;
     }
 
@@ -57,18 +60,18 @@ export const createComment = async (commentData: CommentFormType, blogId: string
             }),
         });
 
-        console.log('create comment POST response.status:', response.status);
+        console.log('create comment POST response.status: ', response.status);
 
         if (response.ok) {
             const newComment: RawCommentType = await response.json();
             //console.log('New comment:', newComment);
             return newComment;
         } else {
-            console.error('Failed to create comment');
+            console.error('Failed to create comment response.status: ', response.status);
             return null;
         }
     } catch (error) {
-        console.error('Failed to create comment:', error);
-        throw new Error('Failed to create comment');
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+        throw new Error('Failed to create comment. ' + error);
     }
 };
