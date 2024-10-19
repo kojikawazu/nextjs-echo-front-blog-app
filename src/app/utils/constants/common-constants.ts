@@ -22,10 +22,14 @@ export const CommonConstants = {
     ERROR_MESSAGE: {
         API_ROUTER_ERROR: 'API Error',
 
-        DEL_BLOG_FAILURE: 'ブログを削除しました。',
+        DEL_BLOG_FAILURE: 'ブログの削除に失敗しました。',
 
         ADD_COMMENT_FAILURE: 'コメントの追加に失敗しました。',
 
         BLOG_LIKE_FAILURE: 'いいねの登録/失敗に失敗しました。',
+    },
+    BLOG_LIST: {
+        // 1ページあたりの表示数
+        ITEMS_PER_PAGE: 4,
     },
 };
