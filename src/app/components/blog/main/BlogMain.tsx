@@ -6,11 +6,17 @@ import { useRouter } from 'next/navigation';
 
 // types
 import { BlogType } from '@/app/types/blogs-types';
+import { BlogLikeType } from '@/app/types/blogs-likes-types';
 // utils
 import { handleCreateBlogForm, handleEditBlogForm } from '@/app/utils/blog/handle-blog';
 import { deleteBlog, fetchBlogs } from '@/app/utils/blog/fetch-blog';
 import { conversionFromRawBlogTypeToBlogType } from '@/app/utils/conversion/conversion';
-import { generateVisitId } from '@/app/utils/blog-like/fetch-blog-like';
+import {
+    createBlogLikeById,
+    deleteBlogLikeById,
+    fetchBlogLikes,
+    generateVisitId,
+} from '@/app/utils/blog-like/fetch-blog-like';
 // hooks
 import { useUser } from '@/app/hooks/user/useUser';
 // components
@@ -31,6 +37,8 @@ const BlogMain = () => {
     const [blogs, setBlogs] = useState<BlogType[]>([]);
     // ページネーション
     const [currentPage, setCurrentPage] = useState(1);
+    // いいねリスト
+    const [blogLikes, setBlogLikes] = useState<string[]>([]);
     // ユーザー情報
     const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
     // 1ページあたりの表示数
@@ -39,7 +47,11 @@ const BlogMain = () => {
     useEffect(() => {
         const localFetchData = async () => {
             try {
-                const [, responseBlogsData] = await Promise.all([generateVisitId(), fetchBlogs()]);
+                const [, responseBlogsData, responseBlogLikes] = await Promise.all([
+                    generateVisitId(),
+                    fetchBlogs(),
+                    fetchBlogLikes(),
+                ]);
 
                 /**
                  * ブログ一覧を取得する
@@ -55,6 +67,21 @@ const BlogMain = () => {
                     // カテゴリを抽出して追加
                     const newCategories = [...new Set(changedBlogs.map((blog) => blog.category))]; // 重複排除
                     setCategories(['全て', ...newCategories]); // 「全て」を先頭に追加
+                }
+
+                /**
+                 * ブログいいね一覧を取得する
+                 */
+                if (responseBlogLikes) {
+                    const blogLikes: BlogLikeType[] = responseBlogLikes;
+                    const uniqueBlogIds: string[] = [
+                        ...new Set(
+                            blogLikes.map(
+                                (responseBlogLike: BlogLikeType) => responseBlogLike.blog_id,
+                            ),
+                        ),
+                    ];
+                    setBlogLikes(uniqueBlogIds);
                 }
             } catch (error) {
                 console.error('Failed fetch API:', error);
@@ -80,10 +107,36 @@ const BlogMain = () => {
         }
     };
 
-    const handleLikeBlog = (blogId: string) => {
-        setBlogs(
-            blogs.map((blog) => (blog.id === blogId ? { ...blog, likes: blog.likes + 1 } : blog)),
-        );
+    /**
+     * ブログいいねハンドル
+     * @param localBlogId
+     * @returns void
+     */
+    const handleBlogLike = async (localBlogId: string) => {
+        try {
+            const ret = !blogLikes.includes(localBlogId)
+                ? await createBlogLikeById(localBlogId)
+                : await deleteBlogLikeById(localBlogId);
+            if (ret) {
+                if (!blogLikes.includes(localBlogId)) {
+                    setBlogLikes([...blogLikes, localBlogId]);
+                    setBlogs(
+                        blogs.map((blog) =>
+                            blog.id === localBlogId ? { ...blog, likes: blog.likes + 1 } : blog,
+                        ),
+                    );
+                } else {
+                    setBlogLikes(blogLikes.filter((blogId) => blogId !== localBlogId));
+                    setBlogs(
+                        blogs.map((blog) =>
+                            blog.id === localBlogId ? { ...blog, likes: blog.likes - 1 } : blog,
+                        ),
+                    );
+                }
+            }
+        } catch (error) {
+            console.error('Failed to fetch blog like:', error);
+        }
     };
 
     const paginateBlogs = (blogs: BlogType[], page: number, itemsPerPage: number) => {
@@ -140,7 +193,15 @@ const BlogMain = () => {
 
                             {/** いいね */}
                             <div className="flex justify-between items-center">
-                                <span className="text-gray-600 text-sm">❤️ {blog.likes}</span>
+                                <span
+                                    className={`text-sm ${
+                                        blogLikes.includes(blog.id)
+                                            ? 'text-red-600'
+                                            : 'text-gray-600'
+                                    }`}
+                                >
+                                    ❤️ {blog.likes}
+                                </span>
 
                                 <div className="flex items-center">
                                     {isLoggedIn && (
@@ -161,7 +222,7 @@ const BlogMain = () => {
                                     )}
 
                                     <button
-                                        onClick={() => handleLikeBlog(blog.id)}
+                                        onClick={() => handleBlogLike(blog.id)}
                                         className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-2 border border-blue-500 hover:border-transparent rounded ml-2"
                                     >
                                         いいね!

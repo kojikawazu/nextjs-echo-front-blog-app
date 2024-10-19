@@ -16,6 +16,33 @@ export const generateVisitId = async () => {
 };
 
 /**
+ * ブログいいね一覧取得
+ * @returns responseData or null
+ */
+export const fetchBlogLikes = async () => {
+    try {
+        const response = await fetch(`/api/blog-likes`, {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store',
+        });
+
+        console.log('fetch blog likes GET response status:', response.status);
+
+        if (response.ok) {
+            const responseData = await response.json();
+            return responseData;
+        } else {
+            console.error('Failed to fetch blog likes');
+            return null;
+        }
+    } catch (error) {
+        console.error('Server error:', error);
+        throw new Error('Failed to fetch blog likes');
+    }
+};
+
+/**
  * いいねを取得する
  * @param blogId
  * @returns responseData or null

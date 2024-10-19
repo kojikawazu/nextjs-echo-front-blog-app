@@ -57,6 +57,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
     const [blog, setBlog] = useState<BlogType>();
     // markdown用
     const [markdownContent, setMarkdownContent] = useState('');
+    // ブログいいね
     const [isBlogLike, setIsBlogLike] = useState(false);
     // ブログメタ情報
     // const [blogMeta] = useState<{ title: string; topics: string[] }>({
@@ -257,11 +258,11 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                                 className="text-[#4a90e2] hover:text-[#3b7ac7] font-bold py-2 px-4 focus:outline-none focus:shadow-outline ml-2"
                             >
                                 <div
-                                    className={`${isBlogLike ? 'text-red-600' : 'text-[#4a90e2] hover:text-[#3b7ac7]'}`}
+                                    className={`flex ${isBlogLike ? 'text-red-600' : 'text-[#4a90e2] hover:text-[#3b7ac7]'}`}
                                 >
-                                    ❤️
+                                    <div>❤️</div>
+                                    <p>{blog.likes}</p>
                                 </div>
-                                {blog.likes}
                             </button>
                             <button
                                 onClick={() => handleEditBlogForm(router, blog.id)}
