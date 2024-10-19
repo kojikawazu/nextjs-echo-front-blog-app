@@ -1,12 +1,19 @@
 'use client';
 
 import React from 'react';
+import { toast } from 'react-toastify';
+
+// types
 import { UserLoginFormType } from '@/app/types/users-type';
+// utils
 import { isValidEmail } from '@/app/utils/validate/validate';
 import { handleFormChange } from '@/app/utils/form/handle-form';
+// hooks
 import { useUser } from '@/app/hooks/user/useUser';
 import { useUserLoginForm } from '@/app/hooks/user/useUserLoginForm';
+// components
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
+import { CommonConstants } from '@/app/utils/constants/common-constants';
 
 /**
  * ユーザーログインフォームコンポーネント
@@ -39,12 +46,12 @@ const UserLoginForm = () => {
 
         // ユーザーネームとパスワードが入力されているかチェック
         if (formData.username === '' || formData.password === '') {
-            setErrorMessage('ユーザーネームとパスワードを入力してください');
+            toast.error(CommonConstants.TOAST_MESSAGE.LOGIN_USER_INVALID_EMAIL_AND_PASSWORD);
             return;
         }
         // メールアドレスの形式チェック
         if (!isValidEmail(formData.username)) {
-            setErrorMessage('正しいEメールアドレスを入力してください');
+            toast.error(CommonConstants.TOAST_MESSAGE.LOGIN_USER_INVALID_EMAIL_FORMAT);
             return;
         }
 
@@ -55,8 +62,8 @@ const UserLoginForm = () => {
         try {
             await handleLogin(formData.username, formData.password);
         } catch (error) {
-            console.error('ログイン中にエラーが発生しました:', error);
-            setErrorMessage('ログイン中にエラーが発生しました。再度お試しください。');
+            console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+            toast.error(CommonConstants.TOAST_MESSAGE.LOGIN_USER_FAILURE);
         } finally {
             setIsLoginLoading(false);
         }
@@ -79,7 +86,7 @@ const UserLoginForm = () => {
                     {isLoginError && (
                         <div className="flex justify-center">
                             <p className="text-red-500 text-sm italic mb-4">
-                                {'ユーザーログインに失敗しました'}
+                                {CommonConstants.LOGIN_FORM.LOGIN_ERROR_MESSAGE}
                             </p>
                         </div>
                     )}
@@ -135,7 +142,9 @@ const UserLoginForm = () => {
                             type="submit"
                             disabled={isLoginLoading}
                         >
-                            {isLoginLoading ? 'ログイン中...' : 'ログイン'}
+                            {isLoginLoading
+                                ? CommonConstants.LOGIN_FORM.LOGIN_NOW
+                                : CommonConstants.LOGIN_FORM.LOGIN_BUTTON}
                         </button>
                     </div>
                 </form>

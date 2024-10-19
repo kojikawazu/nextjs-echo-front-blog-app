@@ -3,9 +3,13 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
-import { useUser } from '@/app/hooks/user/useUser';
+// utils
 import { handleCreateBlogForm } from '@/app/utils/blog/handle-blog';
 import { handleUserEditForm } from '@/app/utils/user/handle-user';
+// hooks
+import { useUser } from '@/app/hooks/user/useUser';
+// components
+import LoadingComponent from '@/app/components/common/LoadingComponent';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 
 /**
@@ -28,7 +32,9 @@ const UserDetail = () => {
             handleLogin={() => {}}
         >
             {isLoading ? (
-                <div className="flex-grow p-4 flex items-center justify-center">Loading...</div>
+                <div className="flex-grow p-4 flex items-center justify-center">
+                    <LoadingComponent />
+                </div>
             ) : (
                 <main className="flex-grow p-6">
                     {/** 戻る */}
