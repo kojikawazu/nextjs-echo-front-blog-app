@@ -4,13 +4,15 @@
 export const CommonConstants = {
     // toast messages
     TOAST_MESSAGE: {
-        CONFIRM_BLOG_ADD: 'ブログを追加してもよろしいですか？',
-
-        CONFIRM_DELETE_BLOG: 'ブログを削除しますか？',
-        CONFIRM_ADD_COMMENT: 'コメントを追加しますか？',
-
         ADD_COMMENT_INVALID_REQUIRED: '名前とコメントは必須です。',
         ADD_COMMENT_SUCCESSED: 'コメントを追加しました。',
+    },
+    // confirm messages
+    CONFIRM_MESSAGE: {
+        BLOG_ADD: 'ブログを追加してもよろしいですか？',
+        BLOG_DELETE: 'ブログを削除してもよろしいですか？',
+
+        ADD_COMMENT: 'コメントを追加してもよろしいですか？',
     },
     // URL path
     URL_PATH: {
