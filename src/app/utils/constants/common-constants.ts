@@ -34,6 +34,7 @@ export const CommonConstants = {
     // URL path
     URL_PATH: {
         BLOG_HOME: '/blog',
+        USER_LOGIN: '/user/login',
     },
     // API error message
     ERROR_MESSAGE: {
