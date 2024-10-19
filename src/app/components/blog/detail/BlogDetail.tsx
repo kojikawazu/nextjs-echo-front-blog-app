@@ -238,7 +238,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
         >
-            {isLoading || isLoadingBlog || isLoadingBlogLike || isLoadingComments ? (
+            {isLoading ? (
                 <div className="flex-grow p-4 flex items-center justify-center">Loading...</div>
             ) : blog == undefined ? (
                 <div className="flex-grow p-4 flex items-center justify-center">No blog found</div>
@@ -254,52 +254,75 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                         </button>
                     </div>
 
-                    {/** ブログ詳細 */}
+                    {/** ブログ詳細 start */}
                     <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                        <h2 className="text-2xl font-bold mb-4">{blog.title}</h2>
-                        {/* <p className="text-sm text-gray-600">
-                            トピック: {blogMeta.topics.join(', ')}
-                        </p> */}
-
-                        <div className="flex space-x-4 mb-2">
-                            <p className="text-sm text-gray-600">カテゴリー: {blog.category}</p>
-                            <p className="text-sm text-gray-600">タグ: {blog.tags.join(', ')}</p>
-                        </div>
-
-                        <div className="flex space-x-4 mb-4">
-                            <p className="text-sm text-gray-600">
-                                作成日: {format(new Date(blog.createdAt), 'yyyy/MM/dd HH:mm')}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                                更新日: {format(new Date(blog.updatedAt), 'yyyy/MM/dd HH:mm')}
-                            </p>
-                        </div>
-
-                        <div className="mb-4 border-t border-b border-gray-200 py-4">
-                            <h3 className="text-lg font-semibold mb-2">概要</h3>
-                            <p className="mb-4">{blog.description}</p>
-                            <div className="markdown-content">
-                                <ReactMarkdown
-                                    remarkPlugins={[remarkGfm, remarkBreaks]}
-                                    rehypePlugins={[rehypeRaw, rehypeHighlight]}
-                                >
-                                    {markdownContent}
-                                </ReactMarkdown>
+                        {isLoadingBlog ? (
+                            <div className="flex-grow p-4 flex items-center justify-center">
+                                Loading...
                             </div>
-                        </div>
+                        ) : (
+                            <>
+                                <h2 className="text-2xl font-bold mb-4">{blog.title}</h2>
+                                {/* <p className="text-sm text-gray-600">
+                                    トピック: {blogMeta.topics.join(', ')}
+                                </p> */}
 
-                        <div className="flex justify-end items-center space-x-2 mb-4">
-                            <button
-                                onClick={() => handleBlogLike(blog.id)}
-                                className="text-[#4a90e2] hover:text-[#3b7ac7] font-bold py-2 px-4 focus:outline-none focus:shadow-outline ml-2"
-                            >
-                                <div
-                                    className={`flex ${isBlogLike ? 'text-red-600' : 'text-[#4a90e2] hover:text-[#3b7ac7]'}`}
-                                >
-                                    <div>❤️</div>
-                                    <p>{blog.likes}</p>
+                                <div className="flex space-x-4 mb-2">
+                                    <p className="text-sm text-gray-600">
+                                        カテゴリー: {blog.category}
+                                    </p>
+                                    <p className="text-sm text-gray-600">
+                                        タグ: {blog.tags.join(', ')}
+                                    </p>
                                 </div>
-                            </button>
+
+                                <div className="flex space-x-4 mb-4">
+                                    <p className="text-sm text-gray-600">
+                                        作成日:{' '}
+                                        {format(new Date(blog.createdAt), 'yyyy/MM/dd HH:mm')}
+                                    </p>
+                                    <p className="text-sm text-gray-600">
+                                        更新日:{' '}
+                                        {format(new Date(blog.updatedAt), 'yyyy/MM/dd HH:mm')}
+                                    </p>
+                                </div>
+
+                                <div className="mb-4 border-t border-b border-gray-200 py-4">
+                                    <h3 className="text-lg font-semibold mb-2">概要</h3>
+                                    <p className="mb-4">{blog.description}</p>
+                                    <div className="markdown-content">
+                                        <ReactMarkdown
+                                            remarkPlugins={[remarkGfm, remarkBreaks]}
+                                            rehypePlugins={[rehypeRaw, rehypeHighlight]}
+                                        >
+                                            {markdownContent}
+                                        </ReactMarkdown>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+                        {/** ブログ詳細 end */}
+
+                        {/** いいね、編集、削除 */}
+                        <div className="flex justify-end items-center space-x-2 mb-4">
+                            {/** いいね */}
+                            {isLoadingBlogLike ? (
+                                <div className="flex items-center justify-center">Loading...</div>
+                            ) : (
+                                <button
+                                    onClick={() => handleBlogLike(blog.id)}
+                                    className="text-[#4a90e2] hover:text-[#3b7ac7] font-bold py-2 px-4 focus:outline-none focus:shadow-outline ml-2"
+                                >
+                                    <div
+                                        className={`flex ${isBlogLike ? 'text-red-600' : 'text-[#4a90e2] hover:text-[#3b7ac7]'}`}
+                                    >
+                                        <div>❤️</div>
+                                        <p>{blog.likes}</p>
+                                    </div>
+                                </button>
+                            )}
+
+                            {/** 編集、削除 */}
                             <button
                                 onClick={() => handleEditBlogForm(router, blog.id)}
                                 className="bg-[#4a90e2] hover:bg-[#3b7ac7] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -314,55 +337,63 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                             </button>
                         </div>
 
-                        <div className="mt-6">
-                            <h3 className="text-lg font-semibold mb-2">ユーザー</h3>
-                            <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="guestUser"
-                                type="text"
-                                name="guestUser"
-                                value={commentForm.guestUser}
-                                onChange={(e) =>
-                                    handleFormChange<CommentFormType>(
-                                        e,
-                                        commentForm,
-                                        setCommentForm,
-                                    )
-                                }
-                                required
-                            />
+                        {/** コメント */}
+                        {isLoadingComments ? (
+                            <div className="flex items-center justify-center">Loading...</div>
+                        ) : (
+                            <div className="mt-6">
+                                {/** コメントフォーム start */}
+                                <h3 className="text-lg font-semibold mb-2">ユーザー</h3>
+                                <input
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="guestUser"
+                                    type="text"
+                                    name="guestUser"
+                                    value={commentForm.guestUser}
+                                    onChange={(e) =>
+                                        handleFormChange<CommentFormType>(
+                                            e,
+                                            commentForm,
+                                            setCommentForm,
+                                        )
+                                    }
+                                    required
+                                />
 
-                            <h3 className="text-lg font-semibold mb-2">コメント</h3>
-                            <textarea
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
-                                id="comment"
-                                value={commentForm?.comment}
-                                name="comment"
-                                onChange={(e) =>
-                                    handleTextareaFormChange<CommentFormType>(
-                                        e,
-                                        commentForm,
-                                        setCommentForm,
-                                    )
-                                }
-                                placeholder="コメントを書く..."
-                            />
+                                <h3 className="text-lg font-semibold mb-2">コメント</h3>
+                                <textarea
+                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2"
+                                    id="comment"
+                                    value={commentForm?.comment}
+                                    name="comment"
+                                    onChange={(e) =>
+                                        handleTextareaFormChange<CommentFormType>(
+                                            e,
+                                            commentForm,
+                                            setCommentForm,
+                                        )
+                                    }
+                                    placeholder="コメントを書く..."
+                                />
 
-                            <button
-                                onClick={() => handleAddComment(blog.id)}
-                                className="bg-[#4a90e2] hover:bg-[#3b7ac7] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
-                            >
-                                コメントを追加
-                            </button>
+                                <button
+                                    onClick={() => handleAddComment(blog.id)}
+                                    className="bg-[#4a90e2] hover:bg-[#3b7ac7] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
+                                >
+                                    コメントを追加
+                                </button>
+                                {/** コメントフォーム end */}
 
-                            <ul className="mb-4">
-                                {comments.map((comment, index) => (
-                                    <li key={index} className="p-2 border-b border-gray-200">
-                                        <strong>{comment.guestUser}</strong> : {comment.comment}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
+                                {/** コメントリスト */}
+                                <ul className="mb-4">
+                                    {comments.map((comment, index) => (
+                                        <li key={index} className="p-2 border-b border-gray-200">
+                                            <strong>{comment.guestUser}</strong> : {comment.comment}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </div>
                 </main>
             )}
