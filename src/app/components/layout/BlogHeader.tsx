@@ -1,6 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
 
+// components
+import LoadingComponent from '@/app/components/common/LoadingComponent';
+
 interface BlogHeaderProps {
     isLoading: boolean;
     isLoggedIn: boolean;
@@ -35,7 +38,9 @@ const BlogHeader = ({
             </Link>
 
             {isLoading ? (
-                <div className="text-sm mr-2">Loading...</div>
+                <div className="text-sm mr-2">
+                    <LoadingComponent />
+                </div>
             ) : (
                 <div className="flex items-center">
                     {isLoggedIn ? (

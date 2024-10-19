@@ -3,11 +3,18 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
+// constants
+import { CommonConstants } from '@/app/utils/constants/common-constants';
+// types
 import { BlogCreateFormType } from '@/app/types/blogs-types';
+// utils
 import { handleFormChange } from '@/app/utils/form/handle-form';
 import { createBlog } from '@/app/utils/blog/fetch-blog';
+// hooks
 import { useUser } from '@/app/hooks/user/useUser';
 import { useBlogCreateForm } from '@/app/hooks/blog/useBlogCreateForm';
+// components
+import LoadingComponent from '@/app/components/common/LoadingComponent';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 
 /**
@@ -19,7 +26,6 @@ const BlogCreateForm = () => {
     const router = useRouter();
     // ブログ作成フォームカスタムフック
     const { formData, setFormData } = useBlogCreateForm();
-
     // ユーザー情報カスタムフック
     const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
 
@@ -27,15 +33,15 @@ const BlogCreateForm = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (confirm('本当に追加してよろしいですか？')) {
+        if (confirm(CommonConstants.CONFIRM_MESSAGE.BLOG_ADD)) {
             try {
                 const ret = await createBlog(formData);
 
                 if (ret) {
-                    router.push('/blog');
+                    router.push(CommonConstants.URL_PATH.BLOG_HOME);
                 }
             } catch (error) {
-                console.error('Server error:', error);
+                console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
             }
         }
     };
@@ -50,7 +56,9 @@ const BlogCreateForm = () => {
             handleLogin={handleLoginForm}
         >
             {isLoading ? (
-                <div className="flex-grow p-4 flex items-center justify-center">Loading...</div>
+                <div className="flex-grow p-4 flex items-center justify-center">
+                    <LoadingComponent />
+                </div>
             ) : (
                 <main className="p-4">
                     {/** 戻る */}
