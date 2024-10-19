@@ -30,6 +30,9 @@ export interface BlogType {
     updatedAt: Date;
 }
 
+/**
+ * @description: Type for the blog like
+ */
 export interface BlogCreateFormType {
     title: string;
     description: string;
