@@ -10,6 +10,8 @@ import rehypeHighlight from 'rehype-highlight';
 import { format } from 'date-fns';
 import { toast } from 'react-toastify';
 
+// constants
+import { CommonConstants } from '@/app/utils/constants/common-constants';
 // types
 import { BlogType } from '@/app/types/blogs-types';
 import { CommentFormType } from '@/app/types/comment-types';
@@ -64,6 +66,12 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
     //     title: '',
     //     topics: [],
     // });
+    // ブログローディング
+    const [isLoadingBlog, setIsLoadingBlog] = useState(true);
+    // ブログいいねローディング
+    const [isLoadingBlogLike, setIsLoadingBlogLike] = useState(true);
+    // ブログコメントローディング
+    const [isLoadingComments, setIsLoadingComments] = useState(true);
 
     // コメントカスタムフック
     const { commentForm, setCommentForm, comments, setComments, addCommentData, validation } =
@@ -73,14 +81,8 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
 
     useEffect(() => {
         const localFetch = async () => {
-            let githubUrls = '';
-
             try {
-                const [responseBlogData, reasponseBlogLiked, rawCommentsData] = await Promise.all([
-                    fetchBlogById(blogId),
-                    fetchBlogLikeById(blogId),
-                    fetchCommentsByBlogId(blogId),
-                ]);
+                const [responseBlogData] = await Promise.all([fetchBlogById(blogId)]);
 
                 /**
                  * ブログデータ取得
@@ -90,7 +92,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                     const changedBlogs: BlogType =
                         conversionFromRawBlogTypeToBlogType(responseBlogData);
                     setBlog(changedBlogs);
-                    githubUrls = changedBlogs.githubUrl;
+                    const githubUrls = changedBlogs.githubUrl;
 
                     /**
                      * GitHubからMarkdownを取得
@@ -100,6 +102,22 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                         setMarkdownContent(resGitHubContent);
                     }
                 }
+            } catch (error) {
+                console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+            } finally {
+                setIsLoadingBlog(false);
+            }
+        };
+
+        if (!isLoading && isLoggedIn) {
+            localFetch();
+        }
+    }, [isLoading, isLoggedIn, blogId, setIsLoadingBlog]);
+
+    useEffect(() => {
+        const localFetch = async () => {
+            try {
+                const [reasponseBlogLiked] = await Promise.all([fetchBlogLikeById(blogId)]);
 
                 /**
                  * ブログいいねデータ取得
@@ -108,6 +126,22 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                     const isLiked: boolean = reasponseBlogLiked.isLiked;
                     setIsBlogLike(isLiked);
                 }
+            } catch (error) {
+                console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+            } finally {
+                setIsLoadingBlogLike(false);
+            }
+        };
+
+        if (!isLoading && isLoggedIn) {
+            localFetch();
+        }
+    }, [isLoading, isLoggedIn, blogId, setIsLoadingBlogLike]);
+
+    useEffect(() => {
+        const localFetch = async () => {
+            try {
+                const [rawCommentsData] = await Promise.all([fetchCommentsByBlogId(blogId)]);
 
                 /**
                  * コメントデータリストの取得
@@ -118,28 +152,30 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                     setComments(commentsData);
                 }
             } catch (error) {
-                console.error('API Error:', error);
+                console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+            } finally {
+                setIsLoadingComments(false);
             }
         };
 
         if (!isLoading && isLoggedIn) {
             localFetch();
         }
-    }, [isLoading, isLoggedIn, blogId, setComments]);
+    }, [isLoading, isLoggedIn, blogId, setComments, setIsLoadingComments]);
 
     /**
      * ブログ削除ハンドル
      * @param localBlogId
      */
     const handleDeleteBlog = async (localBlogId: string) => {
-        if (confirm('本当に削除しますか？')) {
+        if (confirm(CommonConstants.TOAST_MESSAGE.CONFIRM_DELETE_BLOG)) {
             try {
                 const ret = await deleteBlog(localBlogId);
                 if (ret) {
-                    router.push('/blog');
+                    router.push(CommonConstants.URL_PATH.BLOG_HOME);
                 }
             } catch (error) {
-                console.error('Failed to delete blog:', error);
+                console.error(`${CommonConstants.ERROR_MESSAGE.DEL_BLOG_FAILURE}: `, error);
             }
         }
     };
@@ -161,7 +197,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                 }
             }
         } catch (error) {
-            console.error('Failed to fetch blog like:', error);
+            console.error(`${CommonConstants.ERROR_MESSAGE.BLOG_LIKE_FAILURE}: `, error);
         }
     };
 
@@ -171,21 +207,21 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
      * @returns void
      */
     const handleAddComment = async (localBlogId: string) => {
-        if (confirm('コメントを追加しますか？')) {
+        if (confirm(CommonConstants.TOAST_MESSAGE.CONFIRM_ADD_COMMENT)) {
             // バリデーション
             if (!validation()) {
-                toast.error('名前とコメントは必須です');
+                toast.error(CommonConstants.TOAST_MESSAGE.ADD_COMMENT_INVALID_REQUIRED);
                 return;
             }
 
             try {
                 const response = await createComment(commentForm, localBlogId);
                 if (response) {
-                    toast.success('コメントを追加しました');
+                    toast.success(CommonConstants.TOAST_MESSAGE.ADD_COMMENT_SUCCESSED);
                     addCommentData();
                 }
             } catch (error) {
-                console.error('Failed to add comment:', error);
+                console.error(`${CommonConstants.ERROR_MESSAGE.ADD_COMMENT_FAILURE}: `, error);
             }
         }
     };
@@ -202,7 +238,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
         >
-            {isLoading ? (
+            {isLoading || isLoadingBlog || isLoadingBlogLike || isLoadingComments ? (
                 <div className="flex-grow p-4 flex items-center justify-center">Loading...</div>
             ) : blog == undefined ? (
                 <div className="flex-grow p-4 flex items-center justify-center">No blog found</div>
