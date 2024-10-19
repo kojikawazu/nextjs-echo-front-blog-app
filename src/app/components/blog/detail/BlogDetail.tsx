@@ -8,6 +8,7 @@ import remarkBreaks from 'remark-breaks';
 import rehypeRaw from 'rehype-raw';
 import rehypeHighlight from 'rehype-highlight';
 import { format } from 'date-fns';
+import { toast } from 'react-toastify';
 
 // types
 import { BlogType } from '@/app/types/blogs-types';
@@ -22,6 +23,11 @@ import {
 import { handleFormChange, handleTextareaFormChange } from '@/app/utils/form/handle-form';
 import { createComment, fetchCommentsByBlogId } from '@/app/utils/comment/fetch-comment';
 import { fetchMarkdown } from '@/app/utils/github/fetch-github';
+import {
+    createBlogLikeById,
+    deleteBlogLikeById,
+    fetchBlogLikeById,
+} from '@/app/utils/blog-like/fetch-blog-like';
 // hooks
 import { useUser } from '@/app/hooks/user/useUser';
 import { useCommentForm } from '@/app/hooks/comment/useCommentForm';
@@ -30,7 +36,6 @@ import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
 // css
 import 'highlight.js/styles/github.css';
 import '@/app/styles/markdown.css';
-import { toast } from 'react-toastify';
 
 interface BlogDetailProps {
     blogId: string;
@@ -52,11 +57,12 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
     const [blog, setBlog] = useState<BlogType>();
     // markdown用
     const [markdownContent, setMarkdownContent] = useState('');
+    const [isBlogLike, setIsBlogLike] = useState(false);
     // ブログメタ情報
-    const [blogMeta] = useState<{ title: string; topics: string[] }>({
-        title: '',
-        topics: [],
-    });
+    // const [blogMeta] = useState<{ title: string; topics: string[] }>({
+    //     title: '',
+    //     topics: [],
+    // });
 
     // コメントカスタムフック
     const { commentForm, setCommentForm, comments, setComments, addCommentData, validation } =
@@ -68,52 +74,50 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
         const localFetch = async () => {
             let githubUrls = '';
 
-            /**
-             * ブログデータ取得
-             */
             try {
-                const responseBlogData = await fetchBlogById(blogId);
+                const [responseBlogData, reasponseBlogLiked, rawCommentsData] = await Promise.all([
+                    fetchBlogById(blogId),
+                    fetchBlogLikeById(blogId),
+                    fetchCommentsByBlogId(blogId),
+                ]);
+
+                /**
+                 * ブログデータ取得
+                 */
                 if (responseBlogData) {
                     // RawBlogType から BlogType に変換
                     const changedBlogs: BlogType =
                         conversionFromRawBlogTypeToBlogType(responseBlogData);
                     setBlog(changedBlogs);
                     githubUrls = changedBlogs.githubUrl;
-                } else {
-                    return;
-                }
-            } catch (error) {
-                console.error('Server error:', error);
-                return;
-            }
 
-            /**
-             * GitHubからMarkdownを取得
-             */
-            try {
-                const resGitHubContent = await fetchMarkdown(githubUrls);
-                if (resGitHubContent) {
-                    setMarkdownContent(resGitHubContent);
-                } else {
-                    return;
+                    /**
+                     * GitHubからMarkdownを取得
+                     */
+                    const resGitHubContent = await fetchMarkdown(githubUrls);
+                    if (resGitHubContent) {
+                        setMarkdownContent(resGitHubContent);
+                    }
                 }
-            } catch (error) {
-                console.error('API Error:', error);
-                return;
-            }
 
-            /**
-             * コメントデータリストの取得
-             */
-            try {
-                const rawCommentsData = await fetchCommentsByBlogId(blogId);
+                /**
+                 * ブログいいねデータ取得
+                 */
+                if (reasponseBlogLiked) {
+                    const isLiked: boolean = reasponseBlogLiked.isLiked;
+                    setIsBlogLike(isLiked);
+                }
+
+                /**
+                 * コメントデータリストの取得
+                 */
                 if (rawCommentsData) {
                     const commentsData: CommentFormType[] =
                         conversionFRawCommentListTCommentList(rawCommentsData);
                     setComments(commentsData);
                 }
             } catch (error) {
-                console.error('Failed to fetch comments:', error);
+                console.error('API Error:', error);
             }
         };
 
@@ -136,6 +140,27 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
             } catch (error) {
                 console.error('Failed to delete blog:', error);
             }
+        }
+    };
+
+    /**
+     * ブログいいねハンドル
+     * @param localBlogId
+     * @returns void
+     */
+    const handleBlogLike = async (localBlogId: string) => {
+        try {
+            const ret = !isBlogLike
+                ? await createBlogLikeById(localBlogId)
+                : await deleteBlogLikeById(localBlogId);
+            if (ret) {
+                setIsBlogLike(!isBlogLike);
+                if (blog?.id && blog.userId) {
+                    setBlog({ ...blog, likes: blog.likes + (isBlogLike ? -1 : 1) });
+                }
+            }
+        } catch (error) {
+            console.error('Failed to fetch blog like:', error);
         }
     };
 
@@ -195,9 +220,9 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                     {/** ブログ詳細 */}
                     <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                         <h2 className="text-2xl font-bold mb-4">{blog.title}</h2>
-                        <p className="text-sm text-gray-600">
+                        {/* <p className="text-sm text-gray-600">
                             トピック: {blogMeta.topics.join(', ')}
-                        </p>
+                        </p> */}
 
                         <div className="flex space-x-4 mb-2">
                             <p className="text-sm text-gray-600">カテゴリー: {blog.category}</p>
@@ -228,10 +253,15 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
 
                         <div className="flex justify-end items-center space-x-2 mb-4">
                             <button
-                                onClick={() => alert('いいねが追加されました！')}
+                                onClick={() => handleBlogLike(blog.id)}
                                 className="text-[#4a90e2] hover:text-[#3b7ac7] font-bold py-2 px-4 focus:outline-none focus:shadow-outline ml-2"
                             >
-                                ❤️ 0
+                                <div
+                                    className={`${isBlogLike ? 'text-red-600' : 'text-[#4a90e2] hover:text-[#3b7ac7]'}`}
+                                >
+                                    ❤️
+                                </div>
+                                {blog.likes}
                             </button>
                             <button
                                 onClick={() => handleEditBlogForm(router, blog.id)}

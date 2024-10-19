@@ -4,11 +4,16 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+// types
 import { BlogType } from '@/app/types/blogs-types';
-import { useUser } from '@/app/hooks/user/useUser';
+// utils
 import { handleCreateBlogForm, handleEditBlogForm } from '@/app/utils/blog/handle-blog';
 import { deleteBlog, fetchBlogs } from '@/app/utils/blog/fetch-blog';
 import { conversionFromRawBlogTypeToBlogType } from '@/app/utils/conversion/conversion';
+import { generateVisitId } from '@/app/utils/blog-like/fetch-blog-like';
+// hooks
+import { useUser } from '@/app/hooks/user/useUser';
+// components
 import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
 
 /**
@@ -32,15 +37,16 @@ const BlogMain = () => {
     const itemsPerPage = 4;
 
     useEffect(() => {
-        /**
-         * ブログ一覧を取得する
-         */
-        const localFetchBlogs = async () => {
+        const localFetchData = async () => {
             try {
-                const responseData = await fetchBlogs();
-                if (responseData) {
+                const [, responseBlogsData] = await Promise.all([generateVisitId(), fetchBlogs()]);
+
+                /**
+                 * ブログ一覧を取得する
+                 */
+                if (responseBlogsData) {
                     // RawBlogType から BlogType に変換
-                    const changedBlogs: BlogType[] = responseData.map(
+                    const changedBlogs: BlogType[] = responseBlogsData.map(
                         conversionFromRawBlogTypeToBlogType,
                     );
                     //console.log('changed blogs data:', changedBlogs);
@@ -51,12 +57,12 @@ const BlogMain = () => {
                     setCategories(['全て', ...newCategories]); // 「全て」を先頭に追加
                 }
             } catch (error) {
-                console.error('Failed to fetch blogs:', error);
+                console.error('Failed fetch API:', error);
             }
         };
 
         if (!isLoading && isLoggedIn) {
-            localFetchBlogs();
+            localFetchData();
         }
     }, [isLoading, isLoggedIn]);
 
