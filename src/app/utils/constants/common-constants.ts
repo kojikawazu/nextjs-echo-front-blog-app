@@ -10,6 +10,7 @@ export const CommonConstants = {
     // confirm messages
     CONFIRM_MESSAGE: {
         BLOG_ADD: 'ブログを追加してもよろしいですか？',
+        BLOG_UPDATE: 'ブログを更新してもよろしいですか？',
         BLOG_DELETE: 'ブログを削除してもよろしいですか？',
 
         ADD_COMMENT: 'コメントを追加してもよろしいですか？',

@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import ClipLoader from 'react-spinners/ClipLoader';
 
 // constants
 import { CommonConstants } from '@/app/utils/constants/common-constants';
@@ -23,6 +22,7 @@ import {
 // hooks
 import { useUser } from '@/app/hooks/user/useUser';
 // components
+import LoadingComponent from '@/app/components/common/LoadingComponent';
 import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
 
 /**
@@ -42,9 +42,11 @@ const BlogMain = () => {
     const [currentPage, setCurrentPage] = useState(1);
     // いいねリスト
     const [blogLikes, setBlogLikes] = useState<string[]>([]);
-
+    //  VisitIdローディング
     const [isLoadingVisitId, setIsLoadingVisitId] = useState(true);
+    // ブログローディング
     const [isLoadingBlogs, setIsLoadingBlogs] = useState(true);
+    // いいねローディング
     const [isLoadingBlogLikes, setIsLoadingBlogLikes] = useState(true);
 
     // ユーザー情報
@@ -210,13 +212,13 @@ const BlogMain = () => {
         >
             {isLoading || isLoadingVisitId ? (
                 <div className="flex-grow p-4 flex items-center justify-center">
-                    <ClipLoader color={'#4a90e2'} loading={true} size={20} />
+                    <LoadingComponent />
                 </div>
             ) : (
                 <main className="flex-grow p-4">
                     {isLoadingBlogs ? (
                         <div className="flex-grow p-4 flex items-center justify-center">
-                            <ClipLoader color={'#4a90e2'} loading={true} size={20} />
+                            <LoadingComponent />
                         </div>
                     ) : (
                         <>
@@ -249,11 +251,7 @@ const BlogMain = () => {
                                     <div className="flex justify-between items-center">
                                         {isLoadingBlogLikes ? (
                                             <div className="flex-grow p-4 flex items-center justify-center">
-                                                <ClipLoader
-                                                    color={'#4a90e2'}
-                                                    loading={true}
-                                                    size={20}
-                                                />
+                                                <LoadingComponent />
                                             </div>
                                         ) : (
                                             <span
@@ -289,11 +287,7 @@ const BlogMain = () => {
 
                                             {isLoadingBlogLikes ? (
                                                 <div className="flex-grow p-4 flex items-center justify-center">
-                                                    <ClipLoader
-                                                        color={'#4a90e2'}
-                                                        loading={true}
-                                                        size={20}
-                                                    />
+                                                    <LoadingComponent />
                                                 </div>
                                             ) : (
                                                 <button

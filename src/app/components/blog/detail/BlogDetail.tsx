@@ -9,7 +9,6 @@ import rehypeRaw from 'rehype-raw';
 import rehypeHighlight from 'rehype-highlight';
 import { format } from 'date-fns';
 import { toast } from 'react-toastify';
-import ClipLoader from 'react-spinners/ClipLoader';
 
 // constants
 import { CommonConstants } from '@/app/utils/constants/common-constants';
@@ -35,6 +34,7 @@ import {
 import { useUser } from '@/app/hooks/user/useUser';
 import { useCommentForm } from '@/app/hooks/comment/useCommentForm';
 // components
+import LoadingComponent from '@/app/components/common/LoadingComponent';
 import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
 // css
 import 'highlight.js/styles/github.css';
@@ -241,7 +241,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
         >
             {isLoading ? (
                 <div className="flex-grow p-4 flex items-center justify-center">
-                    <ClipLoader color={'#4a90e2'} loading={true} size={20} />
+                    <LoadingComponent />
                 </div>
             ) : blog == undefined ? (
                 <div className="flex-grow p-4 flex items-center justify-center">No blog found</div>
@@ -261,7 +261,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                     <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                         {isLoadingBlog ? (
                             <div className="p-4 flex items-center justify-center">
-                                <ClipLoader color={'#4a90e2'} loading={true} size={20} />
+                                <LoadingComponent />
                             </div>
                         ) : (
                             <>
@@ -311,7 +311,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                             {/** いいね */}
                             {isLoadingBlogLike ? (
                                 <div className="p-4 flex items-center justify-center">
-                                    <ClipLoader color={'#4a90e2'} loading={true} size={20} />
+                                    <LoadingComponent />
                                 </div>
                             ) : (
                                 <button
@@ -346,7 +346,7 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                         {isLoadingComments ? (
                             <div className="flex items-center justify-center">
                                 <div className="p-4 flex items-center justify-center">
-                                    <ClipLoader color={'#4a90e2'} loading={true} size={20} />
+                                    <LoadingComponent />
                                 </div>
                             </div>
                         ) : (
