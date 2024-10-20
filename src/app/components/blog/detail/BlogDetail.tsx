@@ -239,7 +239,8 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
      * @param category カテゴリー
      */
     const handleJumpToBlogList = (category: string) => {
-        const selectedCategory = category === CommonConstants.BLOG_LIST.CATEGORY_ALL ? '' : `?category=${category}`;
+        const selectedCategory =
+            category === CommonConstants.BLOG_LIST.CATEGORY_ALL ? '' : `?category=${category}`;
         router.push(CommonConstants.URL_PATH.BLOG_HOME + `${selectedCategory}`);
     };
 
