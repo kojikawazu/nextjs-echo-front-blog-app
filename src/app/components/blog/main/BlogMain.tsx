@@ -10,7 +10,11 @@ import { CommonConstants } from '@/app/utils/constants/common-constants';
 import { BlogType } from '@/app/types/blogs-types';
 import { BlogLikeType } from '@/app/types/blogs-likes-types';
 // utils
-import { handleCreateBlogForm, handleEditBlogForm } from '@/app/utils/blog/handle-blog';
+import {
+    handleCreateBlogForm,
+    handleEditBlogForm,
+    paginateBlogs,
+} from '@/app/utils/blog/handle-blog';
 import { deleteBlog, fetchBlogs } from '@/app/utils/blog/fetch-blog';
 import { conversionFromRawBlogTypeToBlogType } from '@/app/utils/conversion/conversion';
 import {
@@ -21,21 +25,27 @@ import {
 } from '@/app/utils/blog-like/fetch-blog-like';
 // hooks
 import { useUser } from '@/app/hooks/user/useUser';
+import { useBlogCategory } from '@/app/hooks/blog/useBlogCategory';
 // components
 import LoadingComponent from '@/app/components/common/LoadingComponent';
 import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
 
+type BlogMainProps = {
+    selectCategory: string;
+};
+
 /**
  * ブログメインコンポーネント
+ * @param selectCategory
  * @returns JSX
  */
-const BlogMain = () => {
+const BlogMain = ({ selectCategory }: BlogMainProps) => {
     // Router(カスタムフック)
     const router = useRouter();
     // カテゴリー選択状態
-    const [selectedCategory, setSelectedCategory] = useState('全て');
-    // カテゴリー一覧
-    const [categories, setCategories] = useState<string[]>(['全て']);
+    const [selectedCategory, setSelectedCategory] = useState(
+        selectCategory ? selectCategory : CommonConstants.BLOG_LIST.CATEGORY_ALL,
+    );
     // ブログ一覧
     const [blogs, setBlogs] = useState<BlogType[]>([]);
     // ページネーション
@@ -51,6 +61,22 @@ const BlogMain = () => {
 
     // ユーザー情報
     const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
+    // ブログカテゴリ
+    const { blogCategories } = useBlogCategory();
+
+    // カテゴリーによるフィルタリング
+    const filteredBlogs =
+        selectedCategory === CommonConstants.BLOG_LIST.CATEGORY_ALL
+            ? blogs
+            : blogs.filter((blog) => blog.category === selectedCategory);
+    // ページネーションされたブログリスト
+    const paginatedBlogs = paginateBlogs(
+        filteredBlogs,
+        currentPage,
+        CommonConstants.BLOG_LIST.ITEMS_PER_PAGE,
+    );
+    // ページ数
+    const totalPages = Math.ceil(filteredBlogs.length / CommonConstants.BLOG_LIST.ITEMS_PER_PAGE);
 
     useEffect(() => {
         const localFetch = async () => {
@@ -83,10 +109,6 @@ const BlogMain = () => {
                     );
                     //console.log('changed blogs data:', changedBlogs);
                     setBlogs(changedBlogs);
-
-                    // カテゴリを抽出して追加
-                    const newCategories = [...new Set(changedBlogs.map((blog) => blog.category))]; // 重複排除
-                    setCategories(['全て', ...newCategories]); // 「全て」を先頭に追加
                 }
             } catch (error) {
                 console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
@@ -180,24 +202,6 @@ const BlogMain = () => {
         }
     };
 
-    /** TODO start */
-    const paginateBlogs = (blogs: BlogType[], page: number, itemsPerPage: number) => {
-        const startIndex = (page - 1) * itemsPerPage;
-        return blogs.slice(startIndex, startIndex + itemsPerPage);
-    };
-
-    const filteredBlogs =
-        selectedCategory === '全て'
-            ? blogs
-            : blogs.filter((blog) => blog.category === selectedCategory);
-    const paginatedBlogs = paginateBlogs(
-        filteredBlogs,
-        currentPage,
-        CommonConstants.BLOG_LIST.ITEMS_PER_PAGE,
-    );
-    const totalPages = Math.ceil(filteredBlogs.length / CommonConstants.BLOG_LIST.ITEMS_PER_PAGE);
-    /** TODO end */
-
     return (
         <BlogMainLayout
             isLoading={isLoading}
@@ -206,7 +210,7 @@ const BlogMain = () => {
             handleCreateBlog={() => handleCreateBlogForm(router)}
             handleLogout={handleLogout}
             handleLogin={handleLoginForm}
-            categories={categories}
+            categories={blogCategories}
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
         >
