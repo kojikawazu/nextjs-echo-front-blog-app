@@ -33,6 +33,7 @@ import {
 // hooks
 import { useUser } from '@/app/hooks/user/useUser';
 import { useCommentForm } from '@/app/hooks/comment/useCommentForm';
+import { useBlogCategory } from '@/app/hooks/blog/useBlogCategory';
 // components
 import LoadingComponent from '@/app/components/common/LoadingComponent';
 import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
@@ -53,9 +54,9 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
     // Router(カスタムフック)
     const router = useRouter();
     // 選択カテゴリー
-    const [selectedCategory, setSelectedCategory] = useState('全て');
-    // カテゴリー
-    const categories = ['全て', 'フロントエンド', 'バックエンド', 'DevOps', 'AI/機械学習'];
+    const [selectedCategory, setSelectedCategory] = useState(
+        CommonConstants.BLOG_LIST.CATEGORY_ALL,
+    );
     // ブログ
     const [blog, setBlog] = useState<BlogType>();
     // markdown用
@@ -79,6 +80,8 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
         useCommentForm();
     // ユーザー情報カスタムフック
     const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
+    // ブログカテゴリーカスタムフック
+    const { blogCategories } = useBlogCategory();
 
     useEffect(() => {
         const localFetch = async () => {
@@ -93,7 +96,11 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
                     const changedBlogs: BlogType =
                         conversionFromRawBlogTypeToBlogType(responseBlogData);
                     setBlog(changedBlogs);
+
+                    // GitHubのURL
                     const githubUrls = changedBlogs.githubUrl;
+                    // カテゴリー選択
+                    setSelectedCategory(changedBlogs.category);
 
                     /**
                      * GitHubからMarkdownを取得
@@ -227,6 +234,16 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
         }
     };
 
+    /**
+     * ブログリストへジャンプ
+     * @param category カテゴリー
+     */
+    const handleJumpToBlogList = (category: string) => {
+        const selectedCategory =
+            category === CommonConstants.BLOG_LIST.CATEGORY_ALL ? '' : `?category=${category}`;
+        router.push(CommonConstants.URL_PATH.BLOG_HOME + `${selectedCategory}`);
+    };
+
     return (
         <BlogMainLayout
             isLoading={isLoading}
@@ -235,9 +252,9 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
             handleCreateBlog={() => handleCreateBlogForm(router)}
             handleLogout={handleLogout}
             handleLogin={handleLoginForm}
-            categories={categories}
+            categories={blogCategories}
             selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
+            setSelectedCategory={handleJumpToBlogList}
         >
             {isLoading ? (
                 <div className="flex-grow p-4 flex items-center justify-center">
