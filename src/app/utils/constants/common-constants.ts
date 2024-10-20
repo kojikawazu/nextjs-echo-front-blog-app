@@ -59,7 +59,7 @@ export const CommonConstants = {
     BLOG_LIST: {
         // query param
         QUERY_PARAM_CATEGORY: 'category',
-        
+
         // カテゴリー
         CATEGORY_ALL: '全て',
 
