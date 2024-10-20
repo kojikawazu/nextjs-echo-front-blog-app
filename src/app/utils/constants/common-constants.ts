@@ -57,6 +57,12 @@ export const CommonConstants = {
         BLOG_LIKE_FAILURE: 'いいねの登録/失敗に失敗しました。',
     },
     BLOG_LIST: {
+        // query param
+        QUERY_PARAM_CATEGORY: 'category',
+        
+        // カテゴリー
+        CATEGORY_ALL: '全て',
+
         // 1ページあたりの表示数
         ITEMS_PER_PAGE: 4,
     },

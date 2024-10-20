@@ -62,6 +62,34 @@ export const fetchBlogById = async (blogId: string) => {
 };
 
 /**
+ * ブログカテゴリ取得関数
+ * @returns ブログカテゴリリスト
+ * @throws Error
+ */
+export const fetchBlogCategories = async () => {
+    try {
+        const response = await fetch(`/api/blogs/categories`, {
+            method: 'GET',
+        });
+
+        console.log('fetch blog categories GET response status: ', response.status);
+        //console.log('fetch blog categories GET response headers:', response.headers);
+
+        if (response.ok) {
+            const responseData = await response.json();
+            //console.log('fetch blog categories GET response data:', responseData);
+            return responseData;
+        } else {
+            console.error('Failed to fetch blog categories: ', response.status);
+            return null;
+        }
+    } catch (error) {
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+        throw new Error('Failed to fetch blog categories. ' + error);
+    }
+};
+
+/**
  * ブログ作成関数
  * @param formData フォームデータ
  * @returns true or false
