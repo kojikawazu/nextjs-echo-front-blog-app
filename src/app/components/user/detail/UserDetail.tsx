@@ -3,24 +3,33 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
+// types
+import { UserAuthType } from '@/app/types/users-type';
 // utils
 import { handleCreateBlogForm } from '@/app/utils/blog/handle-blog';
 import { handleUserEditForm } from '@/app/utils/user/handle-user';
 // hooks
-import { useUser } from '@/app/hooks/user/useUser';
+import { useUserS } from '@/app/hooks/user/useUserS';
 // components
 import LoadingComponent from '@/app/components/common/LoadingComponent';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 
+interface UserDetailProps {
+    inAuthUser: UserAuthType;
+}
+
 /**
  * ユーザー詳細コンポーネント
+ * @param inAuthUser
  * @returns JSX
  */
-const UserDetail = () => {
+const UserDetail = ({ inAuthUser }: UserDetailProps) => {
     // Router(カスタムフック)
     const router = useRouter();
-    // ユーザー情報
-    const { isLoading, isLoggedIn, authUser, handleLogout } = useUser();
+    // ユーザー情報(カスタムフック)
+    const { isLoading, isLoggedIn, authUser, handleLogout } = useUserS({
+        inAuthUser,
+    });
 
     return (
         <BlogFormLayout

@@ -3,7 +3,7 @@ import { ReadonlyURLSearchParams } from 'next/navigation';
 import { redirect } from 'next/navigation';
 
 // constants
-import { CommonConstants } from '../utils/constants/common-constants';
+import { CommonConstants } from '@/app/utils/constants/common-constants';
 // types
 import { UserAuthType } from '@/app/types/users-type';
 // utils
