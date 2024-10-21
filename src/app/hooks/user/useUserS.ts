@@ -7,6 +7,11 @@ import { useRouter } from 'next/navigation';
 import { CommonConstants } from '@/app/utils/constants/common-constants';
 // types
 import { UserAuthType } from '@/app/types/users-type';
+// utils
+import {
+    loginServerAction,
+    logoutServerAction,
+} from '@/app/utils/auth/fetch-auth-user-server-action';
 
 interface useUserProps {
     inputAuthUser: UserAuthType | null;
@@ -34,21 +39,9 @@ export const useUserS = ({ inputAuthUser }: useUserProps) => {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`/api/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify({ email, password }),
-            });
+            const ret = await loginServerAction(email, password);
 
-            console.log('auth login post response status: ', response.status);
-            //console.log('auth login post response headers:', response.headers);
-            //console.log('auth login post response body:', response.body);
-
-            if (response.ok) {
-                await response.json();
+            if (ret) {
                 setIsLoggedIn(true);
                 router.push(CommonConstants.URL_PATH.BLOG_HOME);
             } else {
@@ -67,20 +60,13 @@ export const useUserS = ({ inputAuthUser }: useUserProps) => {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`/api/auth/logout`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-            });
+            const ret = await logoutServerAction();
 
-            console.log('auth logout get response status: ', response.status);
-
-            if (response.ok) {
-                await response.json();
+            if (ret) {
                 setIsLoggedIn(false);
                 router.push(CommonConstants.URL_PATH.USER_LOGIN);
+            } else {
+                setIsLoginError(true);
             }
         } catch (error) {
             console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
