@@ -24,9 +24,10 @@ import {
     conversionFromRawBlogTypeToBlogType,
 } from '@/app/utils/conversion/conversion';
 import { handleFormChange, handleTextareaFormChange } from '@/app/utils/form/handle-form';
-import { createComment, fetchCommentsByBlogId } from '@/app/utils/comment/fetch-comment';
+import { fetchCommentsByBlogId } from '@/app/utils/comment/fetch-comment';
 import { deleteBlogServerAction } from '@/app/utils/blog/fetch-blog-server-action';
 import { fetchMarkdown } from '@/app/utils/github/fetch-github';
+import { createCommentServerAction } from '@/app/utils/comment/fetch-comments-server-action';
 import {
     createBlogLikeById,
     deleteBlogLikeById,
@@ -233,8 +234,8 @@ const BlogDetail = ({ blogId, inAuthUser }: BlogDetailProps) => {
             }
 
             try {
-                const response = await createComment(commentForm, localBlogId);
-                if (response) {
+                const ret = await createCommentServerAction(commentForm, localBlogId);
+                if (ret) {
                     toast.success(CommonConstants.TOAST_MESSAGE.ADD_COMMENT_SUCCESSED);
                     addCommentData();
                 }
