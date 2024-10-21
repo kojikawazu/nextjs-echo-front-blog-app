@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 // constants
 import { CommonConstants } from '@/app/utils/constants/common-constants';
 // types
+import { UserAuthType } from '@/app/types/users-type';
 import { BlogCreateFormType } from '@/app/types/blogs-types';
 // utils
 import { handleCreateBlogForm } from '@/app/utils/blog/handle-blog';
@@ -14,7 +15,7 @@ import { handleFormChange } from '@/app/utils/form/handle-form';
 import { fetchBlogById } from '@/app/utils/blog/fetch-blog';
 import { updateBlogServerAction } from '@/app/utils/blog/fetch-blog-server-action';
 // hooks
-import { useUser } from '@/app/hooks/user/useUser';
+import { useUserS } from '@/app/hooks/user/useUserS';
 import { useBlogEditForm } from '@/app/hooks/blog/useBlogEditForm';
 // components
 import LoadingComponent from '@/app/components/common/LoadingComponent';
@@ -22,14 +23,16 @@ import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 
 interface BlogEditFormProps {
     editBlogId: string;
+    inputAuthUser: UserAuthType;
 }
 
 /**
  * ブログ編集フォームコンポーネント
  * @param editBlogId
+ * @param inputAuthUser
  * @returns JSX
  */
-const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
+const BlogEditForm = ({ editBlogId, inputAuthUser }: BlogEditFormProps) => {
     // Router(カスタムフック)
     const router = useRouter();
     // 編集中のブログID
@@ -38,7 +41,9 @@ const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
     // ブログ編集フォームカスタムフック
     const { isLoadingBlogData, formData, setIsLoadingBlogData, setFormData } = useBlogEditForm();
     // ユーザー情報カスタムフック
-    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
+    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUserS({
+        inputAuthUser,
+    });
 
     // ブログデータ取得
     useEffect(() => {
