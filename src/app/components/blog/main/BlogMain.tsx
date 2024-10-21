@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 // constants
 import { CommonConstants } from '@/app/utils/constants/common-constants';
@@ -15,7 +16,8 @@ import {
     handleEditBlogForm,
     paginateBlogs,
 } from '@/app/utils/blog/handle-blog';
-import { deleteBlog, fetchBlogs } from '@/app/utils/blog/fetch-blog';
+import { fetchBlogs } from '@/app/utils/blog/fetch-blog';
+import { deleteBlogServerAction } from '@/app/utils/blog/fetch-blog-server-action';
 import { conversionFromRawBlogTypeToBlogType } from '@/app/utils/conversion/conversion';
 import {
     createBlogLikeById,
@@ -160,11 +162,15 @@ const BlogMain = ({ selectCategory }: BlogMainProps) => {
     const handleDeleteBlog = async (blogId: string) => {
         if (confirm(CommonConstants.CONFIRM_MESSAGE.BLOG_DELETE)) {
             try {
-                const ret = await deleteBlog(blogId);
+                const ret = await deleteBlogServerAction(blogId);
                 if (ret) {
+                    toast.success(CommonConstants.TOAST_MESSAGE.DELETE_BLOG_SUCCESSED);
                     setBlogs(blogs.filter((blog) => blog.id !== blogId));
+                } else {
+                    toast.error(CommonConstants.TOAST_MESSAGE.DELETE_BLOG_FAILURE);
                 }
             } catch (error) {
+                toast.error(CommonConstants.TOAST_MESSAGE.ADD_BLOG_FAILURE);
                 console.error(`${CommonConstants.ERROR_MESSAGE.DEL_BLOG_FAILURE}: `, error);
             }
         }

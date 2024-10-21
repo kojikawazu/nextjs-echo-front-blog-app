@@ -17,13 +17,14 @@ import { BlogType } from '@/app/types/blogs-types';
 import { CommentFormType } from '@/app/types/comment-types';
 // utils
 import { handleCreateBlogForm, handleEditBlogForm } from '@/app/utils/blog/handle-blog';
-import { deleteBlog, fetchBlogById } from '@/app/utils/blog/fetch-blog';
+import { fetchBlogById } from '@/app/utils/blog/fetch-blog';
 import {
     conversionFRawCommentListTCommentList,
     conversionFromRawBlogTypeToBlogType,
 } from '@/app/utils/conversion/conversion';
 import { handleFormChange, handleTextareaFormChange } from '@/app/utils/form/handle-form';
 import { createComment, fetchCommentsByBlogId } from '@/app/utils/comment/fetch-comment';
+import { deleteBlogServerAction } from '@/app/utils/blog/fetch-blog-server-action';
 import { fetchMarkdown } from '@/app/utils/github/fetch-github';
 import {
     createBlogLikeById,
@@ -178,11 +179,15 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
     const handleDeleteBlog = async (localBlogId: string) => {
         if (confirm(CommonConstants.CONFIRM_MESSAGE.BLOG_DELETE)) {
             try {
-                const ret = await deleteBlog(localBlogId);
+                const ret = await deleteBlogServerAction(localBlogId);
                 if (ret) {
+                    toast.success(CommonConstants.TOAST_MESSAGE.DELETE_BLOG_SUCCESSED);
                     router.push(CommonConstants.URL_PATH.BLOG_HOME);
+                } else {
+                    toast.error(CommonConstants.TOAST_MESSAGE.DELETE_BLOG_FAILURE);
                 }
             } catch (error) {
+                toast.error(CommonConstants.TOAST_MESSAGE.ADD_BLOG_FAILURE);
                 console.error(`${CommonConstants.ERROR_MESSAGE.DEL_BLOG_FAILURE}: `, error);
             }
         }
