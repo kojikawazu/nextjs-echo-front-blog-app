@@ -9,10 +9,11 @@ import { CommonConstants } from '@/app/utils/constants/common-constants';
 // types
 import { UserAuthType, UserEditFormType } from '@/app/types/users-type';
 // utils
-import { fetchUser, updateUser } from '@/app/utils/user/fetch-user';
+import { fetchUser } from '@/app/utils/user/fetch-user';
 import { handleCreateBlogForm } from '@/app/utils/blog/handle-blog';
 import { handleFormChange } from '@/app/utils/form/handle-form';
 import { isValidEmail } from '@/app/utils/validate/validate';
+import { updateUserServerAction } from '@/app/utils/user/fetch-user-server-action';
 // hooks
 import { useUser } from '@/app/hooks/user/useUser';
 import { useUserEditForm } from '@/app/hooks/user/useUserEditForm';
@@ -113,11 +114,15 @@ const UserEditForm = ({ inAuthUser }: UserEditFormProps) => {
         if (confirm(CommonConstants.CONFIRM_MESSAGE.USER_UPDATE)) {
             try {
                 // ユーザー情報更新
-                const ret = await updateUser(formData);
+                const ret = await updateUserServerAction(formData);
                 if (ret) {
+                    toast.success(CommonConstants.TOAST_MESSAGE.UPDATE_USER_SUCCESSED);
                     router.push(CommonConstants.URL_PATH.BLOG_HOME);
+                } else {
+                    toast.error(CommonConstants.TOAST_MESSAGE.UPDATE_USER_FAILURE);
                 }
             } catch (error) {
+                toast.error(CommonConstants.TOAST_MESSAGE.UPDATE_USER_FAILURE);
                 console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
             }
         }
