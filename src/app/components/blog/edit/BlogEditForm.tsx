@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 // constants
 import { CommonConstants } from '@/app/utils/constants/common-constants';
@@ -10,7 +11,8 @@ import { BlogCreateFormType } from '@/app/types/blogs-types';
 // utils
 import { handleCreateBlogForm } from '@/app/utils/blog/handle-blog';
 import { handleFormChange } from '@/app/utils/form/handle-form';
-import { fetchBlogById, updateBlog } from '@/app/utils/blog/fetch-blog';
+import { fetchBlogById } from '@/app/utils/blog/fetch-blog';
+import { updateBlogServerAction } from '@/app/utils/blog/fetch-blog-server-action';
 // hooks
 import { useUser } from '@/app/hooks/user/useUser';
 import { useBlogEditForm } from '@/app/hooks/blog/useBlogEditForm';
@@ -68,19 +70,23 @@ const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
     }, [blogId, isLoading, isLoggedIn, router, setFormData, setIsLoadingBlogData]);
 
     /**
-     * フォーム送信処理
-     * @param e
+     * Submit処理
+     * @param formData フォームデータ
      */
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
+    const handleSubmit = async (formData: FormData) => {
         if (confirm(CommonConstants.CONFIRM_MESSAGE.BLOG_UPDATE)) {
             try {
-                const ret = await updateBlog(blogId, formData);
+                //const ret = await updateBlog(blogId, formData);
+                const ret = await updateBlogServerAction(formData, blogId);
+
                 if (ret) {
+                    toast.success(CommonConstants.TOAST_MESSAGE.UPDATE_BLOG_SUCCESSED);
                     router.push(CommonConstants.URL_PATH.BLOG_HOME);
+                } else {
+                    toast.error(CommonConstants.TOAST_MESSAGE.UPDATE_BLOG_FAILURE);
                 }
             } catch (error) {
+                toast.error(CommonConstants.TOAST_MESSAGE.UPDATE_BLOG_FAILURE);
                 console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
             }
         }
@@ -119,7 +125,7 @@ const BlogEditForm = ({ editBlogId }: BlogEditFormProps) => {
                         <>
                             {/** フォーム */}
                             <form
-                                onSubmit={handleSubmit}
+                                action={handleSubmit}
                                 className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
                             >
                                 <div className="mb-4">

@@ -49,7 +49,7 @@ export const createBlogServerAction = async (formData: FormData) => {
         if (response.ok) {
             const responseBody = await response.text();
             const blogData: RawBlogType[] = JSON.parse(responseBody);
-            console.log('create blog POST response body: ', blogData);
+            //console.log('create blog POST response body: ', blogData);
             return blogData;
         } else {
             console.log('create blog POST response error status: ', response.status);
@@ -58,5 +58,59 @@ export const createBlogServerAction = async (formData: FormData) => {
     } catch (error) {
         console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
         throw new Error('Failed to create blog. ' + error);
+    }
+};
+
+/**
+ * ブログ更新関数(サーバーサイド)
+ * @param formData フォームデータ
+ * @param blogId ブログID
+ * @returns 更新後のブログデータ or null
+ * @throws Error
+ */
+export const updateBlogServerAction = async (formData: FormData, blogId: string) => {
+    console.log('updateBlogServerAction formData: ', formData + ' blogId: ' + blogId);
+    const fetchUrl = `${process.env.API_URL}/blogs/update/${blogId}`;
+
+    // 渡すデータのセット
+    const updateFormData: BlogCreateFormType = {
+        title: formData.get('title') as string,
+        description: formData.get('description') as string,
+        githubUrl: formData.get('githubUrl') as string,
+        category: formData.get('category') as string,
+        tags: formData.get('tags') as string,
+    };
+
+    // クッキーの取得
+    const cookieStore = cookies();
+    const token = cookieStore.get('token');
+    //console.log('create blog POST token: ', token);
+
+    try {
+        // Backend API 送信
+        const response = await fetch(`${fetchUrl}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { Cookie: `token=${token.value}` } : {}),
+            },
+            body: JSON.stringify(updateFormData),
+        });
+
+        console.log('update blog PUT response status: ', response.status);
+        //console.log(`create blog POST response.headers: ${response.headers}`);
+
+        if (response.ok) {
+            const responseBody = await response.text();
+            const blogData: RawBlogType[] = JSON.parse(responseBody);
+            //console.log('update blog PUT response body: ', blogData);
+            return blogData;
+        } else {
+            console.log('update blog PUT response error status: ', response.status);
+            return null;
+        }
+    } catch (error) {
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+        throw new Error('Failed to update blog. ' + error);
     }
 };

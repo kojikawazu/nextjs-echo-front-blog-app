@@ -30,7 +30,10 @@ const BlogCreateForm = () => {
     // ユーザー情報カスタムフック
     const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
 
-    // フォームの送信
+    /**
+     * Submit処理
+     * @param formData フォームデータ
+     */
     const handleSubmit = async (formData: FormData) => {
         if (confirm(CommonConstants.CONFIRM_MESSAGE.BLOG_ADD)) {
             try {
