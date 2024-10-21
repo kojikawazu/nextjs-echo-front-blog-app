@@ -14,19 +14,19 @@ import {
 } from '@/app/utils/auth/fetch-auth-user-server-action';
 
 interface useUserProps {
-    inputAuthUser: UserAuthType | null;
+    inAuthUser: UserAuthType | null;
 }
 
 /**
  * ユーザー情報カスタムフック
- * @param inputAuthUser
+ * @param inAuthUser
  * @returns ユーザー情報カスタムフック
  */
-export const useUserS = ({ inputAuthUser }: useUserProps) => {
+export const useUserS = ({ inAuthUser }: useUserProps) => {
     const router = useRouter();
-    const [authUser] = useState<UserAuthType | null>(inputAuthUser ? inputAuthUser : null);
+    const [authUser] = useState<UserAuthType | null>(inAuthUser ? inAuthUser : null);
     const [isLoading, setIsLoading] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(inputAuthUser !== null);
+    const [isLoggedIn, setIsLoggedIn] = useState(inAuthUser !== null);
     const [isLoginError, setIsLoginError] = useState(false);
 
     /** ログインフォームへ */
@@ -34,7 +34,11 @@ export const useUserS = ({ inputAuthUser }: useUserProps) => {
         moveToLogin();
     };
 
-    /** ログイン処理 */
+    /**
+     * ログイン処理
+     * @param email
+     * @param password
+     */
     const handleLogin = async (email: string, password: string) => {
         setIsLoading(true);
 
@@ -55,7 +59,9 @@ export const useUserS = ({ inputAuthUser }: useUserProps) => {
         }
     };
 
-    /** ログアウト処理 */
+    /**
+     * ログアウト処理
+     */
     const handleLogout = async () => {
         setIsLoading(true);
 

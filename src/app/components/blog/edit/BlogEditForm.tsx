@@ -23,16 +23,16 @@ import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 
 interface BlogEditFormProps {
     editBlogId: string;
-    inputAuthUser: UserAuthType;
+    inAuthUser: UserAuthType;
 }
 
 /**
  * ブログ編集フォームコンポーネント
  * @param editBlogId
- * @param inputAuthUser
+ * @param inAuthUser
  * @returns JSX
  */
-const BlogEditForm = ({ editBlogId, inputAuthUser }: BlogEditFormProps) => {
+const BlogEditForm = ({ editBlogId, inAuthUser }: BlogEditFormProps) => {
     // Router(カスタムフック)
     const router = useRouter();
     // 編集中のブログID
@@ -42,7 +42,7 @@ const BlogEditForm = ({ editBlogId, inputAuthUser }: BlogEditFormProps) => {
     const { isLoadingBlogData, formData, setIsLoadingBlogData, setFormData } = useBlogEditForm();
     // ユーザー情報カスタムフック
     const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUserS({
-        inputAuthUser,
+        inAuthUser,
     });
 
     // ブログデータ取得

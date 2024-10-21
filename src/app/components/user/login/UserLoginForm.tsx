@@ -38,7 +38,7 @@ const UserLoginForm = () => {
         authUser,
         handleLoginForm,
         handleLogin,
-    } = useUserS({ inputAuthUser: null });
+    } = useUserS({ inAuthUser: null });
 
     // フォームの送信
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

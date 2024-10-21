@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 // constants
 import { CommonConstants } from '@/app/utils/constants/common-constants';
 // types
+import { UserAuthType } from '@/app/types/users-type';
 import { BlogType } from '@/app/types/blogs-types';
 import { BlogLikeType } from '@/app/types/blogs-likes-types';
 // utils
@@ -26,7 +27,7 @@ import {
     generateVisitId,
 } from '@/app/utils/blog-like/fetch-blog-like';
 // hooks
-import { useUser } from '@/app/hooks/user/useUser';
+import { useUserS } from '@/app/hooks/user/useUserS';
 import { useBlogCategory } from '@/app/hooks/blog/useBlogCategory';
 // components
 import LoadingComponent from '@/app/components/common/LoadingComponent';
@@ -34,14 +35,16 @@ import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
 
 type BlogMainProps = {
     selectCategory: string;
+    inAuthUser: UserAuthType;
 };
 
 /**
  * ブログメインコンポーネント
  * @param selectCategory
+ * @param inAuthUser
  * @returns JSX
  */
-const BlogMain = ({ selectCategory }: BlogMainProps) => {
+const BlogMain = ({ selectCategory, inAuthUser }: BlogMainProps) => {
     // Router(カスタムフック)
     const router = useRouter();
     // カテゴリー選択状態
@@ -62,7 +65,9 @@ const BlogMain = ({ selectCategory }: BlogMainProps) => {
     const [isLoadingBlogLikes, setIsLoadingBlogLikes] = useState(true);
 
     // ユーザー情報
-    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
+    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUserS({
+        inAuthUser,
+    });
     // ブログカテゴリ
     const { blogCategories } = useBlogCategory();
 

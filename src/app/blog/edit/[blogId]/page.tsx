@@ -17,17 +17,24 @@ import LoadingTotal from '@/app/components/common/LoadingTotal';
  * @returns JSX
  */
 const BlogEditPage = async ({ params }: { params: { blogId: string } }) => {
-    // 認証ユーザーの取得
-    const inputAuthUser: UserAuthType | null = await fetchAuthUserServerAction();
-    if (!inputAuthUser) {
-        console.error('Failed to fetch auth user.');
+    let inAuthUser: UserAuthType | null = null;
+
+    try {
+        // 認証ユーザーの取得
+        inAuthUser = await fetchAuthUserServerAction();
+        if (!inAuthUser) {
+            console.error('Failed to fetch auth user.');
+            return redirect(CommonConstants.URL_PATH.USER_LOGIN);
+        }
+        //console.log('BlogEditPage authUser: ', inputAuthUser);
+    } catch (error) {
+        console.error('BlogEditPage error: ', error);
         return redirect(CommonConstants.URL_PATH.USER_LOGIN);
     }
-    //console.log('BlogEditPage authUser: ', inputAuthUser);
 
     return (
         <Suspense fallback={<LoadingTotal />}>
-            <BlogEditForm editBlogId={params.blogId} inputAuthUser={inputAuthUser} />
+            <BlogEditForm editBlogId={params.blogId} inAuthUser={inAuthUser} />
         </Suspense>
     );
 };
