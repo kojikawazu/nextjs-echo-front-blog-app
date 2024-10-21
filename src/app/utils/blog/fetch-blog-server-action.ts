@@ -15,7 +15,7 @@ import { BlogCreateFormType, RawBlogType } from '@/app/types/blogs-types';
  * @throws Error
  */
 export const createBlogServerAction = async (formData: FormData) => {
-    console.log('createBlogServerAction formData: ', formData);
+    console.log('createBlogServerAction: ');
     const fetchUrl = `${process.env.API_URL}/blogs/create`;
 
     // 渡すデータのセット
@@ -69,7 +69,7 @@ export const createBlogServerAction = async (formData: FormData) => {
  * @throws Error
  */
 export const updateBlogServerAction = async (formData: FormData, blogId: string) => {
-    console.log('updateBlogServerAction formData: ', formData + ' blogId: ' + blogId);
+    console.log('updateBlogServerAction: ');
     const fetchUrl = `${process.env.API_URL}/blogs/update/${blogId}`;
 
     // 渡すデータのセット
@@ -112,5 +112,45 @@ export const updateBlogServerAction = async (formData: FormData, blogId: string)
     } catch (error) {
         console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
         throw new Error('Failed to update blog. ' + error);
+    }
+};
+
+/**
+ * ブログ削除関数(サーバーサイド)
+ * @param blogId ブログID
+ * @returns true or false
+ * @throws Error
+ */
+export const deleteBlogServerAction = async (blogId: string) => {
+    console.log('deleteBlogServerAction: ');
+    const fetchUrl = `${process.env.API_URL}/blogs/delete/${blogId}`;
+
+    // クッキーの取得
+    const cookieStore = cookies();
+    const token = cookieStore.get('token');
+    //console.log('create blog POST token: ', token);
+
+    try {
+        // Backend API 送信
+        const response = await fetch(`${fetchUrl}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { Cookie: `token=${token.value}` } : {}),
+            },
+        });
+
+        console.log('delete blog DELETE response status: ', response.status);
+        //console.log(`delete blog DELETE response.headers: ${response.headers}`);
+
+        if (response.ok) {
+            return true;
+        } else {
+            console.log('delete blog DELETE response error status: ', response.status);
+            return false;
+        }
+    } catch (error) {
+        console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
+        throw new Error('Failed to delete blog. ' + error);
     }
 };
