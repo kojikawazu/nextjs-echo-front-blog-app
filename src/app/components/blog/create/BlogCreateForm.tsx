@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 // constants
 import { CommonConstants } from '@/app/utils/constants/common-constants';
@@ -9,7 +10,7 @@ import { CommonConstants } from '@/app/utils/constants/common-constants';
 import { BlogCreateFormType } from '@/app/types/blogs-types';
 // utils
 import { handleFormChange } from '@/app/utils/form/handle-form';
-import { createBlog } from '@/app/utils/blog/fetch-blog';
+import { createBlogServerAction } from '@/app/utils/blog/fetch-blog-server-action';
 // hooks
 import { useUser } from '@/app/hooks/user/useUser';
 import { useBlogCreateForm } from '@/app/hooks/blog/useBlogCreateForm';
@@ -30,17 +31,19 @@ const BlogCreateForm = () => {
     const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
 
     // フォームの送信
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
+    const handleSubmit = async (formData: FormData) => {
         if (confirm(CommonConstants.CONFIRM_MESSAGE.BLOG_ADD)) {
             try {
-                const ret = await createBlog(formData);
+                const ret = await createBlogServerAction(formData);
 
                 if (ret) {
+                    toast.success(CommonConstants.TOAST_MESSAGE.ADD_BLOG_SUCCESSED);
                     router.push(CommonConstants.URL_PATH.BLOG_HOME);
+                } else {
+                    toast.error(CommonConstants.TOAST_MESSAGE.ADD_BLOG_FAILURE);
                 }
             } catch (error) {
+                toast.error(CommonConstants.TOAST_MESSAGE.ADD_BLOG_FAILURE);
                 console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
             }
         }
@@ -73,7 +76,7 @@ const BlogCreateForm = () => {
 
                     {/** フォーム */}
                     <form
-                        onSubmit={handleSubmit}
+                        action={handleSubmit}
                         className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
                     >
                         <div className="mb-4">
