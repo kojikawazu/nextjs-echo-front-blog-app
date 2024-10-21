@@ -33,7 +33,7 @@ import {
     fetchBlogLikeById,
 } from '@/app/utils/blog-like/fetch-blog-like';
 // hooks
-import { useUserS } from '@/app/hooks/user/useUserS';
+import { useUser } from '@/app/hooks/user/useUser';
 import { useCommentForm } from '@/app/hooks/comment/useCommentForm';
 import { useBlogCategory } from '@/app/hooks/blog/useBlogCategory';
 // components
@@ -83,7 +83,7 @@ const BlogDetail = ({ blogId, inAuthUser }: BlogDetailProps) => {
     const { commentForm, setCommentForm, comments, setComments, addCommentData, validation } =
         useCommentForm();
     // ユーザー情報カスタムフック
-    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUserS({
+    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser({
         inAuthUser,
     });
     // ブログカテゴリーカスタムフック

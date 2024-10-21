@@ -9,7 +9,7 @@ import { UserLoginFormType } from '@/app/types/users-type';
 import { isValidEmail } from '@/app/utils/validate/validate';
 import { handleFormChange } from '@/app/utils/form/handle-form';
 // hooks
-import { useUserS } from '@/app/hooks/user/useUserS';
+import { useUser } from '@/app/hooks/user/useUser';
 import { useUserLoginForm } from '@/app/hooks/user/useUserLoginForm';
 // components
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
@@ -38,7 +38,7 @@ const UserLoginForm = () => {
         authUser,
         handleLoginForm,
         handleLogin,
-    } = useUserS({ inAuthUser: null });
+    } = useUser({ inAuthUser: null });
 
     // フォームの送信
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

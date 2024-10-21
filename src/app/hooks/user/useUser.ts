@@ -22,7 +22,7 @@ interface useUserProps {
  * @param inAuthUser
  * @returns ユーザー情報カスタムフック
  */
-export const useUserS = ({ inAuthUser }: useUserProps) => {
+export const useUser = ({ inAuthUser }: useUserProps) => {
     const router = useRouter();
     const [authUser] = useState<UserAuthType | null>(inAuthUser ? inAuthUser : null);
     const [isLoading, setIsLoading] = useState(false);

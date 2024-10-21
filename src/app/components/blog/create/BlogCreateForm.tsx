@@ -13,7 +13,7 @@ import { BlogCreateFormType } from '@/app/types/blogs-types';
 import { handleFormChange } from '@/app/utils/form/handle-form';
 import { createBlogServerAction } from '@/app/utils/blog/fetch-blog-server-action';
 // hooks
-import { useUserS } from '@/app/hooks/user/useUserS';
+import { useUser } from '@/app/hooks/user/useUser';
 import { useBlogCreateForm } from '@/app/hooks/blog/useBlogCreateForm';
 // components
 import LoadingComponent from '@/app/components/common/LoadingComponent';
@@ -34,7 +34,7 @@ const BlogCreateForm = ({ inAuthUser }: BlogCreateFormProps) => {
     // ブログ作成フォームカスタムフック
     const { formData, setFormData } = useBlogCreateForm();
     // ユーザー情報カスタムフック
-    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUserS({
+    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser({
         inAuthUser,
     });
 

@@ -9,7 +9,7 @@ import { UserAuthType } from '@/app/types/users-type';
 import { handleCreateBlogForm } from '@/app/utils/blog/handle-blog';
 import { handleUserEditForm } from '@/app/utils/user/handle-user';
 // hooks
-import { useUserS } from '@/app/hooks/user/useUserS';
+import { useUser } from '@/app/hooks/user/useUser';
 // components
 import LoadingComponent from '@/app/components/common/LoadingComponent';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
@@ -27,7 +27,7 @@ const UserDetail = ({ inAuthUser }: UserDetailProps) => {
     // Router(カスタムフック)
     const router = useRouter();
     // ユーザー情報(カスタムフック)
-    const { isLoading, isLoggedIn, authUser, handleLogout } = useUserS({
+    const { isLoading, isLoggedIn, authUser, handleLogout } = useUser({
         inAuthUser,
     });
 

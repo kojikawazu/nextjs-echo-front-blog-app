@@ -14,7 +14,7 @@ import { handleCreateBlogForm } from '@/app/utils/blog/handle-blog';
 import { handleFormChange } from '@/app/utils/form/handle-form';
 import { isValidEmail } from '@/app/utils/validate/validate';
 // hooks
-import { useUserS } from '@/app/hooks/user/useUserS';
+import { useUser } from '@/app/hooks/user/useUser';
 import { useUserEditForm } from '@/app/hooks/user/useUserEditForm';
 // components
 import LoadingComponent from '@/app/components/common/LoadingComponent';
@@ -35,7 +35,7 @@ const UserEditForm = ({ inAuthUser }: UserEditFormProps) => {
     // ユーザー情報取得中(カスタムフック)
     const { isLoadingUserData, formData, setIsLoadingUserData, setFormData } = useUserEditForm();
     // ユーザー情報(カスタムフック)
-    const { isLoading, isLoggedIn, authUser, handleLogout } = useUserS({
+    const { isLoading, isLoggedIn, authUser, handleLogout } = useUser({
         inAuthUser,
     });
 

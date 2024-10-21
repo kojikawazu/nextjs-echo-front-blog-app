@@ -27,7 +27,7 @@ import {
     generateVisitId,
 } from '@/app/utils/blog-like/fetch-blog-like';
 // hooks
-import { useUserS } from '@/app/hooks/user/useUserS';
+import { useUser } from '@/app/hooks/user/useUser';
 import { useBlogCategory } from '@/app/hooks/blog/useBlogCategory';
 // components
 import LoadingComponent from '@/app/components/common/LoadingComponent';
@@ -65,7 +65,7 @@ const BlogMain = ({ selectCategory, inAuthUser }: BlogMainProps) => {
     const [isLoadingBlogLikes, setIsLoadingBlogLikes] = useState(true);
 
     // ユーザー情報
-    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUserS({
+    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser({
         inAuthUser,
     });
     // ブログカテゴリ

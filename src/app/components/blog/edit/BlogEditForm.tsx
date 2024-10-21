@@ -15,7 +15,7 @@ import { handleFormChange } from '@/app/utils/form/handle-form';
 import { fetchBlogById } from '@/app/utils/blog/fetch-blog';
 import { updateBlogServerAction } from '@/app/utils/blog/fetch-blog-server-action';
 // hooks
-import { useUserS } from '@/app/hooks/user/useUserS';
+import { useUser } from '@/app/hooks/user/useUser';
 import { useBlogEditForm } from '@/app/hooks/blog/useBlogEditForm';
 // components
 import LoadingComponent from '@/app/components/common/LoadingComponent';
@@ -41,7 +41,7 @@ const BlogEditForm = ({ editBlogId, inAuthUser }: BlogEditFormProps) => {
     // ブログ編集フォームカスタムフック
     const { isLoadingBlogData, formData, setIsLoadingBlogData, setFormData } = useBlogEditForm();
     // ユーザー情報カスタムフック
-    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUserS({
+    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser({
         inAuthUser,
     });
 
