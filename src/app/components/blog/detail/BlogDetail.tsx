@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 // constants
 import { CommonConstants } from '@/app/utils/constants/common-constants';
 // types
+import { UserAuthType } from '@/app/types/users-type';
 import { BlogType } from '@/app/types/blogs-types';
 import { CommentFormType } from '@/app/types/comment-types';
 // utils
@@ -44,14 +45,16 @@ import '@/app/styles/markdown.css';
 
 interface BlogDetailProps {
     blogId: string;
+    inAuthUser: UserAuthType;
 }
 
 /**
  * ブログ詳細コンポーネント
  * @param blogId
+ * @param inAuthUser
  * @returns JSX
  */
-const BlogDetail = ({ blogId }: BlogDetailProps) => {
+const BlogDetail = ({ blogId, inAuthUser }: BlogDetailProps) => {
     // Router(カスタムフック)
     const router = useRouter();
     // 選択カテゴリー
@@ -80,7 +83,9 @@ const BlogDetail = ({ blogId }: BlogDetailProps) => {
     const { commentForm, setCommentForm, comments, setComments, addCommentData, validation } =
         useCommentForm();
     // ユーザー情報カスタムフック
-    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
+    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser({
+        inAuthUser,
+    });
     // ブログカテゴリーカスタムフック
     const { blogCategories } = useBlogCategory();
 

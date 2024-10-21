@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 // constants
 import { CommonConstants } from '@/app/utils/constants/common-constants';
 // types
-import { UserEditFormType } from '@/app/types/users-type';
+import { UserAuthType, UserEditFormType } from '@/app/types/users-type';
 // utils
 import { fetchUser, updateUser } from '@/app/utils/user/fetch-user';
 import { handleCreateBlogForm } from '@/app/utils/blog/handle-blog';
@@ -20,17 +20,24 @@ import { useUserEditForm } from '@/app/hooks/user/useUserEditForm';
 import LoadingComponent from '@/app/components/common/LoadingComponent';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 
+interface UserEditFormProps {
+    inAuthUser: UserAuthType;
+}
+
 /**
  * ユーザー編集フォーム
+ * @param inAuthUser
  * @returns JSX
  */
-const UserEditForm = () => {
+const UserEditForm = ({ inAuthUser }: UserEditFormProps) => {
     // Router(カスタムフック)
     const router = useRouter();
     // ユーザー情報取得中(カスタムフック)
     const { isLoadingUserData, formData, setIsLoadingUserData, setFormData } = useUserEditForm();
-    // ユーザー情報
-    const { isLoading, isLoggedIn, authUser, handleLogout } = useUser();
+    // ユーザー情報(カスタムフック)
+    const { isLoading, isLoggedIn, authUser, handleLogout } = useUser({
+        inAuthUser,
+    });
 
     // ユーザーデータ取得
     useEffect(() => {

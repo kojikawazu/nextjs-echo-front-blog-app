@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 // constants
 import { CommonConstants } from '@/app/utils/constants/common-constants';
 // types
+import { UserAuthType } from '@/app/types/users-type';
 import { BlogCreateFormType } from '@/app/types/blogs-types';
 // utils
 import { handleFormChange } from '@/app/utils/form/handle-form';
@@ -18,17 +19,24 @@ import { useBlogCreateForm } from '@/app/hooks/blog/useBlogCreateForm';
 import LoadingComponent from '@/app/components/common/LoadingComponent';
 import BlogFormLayout from '@/app/components/layout/BlogFormLayout';
 
+interface BlogCreateFormProps {
+    inAuthUser: UserAuthType;
+}
+
 /**
  * ブログ作成フォームコンポーネント
+ * @param inAuthUser
  * @returns JSX
  */
-const BlogCreateForm = () => {
+const BlogCreateForm = ({ inAuthUser }: BlogCreateFormProps) => {
     // Router(カスタムフック)
     const router = useRouter();
     // ブログ作成フォームカスタムフック
     const { formData, setFormData } = useBlogCreateForm();
     // ユーザー情報カスタムフック
-    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser();
+    const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser({
+        inAuthUser,
+    });
 
     /**
      * Submit処理
