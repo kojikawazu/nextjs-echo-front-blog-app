@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 
+// constants
+import { CommonConstants } from '@/app/utils/constants/common-constants';
 // components
 import LoadingComponent from '@/app/components/common/LoadingComponent';
 
@@ -33,7 +35,7 @@ const BlogHeader = ({
 }: BlogHeaderProps) => {
     return (
         <header className="bg-[#1a1a1a] text-white p-4 flex justify-between items-center">
-            <Link href={'/blog'}>
+            <Link href={CommonConstants.URL_PATH.BLOG_HOME}>
                 <h1 className="text-2xl font-bold">Tech Blog</h1>
             </Link>
 
