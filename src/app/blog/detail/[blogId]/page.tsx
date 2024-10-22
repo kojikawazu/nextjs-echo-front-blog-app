@@ -22,10 +22,10 @@ const BlogDetailPage = async ({ params }: { params: { blogId: string } }) => {
     try {
         // 認証ユーザーの取得
         inAuthUser = await fetchAuthUserServerAction();
-        if (!inAuthUser) {
-            console.error('Failed to fetch auth user.');
-            return redirect(CommonConstants.URL_PATH.USER_LOGIN);
-        }
+        // if (!inAuthUser) {
+        //     console.error('Failed to fetch auth user.');
+        //     return redirect(CommonConstants.URL_PATH.USER_LOGIN);
+        // }
         //console.log('BlogEditPage authUser: ', inputAuthUser);
     } catch (error) {
         console.error('BlogDetailPage error: ', error);

@@ -46,7 +46,7 @@ import '@/app/styles/markdown.css';
 
 interface BlogDetailProps {
     blogId: string;
-    inAuthUser: UserAuthType;
+    inAuthUser: UserAuthType | null;
 }
 
 /**
@@ -124,10 +124,10 @@ const BlogDetail = ({ blogId, inAuthUser }: BlogDetailProps) => {
             }
         };
 
-        if (!isLoading && isLoggedIn) {
+        if (!isLoading) {
             localFetch();
         }
-    }, [isLoading, isLoggedIn, blogId, setIsLoadingBlog]);
+    }, [isLoading, blogId, setIsLoadingBlog]);
 
     useEffect(() => {
         const localFetch = async () => {
@@ -148,10 +148,10 @@ const BlogDetail = ({ blogId, inAuthUser }: BlogDetailProps) => {
             }
         };
 
-        if (!isLoading && isLoggedIn) {
+        if (!isLoading) {
             localFetch();
         }
-    }, [isLoading, isLoggedIn, blogId, setIsLoadingBlogLike]);
+    }, [isLoading, blogId, setIsLoadingBlogLike]);
 
     useEffect(() => {
         const localFetch = async () => {
@@ -173,10 +173,10 @@ const BlogDetail = ({ blogId, inAuthUser }: BlogDetailProps) => {
             }
         };
 
-        if (!isLoading && isLoggedIn) {
+        if (!isLoading) {
             localFetch();
         }
-    }, [isLoading, isLoggedIn, blogId, setComments, setIsLoadingComments]);
+    }, [isLoading, blogId, setComments, setIsLoadingComments]);
 
     /**
      * ブログ削除ハンドル
@@ -355,19 +355,23 @@ const BlogDetail = ({ blogId, inAuthUser }: BlogDetailProps) => {
                                 </button>
                             )}
 
-                            {/** 編集、削除 */}
-                            <button
-                                onClick={() => handleEditBlogForm(router, blog.id)}
-                                className="bg-[#4a90e2] hover:bg-[#3b7ac7] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                            >
-                                編集する
-                            </button>
-                            <button
-                                onClick={() => handleDeleteBlog(blog.id)}
-                                className="bg-[#4a90e2] hover:bg-[#3b7ac7] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                            >
-                                削除する
-                            </button>
+                            {isLoggedIn && (
+                                <>
+                                    {/** 編集、削除 */}
+                                    <button
+                                        onClick={() => handleEditBlogForm(router, blog.id)}
+                                        className="bg-[#4a90e2] hover:bg-[#3b7ac7] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                    >
+                                        編集する
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeleteBlog(blog.id)}
+                                        className="bg-[#4a90e2] hover:bg-[#3b7ac7] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                    >
+                                        削除する
+                                    </button>
+                                </>
+                            )}
                         </div>
 
                         {/** コメント */}
