@@ -43,8 +43,13 @@ export const CommonConstants = {
     },
     // URL path
     URL_PATH: {
-        BLOG_HOME: '/blog',
+        BLOG_HOME: '/',
         USER_LOGIN: '/user/login',
+    },
+    // Token name
+    TOKEN_NAME: {
+        TOKEN_NAME: 'token',
+        VISIT_ID_TOKEN: 'visit-id-token',
     },
     // API error message
     ERROR_MESSAGE: {

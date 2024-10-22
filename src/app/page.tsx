@@ -1,13 +1,53 @@
+import React, { Suspense } from 'react';
+import { ReadonlyURLSearchParams } from 'next/navigation';
+import { redirect } from 'next/navigation';
+
+// constants
+import { CommonConstants } from '@/app/utils/constants/common-constants';
+// types
+import { UserAuthType } from '@/app/types/users-type';
+// utils
+import { fetchAuthUserServerAction } from '@/app/utils/auth/fetch-auth-user-server-action';
+// components
+import LoadingTotal from '@/app/components/common/LoadingTotal';
+import BlogMain from '@/app/components/blog/main/BlogMain';
+
+type BlogMainProps = {
+    searchParams: ReadonlyURLSearchParams;
+};
+
 /**
- * Home Page
+ * Blog main page.
+ * @param props BlogMainProps
  * @returns JSX
  */
-export default function Home() {
+const BlogMainPage = async (props: BlogMainProps) => {
+    let inAuthUser: UserAuthType | null = null;
+    let selectCategory = '';
+
+    try {
+        // 認証ユーザーの取得
+        inAuthUser = await fetchAuthUserServerAction();
+        // if (!inAuthUser) {
+        //     console.error('Failed to fetch auth user.');
+        //     return redirect(CommonConstants.URL_PATH.USER_LOGIN);
+        // }
+        //console.log('BlogEditPage authUser: ', inAuthUser);
+
+        // クエリーパラメータからカテゴリーを取得
+        const { searchParams } = props;
+        const queryParams = new URLSearchParams(searchParams);
+        selectCategory = queryParams.get(CommonConstants.BLOG_LIST.QUERY_PARAM_CATEGORY) || '';
+    } catch (error) {
+        console.error('BlogMainPage error: ', error);
+        return redirect(CommonConstants.URL_PATH.USER_LOGIN);
+    }
+
     return (
-        <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-            <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-                Hello World
-            </main>
-        </div>
+        <Suspense fallback={<LoadingTotal />}>
+            <BlogMain selectCategory={selectCategory} inAuthUser={inAuthUser} />
+        </Suspense>
     );
-}
+};
+
+export default BlogMainPage;
