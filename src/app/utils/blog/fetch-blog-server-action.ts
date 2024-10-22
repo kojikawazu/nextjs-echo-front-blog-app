@@ -39,7 +39,9 @@ export const createBlogServerAction = async (formData: FormData) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                ...(token ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` } : {}),
+                ...(token
+                    ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` }
+                    : {}),
             },
             body: JSON.stringify(createFormData),
         });
@@ -94,7 +96,9 @@ export const updateBlogServerAction = async (formData: FormData, blogId: string)
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                ...(token ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` } : {}),
+                ...(token
+                    ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` }
+                    : {}),
             },
             body: JSON.stringify(updateFormData),
         });
@@ -139,7 +143,9 @@ export const deleteBlogServerAction = async (blogId: string) => {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                ...(token ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` } : {}),
+                ...(token
+                    ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` }
+                    : {}),
             },
         });
 

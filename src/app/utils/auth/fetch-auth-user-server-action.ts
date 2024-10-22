@@ -31,7 +31,9 @@ export const fetchAuthUserServerAction = async () => {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                ...(token ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` } : {}),
+                ...(token
+                    ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` }
+                    : {}),
             },
         });
 
@@ -109,7 +111,9 @@ export const loginServerAction = async (email: string, password: string) => {
                 // 'token=...' の部分を取り出す
                 const tokenValue = newCookie
                     .split(';')
-                    .find((cookie) => cookie.trim().startsWith(`${CommonConstants.TOKEN_NAME.TOKEN_NAME}=`));
+                    .find((cookie) =>
+                        cookie.trim().startsWith(`${CommonConstants.TOKEN_NAME.TOKEN_NAME}=`),
+                    );
 
                 if (tokenValue) {
                     // 'token=hogehoge' をデコードして 'token' の値だけを取り出す
@@ -155,7 +159,9 @@ export const logoutServerAction = async () => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                ...(token ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` } : {}),
+                ...(token
+                    ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` }
+                    : {}),
             },
         });
 

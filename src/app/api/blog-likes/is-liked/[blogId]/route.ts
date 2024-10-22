@@ -1,4 +1,4 @@
-import { CommonConstants } from "@/app/utils/constants/common-constants";
+import { CommonConstants } from '@/app/utils/constants/common-constants';
 
 /**
  * いいねしているかどうかを取得する

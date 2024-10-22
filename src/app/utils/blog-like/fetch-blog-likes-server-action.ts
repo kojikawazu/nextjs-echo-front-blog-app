@@ -26,7 +26,11 @@ export const createBlogLikeByIdServerAction = async (blogId: string) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                ...(visitIdToken ? { Cookie: `${CommonConstants.TOKEN_NAME.VISIT_ID_TOKEN}=${visitIdToken.value}` } : {}),
+                ...(visitIdToken
+                    ? {
+                          Cookie: `${CommonConstants.TOKEN_NAME.VISIT_ID_TOKEN}=${visitIdToken.value}`,
+                      }
+                    : {}),
             },
         });
 
@@ -69,7 +73,11 @@ export const deleteBlogLikeByIdServerAction = async (blogId: string) => {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                ...(visitIdToken ? { Cookie: `${CommonConstants.TOKEN_NAME.VISIT_ID_TOKEN}=${visitIdToken.value}` } : {}),
+                ...(visitIdToken
+                    ? {
+                          Cookie: `${CommonConstants.TOKEN_NAME.VISIT_ID_TOKEN}=${visitIdToken.value}`,
+                      }
+                    : {}),
             },
         });
 

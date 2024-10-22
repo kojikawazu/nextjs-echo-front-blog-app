@@ -1,5 +1,5 @@
 // constants
-import { CommonConstants } from "@/app/utils/constants/common-constants";
+import { CommonConstants } from '@/app/utils/constants/common-constants';
 
 /**
  * 訪問IDを生成する

@@ -29,7 +29,9 @@ export const updateUserServerAction = async (formData: UserEditFormType) => {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                ...(token ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` } : {}),
+                ...(token
+                    ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` }
+                    : {}),
             },
             body: JSON.stringify(formData),
         });
@@ -46,7 +48,9 @@ export const updateUserServerAction = async (formData: UserEditFormType) => {
                 // 'token=...' の部分を取り出す
                 const tokenValue = newCookie
                     .split(';')
-                    .find((cookie) => cookie.trim().startsWith(`${CommonConstants.TOKEN_NAME.TOKEN_NAME}=`));
+                    .find((cookie) =>
+                        cookie.trim().startsWith(`${CommonConstants.TOKEN_NAME.TOKEN_NAME}=`),
+                    );
 
                 if (tokenValue) {
                     // 'token=hogehoge' をデコードして 'token' の値だけを取り出す
