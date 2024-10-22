@@ -1,3 +1,6 @@
+// constants
+import { CommonConstants } from "@/app/utils/constants/common-constants";
+
 /**
  * ブログデータを取得する
  * GET /api/blogs/detail/:blogId
@@ -14,7 +17,7 @@ export async function GET(
     },
 ) {
     console.log('GET /api/blogs/detail/:blogId');
-    const fetchUrl = `${process.env.API_URL}/blogs/detail/${params.blogId}`;
+    const fetchUrl = `${process.env.API_URL}${CommonConstants.BACKEND_API.BLOG_DETAIL}/${params.blogId}`;
 
     // リクエストヘッダーとボディの確認
     //console.log('Incoming request headers:', req.headers);

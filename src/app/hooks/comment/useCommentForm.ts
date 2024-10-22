@@ -1,4 +1,5 @@
 import { useState } from 'react';
+// types
 import { CommentFormType } from '@/app/types/comment-types';
 
 /**

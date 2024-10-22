@@ -1,10 +1,13 @@
+// constants
+import { CommonConstants } from "@/app/utils/constants/common-constants";
+
 /**
  * ブログカテゴリー一覧取得API
  * @returns 200 or 500
  */
 export async function GET() {
     console.log('GET /api/blogs/categories');
-    const fetchUrl = `${process.env.API_URL}/blogs/categories`;
+    const fetchUrl = `${process.env.API_URL}${CommonConstants.BACKEND_API.BLOG_CATEGORIES}`;
 
     // リクエストヘッダーとボディの確認
     //console.log('Incoming request headers:', req.headers);

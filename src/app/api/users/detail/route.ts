@@ -1,3 +1,6 @@
+// constants
+import { CommonConstants } from "@/app/utils/constants/common-constants";
+
 /**
  * ユーザー詳細情報取得API
  * @param req
@@ -5,7 +8,7 @@
  */
 export async function GET(req: Request) {
     console.log('GET /api/users/:userId');
-    const fetchUrl = `${process.env.API_URL}/users/detail`;
+    const fetchUrl = `${process.env.API_URL}${CommonConstants.BACKEND_API.USER_DETAIL}`;
 
     // リクエストヘッダーとボディの確認
     //console.log('Incoming request headers:', req.headers);

@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
-import { fetchBlogCategories } from '@/app/utils/blog/fetch-blog';
+
+// constants
 import { CommonConstants } from '@/app/utils/constants/common-constants';
+// utils
+import { fetchBlogCategories } from '@/app/utils/blog/fetch-blog';
 
 /**
  * ブログカテゴリ取得カスタムhooks

@@ -15,11 +15,12 @@ import { UserEditFormType } from '@/app/types/users-type';
  */
 export const updateUserServerAction = async (formData: UserEditFormType) => {
     console.log('updateUserServerAction: ');
-    const fetchUrl = `${process.env.API_URL}/users/update`;
+    const funcName = '[updateUserServerAction]';
+    const fetchUrl = `${process.env.API_URL}${CommonConstants.BACKEND_API.USER_UPDATE}`;
 
     // クッキーの取得
     const cookieStore = cookies();
-    const token = cookieStore.get('token');
+    const token = cookieStore.get(CommonConstants.TOKEN_NAME.TOKEN_NAME);
     //console.log('create blog POST token: ', token);
 
     try {
@@ -28,12 +29,12 @@ export const updateUserServerAction = async (formData: UserEditFormType) => {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                ...(token ? { Cookie: `token=${token.value}` } : {}),
+                ...(token ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` } : {}),
             },
             body: JSON.stringify(formData),
         });
 
-        console.log('update user PUT response status: ', response.status);
+        console.log(funcName, ' update user PUT response status: ', response.status);
         //console.log(`create blog POST response.headers: ${response.headers}`);
 
         if (response.ok) {
@@ -45,7 +46,7 @@ export const updateUserServerAction = async (formData: UserEditFormType) => {
                 // 'token=...' の部分を取り出す
                 const tokenValue = newCookie
                     .split(';')
-                    .find((cookie) => cookie.trim().startsWith('token='));
+                    .find((cookie) => cookie.trim().startsWith(`${CommonConstants.TOKEN_NAME.TOKEN_NAME}=`));
 
                 if (tokenValue) {
                     // 'token=hogehoge' をデコードして 'token' の値だけを取り出す
@@ -54,14 +55,14 @@ export const updateUserServerAction = async (formData: UserEditFormType) => {
 
                     // クッキーを更新
                     const cookieStore = cookies();
-                    cookieStore.set('token', token);
+                    cookieStore.set(CommonConstants.TOKEN_NAME.TOKEN_NAME, token);
                     //console.log(funcName, ' auth login POST Set-Cookie updated with token');
                 }
             }
 
             return true;
         } else {
-            console.log('update user PUT response error status: ', response.status);
+            console.log(funcName, ' update user PUT response error status: ', response.status);
             return false;
         }
     } catch (error) {

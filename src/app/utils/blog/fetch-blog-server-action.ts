@@ -16,7 +16,8 @@ import { BlogCreateFormType, RawBlogType } from '@/app/types/blogs-types';
  */
 export const createBlogServerAction = async (formData: FormData) => {
     console.log('createBlogServerAction: ');
-    const fetchUrl = `${process.env.API_URL}/blogs/create`;
+    const funcName = '[createBlogServerAction]';
+    const fetchUrl = `${process.env.API_URL}${CommonConstants.BACKEND_API.BLOG_CREATE}`;
 
     // 渡すデータのセット
     const createFormData: BlogCreateFormType = {
@@ -29,7 +30,7 @@ export const createBlogServerAction = async (formData: FormData) => {
 
     // クッキーの取得
     const cookieStore = cookies();
-    const token = cookieStore.get('token');
+    const token = cookieStore.get(CommonConstants.TOKEN_NAME.TOKEN_NAME);
     //console.log('create blog POST token: ', token);
 
     try {
@@ -38,12 +39,12 @@ export const createBlogServerAction = async (formData: FormData) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                ...(token ? { Cookie: `token=${token.value}` } : {}),
+                ...(token ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` } : {}),
             },
             body: JSON.stringify(createFormData),
         });
 
-        console.log('create blog POST response status: ', response.status);
+        console.log(funcName, ' create blog POST response status: ', response.status);
         //console.log(`create blog POST response.headers: ${response.headers}`);
 
         if (response.ok) {
@@ -52,7 +53,7 @@ export const createBlogServerAction = async (formData: FormData) => {
             //console.log('create blog POST response body: ', blogData);
             return blogData;
         } else {
-            console.log('create blog POST response error status: ', response.status);
+            console.log(funcName, ' create blog POST response error status: ', response.status);
             return null;
         }
     } catch (error) {
@@ -70,7 +71,8 @@ export const createBlogServerAction = async (formData: FormData) => {
  */
 export const updateBlogServerAction = async (formData: FormData, blogId: string) => {
     console.log('updateBlogServerAction: ');
-    const fetchUrl = `${process.env.API_URL}/blogs/update/${blogId}`;
+    const funcName = '[updateBlogServerAction]';
+    const fetchUrl = `${process.env.API_URL}${CommonConstants.BACKEND_API.BLOG_UPDATE}/${blogId}`;
 
     // 渡すデータのセット
     const updateFormData: BlogCreateFormType = {
@@ -83,7 +85,7 @@ export const updateBlogServerAction = async (formData: FormData, blogId: string)
 
     // クッキーの取得
     const cookieStore = cookies();
-    const token = cookieStore.get('token');
+    const token = cookieStore.get(CommonConstants.TOKEN_NAME.TOKEN_NAME);
     //console.log('create blog POST token: ', token);
 
     try {
@@ -92,12 +94,12 @@ export const updateBlogServerAction = async (formData: FormData, blogId: string)
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                ...(token ? { Cookie: `token=${token.value}` } : {}),
+                ...(token ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` } : {}),
             },
             body: JSON.stringify(updateFormData),
         });
 
-        console.log('update blog PUT response status: ', response.status);
+        console.log(funcName, ' update blog PUT response status: ', response.status);
         //console.log(`create blog POST response.headers: ${response.headers}`);
 
         if (response.ok) {
@@ -106,7 +108,7 @@ export const updateBlogServerAction = async (formData: FormData, blogId: string)
             //console.log('update blog PUT response body: ', blogData);
             return blogData;
         } else {
-            console.log('update blog PUT response error status: ', response.status);
+            console.log(funcName, ' update blog PUT response error status: ', response.status);
             return null;
         }
     } catch (error) {
@@ -123,11 +125,12 @@ export const updateBlogServerAction = async (formData: FormData, blogId: string)
  */
 export const deleteBlogServerAction = async (blogId: string) => {
     console.log('deleteBlogServerAction: ');
-    const fetchUrl = `${process.env.API_URL}/blogs/delete/${blogId}`;
+    const funcName = '[deleteBlogServerAction]';
+    const fetchUrl = `${process.env.API_URL}${CommonConstants.BACKEND_API.BLOG_DELETE}/${blogId}`;
 
     // クッキーの取得
     const cookieStore = cookies();
-    const token = cookieStore.get('token');
+    const token = cookieStore.get(CommonConstants.TOKEN_NAME.TOKEN_NAME);
     //console.log('create blog POST token: ', token);
 
     try {
@@ -136,17 +139,17 @@ export const deleteBlogServerAction = async (blogId: string) => {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                ...(token ? { Cookie: `token=${token.value}` } : {}),
+                ...(token ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` } : {}),
             },
         });
 
-        console.log('delete blog DELETE response status: ', response.status);
+        console.log(funcName, ' delete blog DELETE response status: ', response.status);
         //console.log(`delete blog DELETE response.headers: ${response.headers}`);
 
         if (response.ok) {
             return true;
         } else {
-            console.log('delete blog DELETE response error status: ', response.status);
+            console.log(funcName, ' delete blog DELETE response error status: ', response.status);
             return false;
         }
     } catch (error) {

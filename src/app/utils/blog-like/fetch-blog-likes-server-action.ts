@@ -14,11 +14,11 @@ import { CommonConstants } from '@/app/utils/constants/common-constants';
 export const createBlogLikeByIdServerAction = async (blogId: string) => {
     console.log('createBlogLikeByIdServerAction: ');
     const funcName = '[createBlogLikeByIdServerAction]';
-    const fetchUrl = `${process.env.API_URL}/blog-likes/create/${blogId}`;
+    const fetchUrl = `${process.env.API_URL}${CommonConstants.BACKEND_API.BLOG_LIKE_CREATE}/${blogId}`;
 
     // クッキーの取得
     const cookieStore = cookies();
-    const visitIdToken = cookieStore.get('visit-id-token');
+    const visitIdToken = cookieStore.get(CommonConstants.TOKEN_NAME.VISIT_ID_TOKEN);
     //console.log('create blog like by id POST token: ', visitIdToken);
 
     try {
@@ -26,7 +26,7 @@ export const createBlogLikeByIdServerAction = async (blogId: string) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                ...(visitIdToken ? { Cookie: `visit-id-token=${visitIdToken.value}` } : {}),
+                ...(visitIdToken ? { Cookie: `${CommonConstants.TOKEN_NAME.VISIT_ID_TOKEN}=${visitIdToken.value}` } : {}),
             },
         });
 
@@ -57,11 +57,11 @@ export const createBlogLikeByIdServerAction = async (blogId: string) => {
 export const deleteBlogLikeByIdServerAction = async (blogId: string) => {
     console.log('deleteBlogLikeByIdServerAction: ');
     const funcName = '[deleteBlogLikeByIdServerAction]';
-    const fetchUrl = `${process.env.API_URL}/blog-likes/delete/${blogId}`;
+    const fetchUrl = `${process.env.API_URL}${CommonConstants.BACKEND_API.BLOG_LIKE_DELETE}/${blogId}`;
 
     // クッキーの取得
     const cookieStore = cookies();
-    const visitIdToken = cookieStore.get('visit-id-token');
+    const visitIdToken = cookieStore.get(CommonConstants.TOKEN_NAME.VISIT_ID_TOKEN);
     //console.log('create blog like by id POST token: ', visitIdToken);
 
     try {
@@ -69,7 +69,7 @@ export const deleteBlogLikeByIdServerAction = async (blogId: string) => {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                ...(visitIdToken ? { Cookie: `visit-id-token=${visitIdToken.value}` } : {}),
+                ...(visitIdToken ? { Cookie: `${CommonConstants.TOKEN_NAME.VISIT_ID_TOKEN}=${visitIdToken.value}` } : {}),
             },
         });
 

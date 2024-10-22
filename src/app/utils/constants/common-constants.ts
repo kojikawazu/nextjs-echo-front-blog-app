@@ -2,6 +2,9 @@
  * Common Constants
  */
 export const CommonConstants = {
+    HEADER: {
+        TITLE: 'Tech Blog',
+    },
     // toast messages
     TOAST_MESSAGE: {
         ADD_COMMENT_INVALID_REQUIRED: '名前とコメントは必須です。',
@@ -45,6 +48,32 @@ export const CommonConstants = {
     URL_PATH: {
         BLOG_HOME: '/',
         USER_LOGIN: '/user/login',
+
+        USER_EDIT: '/user/edit',
+    },
+    BACKEND_API: {
+        AUTH_CHECK: '/users/auth-check',
+        AUTH_LOGIN: '/users/login',
+        AUTH_LOGOUT: '/users/logout',
+
+        USER_DETAIL: '/users/detail',
+        USER_UPDATE: '/users/update',
+
+        BLOGS: '/blogs',
+        BLOG_CREATE: '/blogs/create',
+        BLOG_UPDATE: '/blogs/update',
+        BLOG_DELETE: '/blogs/delete',
+        BLOG_DETAIL: '/blogs/detail',
+        BLOG_CATEGORIES: '/blogs/categories',
+
+        BLOG_LIKES: '/blog-likes',
+        GENERATE_VISIT_ID: '/blog-likes/generate-visit-id',
+        IS_LIKED: '/blog-likes/is-liked',
+        BLOG_LIKE_CREATE: '/blog-likes/create',
+        BLOG_LIKE_DELETE: '/blog-likes/delete',
+
+        CREATE_COMMENT: '/comments/create',
+        COMMENT_BLOG: '/comments/blog',
     },
     // Token name
     TOKEN_NAME: {
