@@ -28,11 +28,11 @@ import { fetchCommentsByBlogId } from '@/app/utils/comment/fetch-comment';
 import { deleteBlogServerAction } from '@/app/utils/blog/fetch-blog-server-action';
 import { fetchMarkdown } from '@/app/utils/github/fetch-github';
 import { createCommentServerAction } from '@/app/utils/comment/fetch-comments-server-action';
+import { fetchBlogLikeById } from '@/app/utils/blog-like/fetch-blog-like';
 import {
-    createBlogLikeById,
-    deleteBlogLikeById,
-    fetchBlogLikeById,
-} from '@/app/utils/blog-like/fetch-blog-like';
+    createBlogLikeByIdServerAction,
+    deleteBlogLikeByIdServerAction,
+} from '@/app/utils/blog-like/fetch-blog-likes-server-action';
 // hooks
 import { useUser } from '@/app/hooks/user/useUser';
 import { useCommentForm } from '@/app/hooks/comment/useCommentForm';
@@ -207,8 +207,8 @@ const BlogDetail = ({ blogId, inAuthUser }: BlogDetailProps) => {
     const handleBlogLike = async (localBlogId: string) => {
         try {
             const ret = !isBlogLike
-                ? await createBlogLikeById(localBlogId)
-                : await deleteBlogLikeById(localBlogId);
+                ? await createBlogLikeByIdServerAction(localBlogId)
+                : await deleteBlogLikeByIdServerAction(localBlogId);
             if (ret) {
                 setIsBlogLike(!isBlogLike);
                 if (blog?.id && blog.userId) {
