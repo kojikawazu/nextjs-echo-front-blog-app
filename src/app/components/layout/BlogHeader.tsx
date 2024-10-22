@@ -36,7 +36,7 @@ const BlogHeader = ({
     return (
         <header className="bg-[#1a1a1a] text-white p-4 flex justify-between items-center">
             <Link href={CommonConstants.URL_PATH.BLOG_HOME}>
-                <h1 className="text-2xl font-bold">Tech Blog</h1>
+                <h1 className="text-2xl font-bold">{CommonConstants.HEADER.TITLE}</h1>
             </Link>
 
             {isLoading ? (

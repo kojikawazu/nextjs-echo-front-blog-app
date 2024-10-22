@@ -1,3 +1,6 @@
+// constants
+import { CommonConstants } from '@/app/utils/constants/common-constants';
+
 /**
  * ブログIDに紐づくコメントリストを取得する
  * @param blogId
@@ -5,7 +8,7 @@
  */
 export async function GET(req: Request, { params }: { params: { blogId: string } }) {
     console.log('GET /api/comments/blog/:blogId');
-    const fetchUrl = `${process.env.API_URL}/comments/blog/${params.blogId}`;
+    const fetchUrl = `${process.env.API_URL}${CommonConstants.BACKEND_API.COMMENT_BLOG}/${params.blogId}`;
 
     // リクエストヘッダーとボディの確認
     //console.log('Incoming request headers:', req.headers);

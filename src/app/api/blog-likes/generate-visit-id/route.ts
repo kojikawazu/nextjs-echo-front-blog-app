@@ -1,3 +1,6 @@
+// constants
+import { CommonConstants } from '@/app/utils/constants/common-constants';
+
 /**
  * 訪問IDを生成する
  * @returns 200 | 500
@@ -5,7 +8,7 @@
  */
 export async function GET() {
     console.log('fetch generate visit id GET start...');
-    const fetchUrl = `${process.env.API_URL}/blog-likes/generate-visit-id`;
+    const fetchUrl = `${process.env.API_URL}${CommonConstants.BACKEND_API.GENERATE_VISIT_ID}`;
 
     try {
         const response = await fetch(fetchUrl, {

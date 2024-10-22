@@ -15,7 +15,7 @@ import { CommentFormType, RawCommentType } from '@/app/types/comment-types';
 export const createCommentServerAction = async (commentData: CommentFormType, blogId: string) => {
     console.log('createCommentServerAction: ');
     const funcName = '[createCommentServerAction]';
-    const fetchUrl = `${process.env.API_URL}/comments/create`;
+    const fetchUrl = `${process.env.API_URL}${CommonConstants.BACKEND_API.CREATE_COMMENT}`;
 
     try {
         // Backend API 送信

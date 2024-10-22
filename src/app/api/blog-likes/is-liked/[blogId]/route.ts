@@ -1,3 +1,5 @@
+import { CommonConstants } from '@/app/utils/constants/common-constants';
+
 /**
  * いいねしているかどうかを取得する
  * @param req
@@ -13,7 +15,7 @@ export async function GET(
     },
 ) {
     console.log('GET /api/blog-likes/is-liked/:blogId');
-    const fetchUrl = `${process.env.API_URL}/blog-likes/is-liked/${params.blogId}`;
+    const fetchUrl = `${process.env.API_URL}${CommonConstants.BACKEND_API.IS_LIKED}/${params.blogId}`;
 
     // クライアントから受け取ったクッキーを取得
     const cookie = req.headers.get('cookie');

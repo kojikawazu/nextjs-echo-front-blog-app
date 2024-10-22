@@ -1,3 +1,6 @@
+// constants
+import { CommonConstants } from '@/app/utils/constants/common-constants';
+
 /**
  * ブログいいね一覧取得
  * @param req
@@ -5,7 +8,7 @@
  */
 export async function GET(req: Request) {
     console.log('GET /api/blog-likes');
-    const fetchUrl = `${process.env.API_URL}/blog-likes`;
+    const fetchUrl = `${process.env.API_URL}${CommonConstants.BACKEND_API.BLOG_LIKES}`;
 
     // クライアントから受け取ったクッキーを取得
     const cookie = req.headers.get('cookie');

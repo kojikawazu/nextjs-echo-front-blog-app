@@ -18,11 +18,11 @@ import { isValidEmail } from '@/app/utils/validate/validate';
 export const fetchAuthUserServerAction = async () => {
     console.log('fetchAuthUserServerAction: ');
     const funcName = '[fetchAuthUserServerAction]';
-    const fetchUrl = `${process.env.API_URL}/users/auth-check`;
+    const fetchUrl = `${process.env.API_URL}${CommonConstants.BACKEND_API.AUTH_CHECK}`;
 
     // クッキーの取得
     const cookieStore = cookies();
-    const token = cookieStore.get('token');
+    const token = cookieStore.get(CommonConstants.TOKEN_NAME.TOKEN_NAME);
     //console.log('create blog POST token: ', token);
 
     try {
@@ -31,7 +31,9 @@ export const fetchAuthUserServerAction = async () => {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                ...(token ? { Cookie: `token=${token.value}` } : {}),
+                ...(token
+                    ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` }
+                    : {}),
             },
         });
 
@@ -72,7 +74,7 @@ export const fetchAuthUserServerAction = async () => {
 export const loginServerAction = async (email: string, password: string) => {
     console.log('loginServerAction: ');
     const funcName = '[loginServerAction]';
-    const fetchUrl = `${process.env.API_URL}/users/login`;
+    const fetchUrl = `${process.env.API_URL}${CommonConstants.BACKEND_API.AUTH_LOGIN}`;
 
     // メールアドレスとパスワードのチェック
     if (!email || !password) {
@@ -109,7 +111,9 @@ export const loginServerAction = async (email: string, password: string) => {
                 // 'token=...' の部分を取り出す
                 const tokenValue = newCookie
                     .split(';')
-                    .find((cookie) => cookie.trim().startsWith('token='));
+                    .find((cookie) =>
+                        cookie.trim().startsWith(`${CommonConstants.TOKEN_NAME.TOKEN_NAME}=`),
+                    );
 
                 if (tokenValue) {
                     // 'token=hogehoge' をデコードして 'token' の値だけを取り出す
@@ -118,7 +122,7 @@ export const loginServerAction = async (email: string, password: string) => {
 
                     // クッキーを更新
                     const cookieStore = cookies();
-                    cookieStore.set('token', token);
+                    cookieStore.set(CommonConstants.TOKEN_NAME.TOKEN_NAME, token);
                     //console.log(funcName, ' auth login POST Set-Cookie updated with token');
                 }
             }
@@ -142,11 +146,11 @@ export const loginServerAction = async (email: string, password: string) => {
 export const logoutServerAction = async () => {
     console.log('logoutServerAction: ');
     const funcName = '[logoutServerAction]';
-    const fetchUrl = `${process.env.API_URL}/users/logout`;
+    const fetchUrl = `${process.env.API_URL}${CommonConstants.BACKEND_API.AUTH_LOGOUT}`;
 
     // クッキーの取得
     const cookieStore = cookies();
-    const token = cookieStore.get('token');
+    const token = cookieStore.get(CommonConstants.TOKEN_NAME.TOKEN_NAME);
     //console.log('create blog POST token: ', token);
 
     try {
@@ -155,7 +159,9 @@ export const logoutServerAction = async () => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                ...(token ? { Cookie: `token=${token.value}` } : {}),
+                ...(token
+                    ? { Cookie: `${CommonConstants.TOKEN_NAME.TOKEN_NAME}=${token.value}` }
+                    : {}),
             },
         });
 
@@ -172,7 +178,7 @@ export const logoutServerAction = async () => {
             if (newCookie) {
                 // クッキーを削除
                 const cookieStore = cookies();
-                cookieStore.delete('token');
+                cookieStore.delete(CommonConstants.TOKEN_NAME.TOKEN_NAME);
             }
 
             return true;
