@@ -28,10 +28,10 @@ const BlogMainPage = async (props: BlogMainProps) => {
     try {
         // 認証ユーザーの取得
         inAuthUser = await fetchAuthUserServerAction();
-        if (!inAuthUser) {
-            console.error('Failed to fetch auth user.');
-            return redirect(CommonConstants.URL_PATH.USER_LOGIN);
-        }
+        // if (!inAuthUser) {
+        //     console.error('Failed to fetch auth user.');
+        //     return redirect(CommonConstants.URL_PATH.USER_LOGIN);
+        // }
         //console.log('BlogEditPage authUser: ', inAuthUser);
 
         // クエリーパラメータからカテゴリーを取得

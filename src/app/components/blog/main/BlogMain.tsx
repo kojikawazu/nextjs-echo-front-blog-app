@@ -34,7 +34,7 @@ import BlogMainLayout from '@/app/components/layout/BlogMainLayout';
 
 type BlogMainProps = {
     selectCategory: string;
-    inAuthUser: UserAuthType;
+    inAuthUser: UserAuthType | null;
 };
 
 /**
@@ -95,10 +95,10 @@ const BlogMain = ({ selectCategory, inAuthUser }: BlogMainProps) => {
             }
         };
 
-        if (!isLoading && isLoggedIn) {
+        if (!isLoading) {
             localFetch();
         }
-    }, [isLoading, isLoggedIn, setIsLoadingVisitId]);
+    }, [isLoading, setIsLoadingVisitId]);
 
     useEffect(() => {
         const localFetch = async () => {
@@ -123,10 +123,10 @@ const BlogMain = ({ selectCategory, inAuthUser }: BlogMainProps) => {
             }
         };
 
-        if (!isLoading && isLoggedIn && !isLoadingVisitId) {
+        if (!isLoading && !isLoadingVisitId) {
             localFetch();
         }
-    }, [isLoading, isLoggedIn, isLoadingVisitId, setIsLoadingBlogs]);
+    }, [isLoading, isLoadingVisitId, setIsLoadingBlogs]);
 
     useEffect(() => {
         const localFetch = async () => {
@@ -154,10 +154,10 @@ const BlogMain = ({ selectCategory, inAuthUser }: BlogMainProps) => {
             }
         };
 
-        if (!isLoading && isLoggedIn && !isLoadingVisitId) {
+        if (!isLoading && !isLoadingVisitId) {
             localFetch();
         }
-    }, [isLoading, isLoggedIn, isLoadingVisitId, setIsLoadingBlogLikes]);
+    }, [isLoading, isLoadingVisitId, setIsLoadingBlogLikes]);
 
     /**
      * ブログ削除ハンドル
