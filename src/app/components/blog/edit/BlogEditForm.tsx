@@ -50,6 +50,7 @@ const BlogEditForm = ({ editBlogId, inAuthUser }: BlogEditFormProps) => {
         const localFetchBlogById = async () => {
             try {
                 const responseData = await fetchBlogById(blogId);
+
                 if (responseData) {
                     setFormData({
                         title: responseData.title,
@@ -58,7 +59,6 @@ const BlogEditForm = ({ editBlogId, inAuthUser }: BlogEditFormProps) => {
                         category: responseData.category,
                         tags: responseData.tags,
                     });
-                    setIsLoadingBlogData(false);
                 } else {
                     console.error('Failed to fetch blog by id');
                     router.push(CommonConstants.URL_PATH.BLOG_HOME);
@@ -66,6 +66,8 @@ const BlogEditForm = ({ editBlogId, inAuthUser }: BlogEditFormProps) => {
             } catch (error) {
                 console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
                 router.push(CommonConstants.URL_PATH.BLOG_HOME);
+            } finally {
+                setIsLoadingBlogData(false);
             }
         };
 

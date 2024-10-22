@@ -45,6 +45,7 @@ const UserEditForm = ({ inAuthUser }: UserEditFormProps) => {
         const localFetch = async () => {
             try {
                 const responseData = await fetchUser();
+
                 if (responseData) {
                     setFormData({
                         name: responseData.name,
@@ -53,7 +54,6 @@ const UserEditForm = ({ inAuthUser }: UserEditFormProps) => {
                         newPassword: '',
                         confirmPassword: '',
                     });
-                    setIsLoadingUserData(false);
                 } else {
                     console.error('Failed to fetch user');
                     router.push(CommonConstants.URL_PATH.BLOG_HOME);
@@ -61,6 +61,8 @@ const UserEditForm = ({ inAuthUser }: UserEditFormProps) => {
             } catch (error) {
                 console.error(`${CommonConstants.ERROR_MESSAGE.API_ROUTER_ERROR}: `, error);
                 router.push(CommonConstants.URL_PATH.BLOG_HOME);
+            } finally {
+                setIsLoadingUserData(false);
             }
         };
 
