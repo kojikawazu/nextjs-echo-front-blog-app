@@ -20,12 +20,11 @@ import {
 import { fetchBlogs } from '@/app/utils/blog/fetch-blog';
 import { deleteBlogServerAction } from '@/app/utils/blog/fetch-blog-server-action';
 import { conversionFromRawBlogTypeToBlogType } from '@/app/utils/conversion/conversion';
+import { fetchBlogLikes, generateVisitId } from '@/app/utils/blog-like/fetch-blog-like';
 import {
-    createBlogLikeById,
-    deleteBlogLikeById,
-    fetchBlogLikes,
-    generateVisitId,
-} from '@/app/utils/blog-like/fetch-blog-like';
+    createBlogLikeByIdServerAction,
+    deleteBlogLikeByIdServerAction,
+} from '@/app/utils/blog-like/fetch-blog-likes-server-action';
 // hooks
 import { useUser } from '@/app/hooks/user/useUser';
 import { useBlogCategory } from '@/app/hooks/blog/useBlogCategory';
@@ -189,8 +188,8 @@ const BlogMain = ({ selectCategory, inAuthUser }: BlogMainProps) => {
     const handleBlogLike = async (localBlogId: string) => {
         try {
             const ret = !blogLikes.includes(localBlogId)
-                ? await createBlogLikeById(localBlogId)
-                : await deleteBlogLikeById(localBlogId);
+                ? await createBlogLikeByIdServerAction(localBlogId)
+                : await deleteBlogLikeByIdServerAction(localBlogId);
             if (ret) {
                 if (!blogLikes.includes(localBlogId)) {
                     setBlogLikes([...blogLikes, localBlogId]);
