@@ -28,7 +28,8 @@ export async function GET() {
         if (response.ok) {
             const responseBody = await response.text();
             const blogCategoriesData = JSON.parse(responseBody);
-            //console.log('fetch blog categories GET response data:', blogCategoriesData);
+            console.log('fetch blog categories GET response data:', blogCategoriesData);
+
             return new Response(JSON.stringify(blogCategoriesData), {
                 status: 200,
                 headers: {
