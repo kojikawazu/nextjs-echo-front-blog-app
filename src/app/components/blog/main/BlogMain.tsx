@@ -44,6 +44,9 @@ type BlogMainProps = {
  * @returns JSX
  */
 const BlogMain = ({ selectCategory, inAuthUser }: BlogMainProps) => {
+    // ページングの最大表示数
+    const maxPaginationBlog = parseInt(process.env.MAX_PAGINATION_BLOG as string) || 6;
+
     // Router(カスタムフック)
     const router = useRouter();
     // カテゴリー選択状態
@@ -62,6 +65,7 @@ const BlogMain = ({ selectCategory, inAuthUser }: BlogMainProps) => {
     const [isLoadingBlogs, setIsLoadingBlogs] = useState(true);
     // いいねローディング
     const [isLoadingBlogLikes, setIsLoadingBlogLikes] = useState(true);
+
 
     // ユーザー情報
     const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser({
@@ -318,15 +322,26 @@ const BlogMain = ({ selectCategory, inAuthUser }: BlogMainProps) => {
 
                             {/** ページング start */}
                             <div className="mt-4 flex justify-center space-x-2">
-                                {[...Array(totalPages)].map((_, index) => (
-                                    <button
-                                        key={index}
-                                        onClick={() => setCurrentPage(index + 1)}
-                                        className={`px-2 py-1 rounded ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
-                                    >
-                                        {index + 1}
-                                    </button>
-                                ))}
+                                {(() => {
+                                    const startPage = Math.max(1, currentPage - Math.floor(maxPaginationBlog / 2));
+                                    const endPage = Math.min(totalPages, startPage + maxPaginationBlog - 1);
+                                    const adjustedStartPage = Math.max(1, endPage - maxPaginationBlog + 1);
+
+                                    return [...Array(endPage - adjustedStartPage + 1)].map((_, index) => {
+                                        const pageNumber = adjustedStartPage + index;
+                                        return (
+                                            <button
+                                                key={pageNumber}
+                                                onClick={() => setCurrentPage(pageNumber)}
+                                                className={`px-2 py-1 rounded ${
+                                                    currentPage === pageNumber ? 'bg-blue-500 text-white' : 'bg-gray-300'
+                                                }`}
+                                            >
+                                                {pageNumber}
+                                            </button>
+                                        );
+                                    });
+                                })()}
                             </div>
                             {/** ページング end */}
                         </>
