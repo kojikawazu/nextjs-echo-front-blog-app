@@ -71,6 +71,8 @@ export const fetchBlogCategories = async () => {
             headers: {
                 'Cache-Control': 'no-cache', // キャッシュを無効化
                 Pragma: 'no-cache', // 互換性のため追加
+                'If-None-Match': '', // 条件付きリクエストヘッダーを無効化
+                'If-Modified-Since': '', // 条件付きリクエストヘッダーを無効化
             },
         });
 
