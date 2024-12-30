@@ -68,6 +68,10 @@ export const fetchBlogCategories = async () => {
     try {
         const response = await fetch(`/api/blogs/categories`, {
             method: 'GET',
+            headers: {
+                'Cache-Control': 'no-cache', // キャッシュを無効化
+                Pragma: 'no-cache', // 互換性のため追加
+            },
         });
 
         console.log('fetch blog categories GET response status: ', response.status);
