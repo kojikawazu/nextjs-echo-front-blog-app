@@ -13,6 +13,7 @@ interface BlogMainLayoutProps {
     categories: string[];
     selectedCategory: string;
     setSelectedCategory: (category: string) => void;
+    setCurrentPage: (currentPage: number) => void;
     children: React.ReactNode;
 }
 
@@ -27,6 +28,7 @@ interface BlogMainLayoutProps {
  * @param categories
  * @param selectedCategory
  * @param setSelectedCategory
+ * @param setCurrentPage
  * @param children
  * @returns JSX
  */
@@ -40,6 +42,7 @@ const BlogMainLayout = ({
     categories,
     selectedCategory,
     setSelectedCategory,
+    setCurrentPage,
     children,
 }: BlogMainLayoutProps) => {
     return (
@@ -58,6 +61,7 @@ const BlogMainLayout = ({
                     categories={categories}
                     selectedCategory={selectedCategory}
                     setSelectedCategory={setSelectedCategory}
+                    setCurrentPage={setCurrentPage}
                 />
                 <section className="flex-1 p-4 max-w-4xl mx-auto">{children}</section>
             </div>

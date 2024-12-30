@@ -226,6 +226,7 @@ const BlogMain = ({ selectCategory, inAuthUser }: BlogMainProps) => {
             categories={blogCategories}
             selectedCategory={selectedCategory}
             setSelectedCategory={setSelectedCategory}
+            setCurrentPage={setCurrentPage}
         >
             {isLoading || isLoadingVisitId ? (
                 <div className="flex-grow p-4 flex items-center justify-center">
