@@ -66,7 +66,6 @@ const BlogMain = ({ selectCategory, inAuthUser }: BlogMainProps) => {
     // いいねローディング
     const [isLoadingBlogLikes, setIsLoadingBlogLikes] = useState(true);
 
-
     // ユーザー情報
     const { isLoading, isLoggedIn, authUser, handleLoginForm, handleLogout } = useUser({
         inAuthUser,
@@ -323,24 +322,37 @@ const BlogMain = ({ selectCategory, inAuthUser }: BlogMainProps) => {
                             {/** ページング start */}
                             <div className="mt-4 flex justify-center space-x-2">
                                 {(() => {
-                                    const startPage = Math.max(1, currentPage - Math.floor(maxPaginationBlog / 2));
-                                    const endPage = Math.min(totalPages, startPage + maxPaginationBlog - 1);
-                                    const adjustedStartPage = Math.max(1, endPage - maxPaginationBlog + 1);
+                                    const startPage = Math.max(
+                                        1,
+                                        currentPage - Math.floor(maxPaginationBlog / 2),
+                                    );
+                                    const endPage = Math.min(
+                                        totalPages,
+                                        startPage + maxPaginationBlog - 1,
+                                    );
+                                    const adjustedStartPage = Math.max(
+                                        1,
+                                        endPage - maxPaginationBlog + 1,
+                                    );
 
-                                    return [...Array(endPage - adjustedStartPage + 1)].map((_, index) => {
-                                        const pageNumber = adjustedStartPage + index;
-                                        return (
-                                            <button
-                                                key={pageNumber}
-                                                onClick={() => setCurrentPage(pageNumber)}
-                                                className={`px-2 py-1 rounded ${
-                                                    currentPage === pageNumber ? 'bg-blue-500 text-white' : 'bg-gray-300'
-                                                }`}
-                                            >
-                                                {pageNumber}
-                                            </button>
-                                        );
-                                    });
+                                    return [...Array(endPage - adjustedStartPage + 1)].map(
+                                        (_, index) => {
+                                            const pageNumber = adjustedStartPage + index;
+                                            return (
+                                                <button
+                                                    key={pageNumber}
+                                                    onClick={() => setCurrentPage(pageNumber)}
+                                                    className={`px-2 py-1 rounded ${
+                                                        currentPage === pageNumber
+                                                            ? 'bg-blue-500 text-white'
+                                                            : 'bg-gray-300'
+                                                    }`}
+                                                >
+                                                    {pageNumber}
+                                                </button>
+                                            );
+                                        },
+                                    );
                                 })()}
                             </div>
                             {/** ページング end */}
