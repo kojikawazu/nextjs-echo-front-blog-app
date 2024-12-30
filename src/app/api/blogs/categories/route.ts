@@ -17,10 +17,8 @@ export async function GET() {
         const response = await fetch(`${fetchUrl}`, {
             method: 'GET',
             headers: {
-                'Cache-Control': 'no-cache', // キャッシュを無効化
-                Pragma: 'no-cache', // 互換性のため追加
-                'If-None-Match': '', // 条件付きリクエストヘッダーを無効化
-                'If-Modified-Since': '', // 条件付きリクエストヘッダーを無効化
+                'Cache-Control': 'no-cache',
+                Pragma: 'no-cache',
             },
         });
 
@@ -33,6 +31,11 @@ export async function GET() {
             //console.log('fetch blog categories GET response data:', blogCategoriesData);
             return new Response(JSON.stringify(blogCategoriesData), {
                 status: 200,
+                headers: {
+                    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+                    Pragma: 'no-cache',
+                    Expires: '0',
+                },
             });
         } else {
             console.error(
@@ -41,12 +44,18 @@ export async function GET() {
             );
             return new Response(JSON.stringify({ error: 'Failed fetch blog categories' }), {
                 status: response.status,
+                headers: {
+                    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+                },
             });
         }
     } catch (error) {
         console.error('Server error:', error);
         return new Response(JSON.stringify({ error: 'Server error' }), {
             status: 500,
+            headers: {
+                'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            },
         });
     }
 }
