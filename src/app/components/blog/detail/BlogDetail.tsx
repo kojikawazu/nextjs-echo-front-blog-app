@@ -266,6 +266,7 @@ const BlogDetail = ({ blogId, inAuthUser }: BlogDetailProps) => {
             categories={blogCategories}
             selectedCategory={selectedCategory}
             setSelectedCategory={handleJumpToBlogList}
+            setCurrentPage={() => {}}
         >
             {isLoading ? (
                 <div className="flex-grow p-4 flex items-center justify-center">
